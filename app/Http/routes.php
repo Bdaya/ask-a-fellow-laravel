@@ -262,5 +262,9 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      * Home page data
      */
     Route::get('/home', 'ApiController@home');
+    /*
+     * Get the events of a specific course
+     */
+    Route::get('/events/{course_id}','API\EventsAPIController@index');
 
 });

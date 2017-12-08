@@ -110,11 +110,9 @@
                 "image management",
                 "sdk"
             ],
-<<<<<<< HEAD
-            "time": "2017-04-03 08:28:38"
-=======
+
             "time": "2017-04-03T08:28:38+00:00"
->>>>>>> fd78d73be66b270efe30c76b7b0ebbba4041ecd9
+
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -572,11 +570,9 @@
                 "sftp",
                 "storage"
             ],
-<<<<<<< HEAD
-            "time": "2017-03-22 15:43:14"
-=======
+
             "time": "2017-03-22T15:43:14+00:00"
->>>>>>> fd78d73be66b270efe30c76b7b0ebbba4041ecd9
+
         },
         {
             "name": "monolog/monolog",
@@ -972,7 +968,7 @@
                     "role": "Developer"
                 },
                 {
-                    "name": "Hans-Jürgen Petrich",
+                    "name": "Hans-JÃ¼rgen Petrich",
                     "email": "petrich@tronic-media.com",
                     "role": "Developer"
                 }
@@ -2159,7 +2155,7 @@
             ],
             "authors": [
                 {
-                    "name": "François Zaninotto"
+                    "name": "FranÃ§ois Zaninotto"
                 }
             ],
             "description": "Faker is a PHP library that generates fake data for you.",
@@ -2254,7 +2250,7 @@
             ],
             "authors": [
                 {
-                    "name": "Pádraic Brady",
+                    "name": "PÃ¡draic Brady",
                     "email": "padraic.brady@gmail.com",
                     "homepage": "http://blog.astrumfutura.com"
                 },
@@ -3274,7 +3270,7 @@
             ],
             "authors": [
                 {
-                    "name": "Jean-François Simon",
+                    "name": "Jean-FranÃ§ois Simon",
                     "email": "jeanfrancois.simon@sensiolabs.com"
                 },
                 {
