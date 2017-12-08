@@ -20,7 +20,7 @@ class EventsAPIController extends Controller
     public function index($course_id)
     {
         $course = Course::find($course_id);
-        $events = $course->events()->paginate(10);
+        $events = $course->events()->where('verified', true)->paginate(10);
 
         return response()->json($events, 200);
     }
