@@ -423,7 +423,6 @@ class AdminController extends Controller
             'store_name' => 'required',
             'store_address' => 'required',
             'store_rate' => 'required',
-            'store_review' => 'required',
             'logoPath' => 'required',
             'store_description' => 'required',
             'store_phone_number' => 'required',
@@ -432,7 +431,6 @@ class AdminController extends Controller
         $store->name = $request->store_name;
         $store->location = $request->store_address;
         $store->rate_count = $request->store_rate;
-        $store->review = $request->store_review;
         $store->logo = $request->logoPath;
         $store->description = $request->store_description;
         $store->phone = $request->store_phone_number;

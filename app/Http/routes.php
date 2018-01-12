@@ -277,6 +277,18 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      * Create an event of a specific course
      */
     Route::post('/events/{course_id}', 'API\EventsAPIController@create');
+    /*
+     * Get a list of all of stores
+     */
+    Route::get('/stores', 'API\StoresAPIController@index');
+    /*
+     * Get the full details of a specific store
+     */
+    Route::get('/stores/{store_id}', 'API\StoresAPIController@show');
+    /*
+     * Post a review of a store
+     */
+    Route::post('/stores/{store_id}/reviews', 'API\StoresAPIController@addReview');
 
 
 });

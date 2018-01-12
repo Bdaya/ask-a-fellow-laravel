@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class NewSchemaForStores extends Migration
+class UpdateRateColumnInReviewsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,11 +12,9 @@ class NewSchemaForStores extends Migration
      */
     public function up()
     {
-        Schema::table('stores', function (Blueprint $table) {
+        Schema::table('reviews', function (Blueprint $table) {
             $table->float('rate')->default(0)->change(); //cumulative sum
-            $table->float('rate_count')->default(0)->change();
-            $table->string('logo')->default('')->change();
-            $table->dropColumn('review');
+            ;
         });
     }
 
@@ -27,6 +25,6 @@ class NewSchemaForStores extends Migration
      */
     public function down()
     {
-        Schema::drop('stores');
+        Schema::drop('reviews');
     }
 }
