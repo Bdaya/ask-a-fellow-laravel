@@ -36,7 +36,7 @@ Route::group(['middleware' => ['web']], function () {
 
     Route::get('/user/update', 'UserController@updateInfoPage');
     Route::post('/user/update', 'UserController@updateInfo');
-     Route::get('/user/stores', 'UserController@view_storelist');
+    Route::get('/user/stores', 'UserController@view_storelist');
     Route::get('/user/stores/{{ $store->id }}', 'UserController@view_storedetails');
     Route::get('/user/{id}', 'UserController@show');
     Route::get('/user/{id}/questions', 'UserController@show');
@@ -91,7 +91,6 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('admin/view_note/{id}', 'AdminController@viewNote');
 
 
-
     Route::get('/browse', 'AppController@browse');
     Route::get('/list_courses/{major}/{semester}', 'AjaxController@getCourses');
     Route::get('/browse/{course_id}', 'AppController@list_questions');
@@ -124,10 +123,10 @@ Route::group(['middleware' => ['web']], function () {
 
     Route::get('/add_component', 'AppController@add_component');
     Route::post('/user/post_component', 'AppController@post_component');
-    
-    Route::get('/admin/delete_note/{id}','AdminController@deleteNoteAdmin');
-    Route::get('/browse/notes/{course_id}','AppController@list_notes');
-    Route::get('/browse/notes/view_note/{note_id}','AppController@view_note');
+
+    Route::get('/admin/delete_note/{id}', 'AdminController@deleteNoteAdmin');
+    Route::get('/browse/notes/{course_id}', 'AppController@list_notes');
+    Route::get('/browse/notes/view_note/{note_id}', 'AppController@view_note');
 
 
     /**
@@ -170,7 +169,7 @@ Route::group(['middleware' => ['web']], function () {
      *  Vote a note
      */
     Route::get('/vote/note/{note_id}/{type}', 'NotesController@vote_note');
-     /**
+    /**
      *  View specific note details
      */
     Route::get('/notes/view_note_details/{note_id}', 'NotesController@view_note_details');
@@ -263,12 +262,21 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      */
     Route::get('/home', 'ApiController@home');
     /*
+     * Get the available components
+     */
+    Route::get('/components', 'API\ComponentAPIController@view_components');
+    /*
+     *  Post a question about a component
+     */
+    Route::post('/component/ask/{component_id}', 'API\ComponentAPIController@component_ask');
+    /*
      * Get the events of a specific course
      */
-    Route::get('/events/{course_id}','API\EventsAPIController@index');
+    Route::get('/events/{course_id}', 'API\EventsAPIController@index');
     /*
      * Create an event of a specific course
      */
-    Route::post('/events/{course_id}','API\EventsAPIController@create');
+    Route::post('/events/{course_id}', 'API\EventsAPIController@create');
+
 
 });
