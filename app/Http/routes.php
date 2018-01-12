@@ -266,5 +266,9 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      * Get the events of a specific course
      */
     Route::get('/events/{course_id}','API\EventsAPIController@index');
+    /*
+     * Create an event of a specific course
+     */
+    Route::post('/events/{course_id}','API\EventsAPIController@create');
 
 });
