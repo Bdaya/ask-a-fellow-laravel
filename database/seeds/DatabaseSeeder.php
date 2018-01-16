@@ -104,5 +104,94 @@ class DatabaseSeeder extends Seeder
         DB::table('components_categories')->insert([
             'name' => 'Media Design'
         ]);
+
+        DB::table('stores')->insert([
+            'name' => 'Genedy Store',
+            'location' => 'Genedy Street',
+            'rate' => 'genedymohamed96@gmail.com',
+            'review' => 'helloworld',
+            'description' => 'this is one of the best stores',
+            'phone' => '01122265156',
+        ]);
+        DB::table('stores')->insert([
+            'name' => 'My Store',
+            'location' => 'My Street',
+            'rate' => 'my@gmail.com',
+            'review' => 'helloworld',
+            'description' => 'this is one of the best stores',
+            'phone' => '01122265156',
+        ]);
+        DB::table('stores')->insert([
+            'name' => 'i Store',
+            'location' => 'i Street',
+            'rate' => 'i@gmail.com',
+            'review' => 'helloworld',
+            'description' => 'this is one of the best stores',
+            'phone' => '01122265156',
+        ]);
+        DB::table('stores')->insert([
+            'name' => 'compume',
+            'location' => 'Genedy Street',
+            'rate' => 'genedymohamed96@gmail.com',
+            'review' => 'helloworld',
+            'description' => 'this is one of the best stores',
+            'phone' => '01122265156',
+        ]);
+        DB::table('stores')->insert([
+            'name' => 'mellome',
+            'location' => 'Genedy Street',
+            'rate' => 'genedymohamed96@gmail.com',
+            'review' => 'helloworld',
+            'description' => 'this is one of the best stores',
+            'phone' => '01122265156',
+        ]);
+        DB::table('stores')->insert([
+            'name' => 'lavastone',
+            'location' => 'Genedy Street',
+            'rate' => 'genedymohamed96@gmail.com',
+            'review' => 'helloworld',
+            'description' => 'this is one of the best stores',
+            'phone' => '01122265156',
+        ]);
+        DB::table('stores')->insert([
+            'name' => 'boss',
+            'location' => 'Genedy Street',
+            'rate' => 'genedymohamed96@gmail.com',
+            'review' => 'helloworld',
+            'description' => 'this is one of the best stores',
+            'phone' => '01122265156',
+        ]);
+        DB::table('stores')->insert([
+            'name' => 'lacoste',
+            'location' => 'Genedy Street',
+            'rate' => 'genedymohamed96@gmail.com',
+            'review' => 'helloworld',
+            'description' => 'this is one of the best stores',
+            'phone' => '01122265156',
+        ]);
+        DB::table('stores')->insert([
+            'name' => 'polo',
+            'location' => 'Genedy Street',
+            'rate' => 'genedymohamed96@gmail.com',
+            'review' => 'helloworld',
+            'description' => 'this is one of the best stores',
+            'phone' => '01122265156',
+        ]);
+        DB::table('stores')->insert([
+            'name' => 'adrian',
+            'location' => 'Genedy Street',
+            'rate' => 'genedymohamed96@gmail.com',
+            'review' => 'helloworld',
+            'description' => 'this is one of the best stores',
+            'phone' => '01122265156',
+        ]);
+        DB::table('stores')->insert([
+            'name' => 'mobileshop',
+            'location' => 'Genedy Street',
+            'rate' => 'genedymohamed96@gmail.com',
+            'review' => 'helloworld',
+            'description' => 'this is one of the best stores',
+            'phone' => '01122265156',
+        ]);
     }
 }

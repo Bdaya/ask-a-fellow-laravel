@@ -30,6 +30,9 @@ Route::group(['middleware' => ['web']], function () {
         return view('welcome');
     });
 
+    /*
+     * Get the available components
+     */
 
     Route::get('/about', 'StaticController@about');
     Route::get('/howitworks', 'StaticController@howitworks');
@@ -270,6 +273,11 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      *  Post a question about a component
      */
     Route::post('/component/ask/{component_id}', 'API\ComponentAPIController@component_ask');
+    /*
+     *  Search and sort stores
+     */
+    Route::get('/stores/searchandsort/{id}/{name}/{location}/{orderby}/{ordertype}', 'API\StoresAPIController@search_and_sort_stores');
+
 
     /*
      *  Search a component by its category
