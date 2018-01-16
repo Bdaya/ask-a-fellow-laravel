@@ -25,6 +25,7 @@ class Authenticate
     {
         $authenticated = true;
         $token = $request->header('x-access-token');
+
         if($token)
         {
             try
@@ -32,11 +33,11 @@ class Authenticate
                $var= JWTAuth::decode(new Token($token));
                 $user= User::findOrFail($var['id']);
                 Auth::setUser($user);
-
             }
             catch(TokenInvalidException $e)
             {
                 $authenticated = false;
+
             }
         }
         else if(Auth::guard($guard)->guest())

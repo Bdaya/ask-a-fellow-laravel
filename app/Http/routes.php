@@ -94,7 +94,6 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('admin/view_note/{id}', 'AdminController@viewNote');
 
 
-
     Route::get('/browse', 'AppController@browse');
     Route::get('/list_courses/{major}/{semester}', 'AjaxController@getCourses');
     Route::get('/browse/{course_id}', 'AppController@list_questions');
@@ -127,10 +126,10 @@ Route::group(['middleware' => ['web']], function () {
 
     Route::get('/add_component', 'AppController@add_component');
     Route::post('/user/post_component', 'AppController@post_component');
-    
-    Route::get('/admin/delete_note/{id}','AdminController@deleteNoteAdmin');
-    Route::get('/browse/notes/{course_id}','AppController@list_notes');
-    Route::get('/browse/notes/view_note/{note_id}','AppController@view_note');
+
+    Route::get('/admin/delete_note/{id}', 'AdminController@deleteNoteAdmin');
+    Route::get('/browse/notes/{course_id}', 'AppController@list_notes');
+    Route::get('/browse/notes/view_note/{note_id}', 'AppController@view_note');
 
 
     /**
@@ -173,7 +172,7 @@ Route::group(['middleware' => ['web']], function () {
      *  Vote a note
      */
     Route::get('/vote/note/{note_id}/{type}', 'NotesController@vote_note');
-     /**
+    /**
      *  View specific note details
      */
     Route::get('/notes/view_note_details/{note_id}', 'NotesController@view_note_details');
@@ -274,11 +273,29 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      */
     Route::post('/component/ask/{component_id}', 'API\ComponentAPIController@component_ask');
     /*
+     * Get the events of a specific course
+     */
+    Route::get('/events/{course_id}', 'API\EventsAPIController@index');
+    /*
+     * Create an event of a specific course
+     */
+    Route::post('/events/{course_id}', 'API\EventsAPIController@create');
+    /*
+     * Get a list of all of stores
+     */
+    Route::get('/stores', 'API\StoresAPIController@index');
+    /*
+     * Get the full details of a specific store
+     */
+    Route::get('/stores/{store_id}', 'API\StoresAPIController@show');
+    /*
+     * Post a review of a store
+     */
+    Route::post('/stores/{store_id}/reviews', 'API\StoresAPIController@addReview');
+     /*
      *  Search and sort stores
      */
     Route::get('/stores/searchandsort/{id}/{name}/{location}/{orderby}/{ordertype}', 'API\StoresAPIController@search_and_sort_stores');
-
-
     /*
      *  Search a component by its category
      */
