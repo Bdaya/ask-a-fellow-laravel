@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\ComponentQuestion;
+use App\ComponentCategory;
 use App\Http\Requests;
 use App\Component;
 use App\User;
@@ -55,6 +56,52 @@ class ComponentAPIController extends Controller
         $question->save();
         
         return ['state' => '200 ok', 'error' => false,'data'=>$question];
+    }
+
+    // search by title
+    public function search_by_title($title){
+        $Components = Component::where('title', $title)->orderBy('title', 'asc')->get();
+        if(!$Components || count($Components) == 0){
+            $returnData['status'] = false;
+            $returnData['message'] = 'There are no components with that title';
+        }else{
+            $returnData['status'] = true;
+            $returnData['data'] = $Components;
+        }
+        return response()->json($returnData);
+    }
+
+    // search by price
+    public function search_by_price($price){
+        $Components = Component::where('price', $price)->orderBy('price', 'asc')->get();
+        if(!$Components || count($Components) == 0){
+            $returnData['status'] = false;
+            $returnData['message'] = 'There are no components with that price';
+        }else{
+            $returnData['status'] = true;
+            $returnData['data'] = $Components;
+        }
+        return response()->json($returnData);
+    }
+
+    // search by category
+    public function search_by_category($category){
+        $categoryid = ComponentCategory::where('name', $category)->first(); // get the category id from the component_categories table
+        if(!$categoryid){
+            $returnData['status'] = false;
+            $returnData['message'] = 'Component category not found';
+            return response()->json($returnData);
+        }
+        $Components = Component::where('category_id', $categoryid->id)->orderBy('title', 'asc')->get(); // get all components under this category
+        
+        if(!$Components || count($Components) == 0){
+            $returnData['status'] = false;
+            $returnData['message'] = 'There are no components under that category';
+        }else{
+            $returnData['status'] = true;
+            $returnData['data'] = $Components;
+        }
+        return response()->json($returnData);
     }
 
 }

@@ -271,4 +271,17 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      */
     Route::post('/component/ask/{component_id}', 'API\ComponentAPIController@component_ask');
 
+    /*
+     *  Search a component by its category
+     */
+    Route::get('/components/search_category/{category}', 'API\ComponentAPIController@search_by_category');
+    /*
+     *  Search a component by its price
+     */
+    Route::get('/components/search_price/{price}', 'API\ComponentAPIController@search_by_price');
+    /*
+     *  Search a component by its title
+     */
+    Route::get('/components/search_title/{title}', 'API\ComponentAPIController@search_by_title');
+
 });
