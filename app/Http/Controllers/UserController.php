@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\Store;
 use App\Http\Requests;
 use Auth;
 use App\Major;
@@ -39,11 +40,12 @@ class UserController extends Controller
         $stores = Store::all();
         return view('user.stores', compact(['stores']));
     }
-     public function view_storedetails($id) //////////////////////////////
+    
+    public function view_store_details($id)
     {
-        $storeDetail = Store::find($id);
+        $store = Store::find($id);
         
-        return view('user.store_details', compact(['storeDetail']));
+        return view('user.store_details', compact(['store']));
     }
 
 

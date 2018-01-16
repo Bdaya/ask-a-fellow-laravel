@@ -30,6 +30,9 @@ Route::group(['middleware' => ['web']], function () {
         return view('welcome');
     });
 
+    /*
+     * Get the available components
+     */
 
     Route::get('/about', 'StaticController@about');
     Route::get('/howitworks', 'StaticController@howitworks');
@@ -37,7 +40,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/user/update', 'UserController@updateInfoPage');
     Route::post('/user/update', 'UserController@updateInfo');
     Route::get('/user/stores', 'UserController@view_storelist');
-    Route::get('/user/stores/{{ $store->id }}', 'UserController@view_storedetails');
+    Route::get('/user/stores/{id}', 'UserController@view_store_details');
     Route::get('/user/{id}', 'UserController@show');
     Route::get('/user/{id}/questions', 'UserController@show');
     Route::get('/user/{id}/answers', 'UserController@showProfileAnswers');
@@ -289,6 +292,21 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      * Post a review of a store
      */
     Route::post('/stores/{store_id}/reviews', 'API\StoresAPIController@addReview');
-
+     /*
+     *  Search and sort stores
+     */
+    Route::get('/stores/searchandsort/{id}/{name}/{location}/{orderby}/{ordertype}', 'API\StoresAPIController@search_and_sort_stores');
+    /*
+     *  Search a component by its category
+     */
+    Route::get('/components/search_category/{category}', 'API\ComponentAPIController@search_by_category');
+    /*
+     *  Search a component by its price
+     */
+    Route::get('/components/search_price/{price}', 'API\ComponentAPIController@search_by_price');
+    /*
+     *  Search a component by its title
+     */
+    Route::get('/components/search_title/{title}', 'API\ComponentAPIController@search_by_title');
 
 });

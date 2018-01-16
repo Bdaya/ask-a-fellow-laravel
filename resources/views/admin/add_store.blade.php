@@ -57,7 +57,7 @@
 
             <div class="form-group">
                 <label for="logoPath">Store Logo</label>
-                <input type="file" id="logoPath" name="logoPath">
+                <input type="file" id="logoPath" name="logoPath" accept="image/*">
             </div> 
 
             <div class="form-group">

@@ -1,57 +1,55 @@
 @extends('layouts.app')
-
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-
-              <div class="panel-heading">
-              <h1>{{ $store->name}}</h1>
-              <br>
-              <h4><i>Location :{{ $store->location }}</h2></i>
-              <br>
-              <h4><i>Phone :{{ $store->phone }}</h2></i>
-              <br>
-              <h4><i>Rate :{{ $store->rate_count }}</h2></i>
-              <br>
-              
-             
-              </div>
-                 <div class="logo">
-           
-                <img src="{{asset($store->logo)}}" style="">
-           
-                <img src="{{asset('art/default_pp.png')}}" style="">
-            
-
-        </div>
-              <div class="panel-body">
-               
-                <a href="/admin/accept/{{ $event->id }}" id="accept">Accept Request</a>
-
-                <br>
-
-               
-                
-                  <div id="deleteReq" style="display: none;">
-                  <form method="POST" action="/user/stores/{{ $store->id }}">
-              <div class="form-group">
-                <button type="submit" class="btn">Details</button>
-            </div>
-          </form>
-          </div>
-               
-              </div>
-                
-          </div>
-            
-        </div>
+    <style>
+        table td, table th
+        {
+            border: 1px solid black;
+            padding: 7px;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/t/zf/dt-1.10.11/datatables.min.css"/>
+    <div class="container">
+        <table class="table table-striped table-bordered" style="width:100%;" id="stores_table">
+            <thead>
+            <tr>
+                <th>Store Name</th>
+                <th>Rate</th>
+                <th>Phone Number</th>
+                <th>Location</th>
+            </tr>
+            </thead>
+            <tbody>
+                @foreach($stores as $store)
+                <tr>
+                    <td><a href="/user/stores/{{ $store->id }}">{{ $store->name }}</a></td>
+                    <td>{{ $store->rate_count }}</td>
+                    <td>{{ $store->phone}}</td>
+                    <td>{{ $store->location }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
-</div>
+    
+    <script type="text/javascript" src="https://cdn.datatables.net/t/zf/dt-1.10.11/datatables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#stores_table').DataTable();
+        });
+    </script>
 
+    <style>
+        #stores_table_wrapper
+        {
+            width: 70%;
+        }
+
+        .odd {
+            background-color: #FFECDC !important;
+        }
+
+        #stores_table thead tr {
+            background-color: #FFCEA5;
+        }
+    </style>
 @endsection
-
-
-
-
