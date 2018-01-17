@@ -27,6 +27,7 @@ use App\Store;
 use Mail;
 use Session;
 use Auth;
+use Cloudinary\Uploader;
 use Illuminate\Support\Facades\Redirect;
 
 class AdminController extends Controller
@@ -423,7 +424,8 @@ class AdminController extends Controller
             'store_name' => 'required',
             'store_address' => 'required',
             'store_rate' => 'required',
-            'logoPath' => 'required',
+            'store_review' => 'required',
+            'logoPath' => 'image|max:1000',
             'store_description' => 'required',
             'store_phone_number' => 'required',
         ]);
@@ -431,10 +433,22 @@ class AdminController extends Controller
         $store->name = $request->store_name;
         $store->location = $request->store_address;
         $store->rate_count = $request->store_rate;
-        $store->logo = $request->logoPath;
+        if ($request->file('logoPath')) {
+            \Cloudinary::config(array(
+                "cloud_name" => env("CLOUDINARY_NAME"),
+                "api_key" => env("CLOUDINARY_KEY"),
+                "api_secret" => env("CLOUDINARY_SECRET")
+            ));
+            // upload and set new picture
+            $file = $request->file('logoPath');
+            $image = Uploader::upload($file->getRealPath(), ["width" => 300, "height" => 300, "crop" => "limit"]);
+            $store->logo = $image["url"];
+        }
         $store->description = $request->store_description;
+        $store->review = $request->store_review;
         $store->phone = $request->store_phone_number;
         $store->save();
+        
         return redirect('admin/add_store');
     }
 
@@ -458,7 +472,7 @@ class AdminController extends Controller
             'store_address' => 'required',
             'store_rate' => 'required',
             'store_review' => 'required',
-            'logoPath' => 'required',
+            'logoPath' => 'image|max:1000',
             'store_description' => 'required',
             'store_phone_number' => 'required',
         ]);
@@ -467,7 +481,17 @@ class AdminController extends Controller
         $store->location = $request->store_address;
         $store->rate_count = $request->store_rate;
         $store->review = $request->store_review;
-        $store->logo = $request->logoPath;
+        if ($request->file('logoPath')) {
+            \Cloudinary::config(array(
+                "cloud_name" => env("CLOUDINARY_NAME"),
+                "api_key" => env("CLOUDINARY_KEY"),
+                "api_secret" => env("CLOUDINARY_SECRET")
+            ));
+            // upload and set new picture
+            $file = $request->file('logoPath');
+            $image = Uploader::upload($file->getRealPath(), ["width" => 300, "height" => 300, "crop" => "limit"]);
+            $store->logo = $image["url"];
+        }
         $store->description = $request->store_description;
         $store->phone = $request->store_phone_number;
         $store->save();

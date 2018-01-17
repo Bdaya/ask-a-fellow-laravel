@@ -32,9 +32,8 @@
             </tbody>
         </table>
 
-        <form method="POST" action="{{url('admin/add_store')}}" style="padding: 50px; width: 50%;">
-            {{csrf_field()}}
-
+        <form method="POST" action="{{url('admin/add_store')}}"  enctype="multipart/form-data" style="padding: 50px; width: 50%;">
+            
             <div class="form-group">
                 <label for="store_name">Store Name</label>
                 <input type="text" class="form-control" id="store_name" name="store_name" placeholder="Store Name">
@@ -57,7 +56,7 @@
 
             <div class="form-group">
                 <label for="logoPath">Store Logo</label>
-                <input type="file" id="logoPath" name="logoPath" accept="image/*">
+                <input name="logoPath" id="logoPath" type="file" accept="image/*">
             </div> 
 
             <div class="form-group">

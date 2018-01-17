@@ -46,7 +46,7 @@
     <a target="_blank" href="https://www.facebook.com/BdayaNGO"><img class="contact_logo" src="{{asset('/art/facebook.png')}}"></a>
     <a target="_blank" href="https://www.youtube.com/user/salfoosh"><img class="contact_logo" src="{{asset('/art/youtube.png')}}"></a>
     <a target="_blank" href="https://www.instagram.com/bdaya_ngo/"><img class="contact_logo" src="{{asset('/art/instagram.png')}}"></a>
-    <a target="_blank" href="https://github.com/hossamElfar/ask-a-fellow-laravel/"><img class="contact_logo" src="{{asset('/art/github.png')}}"></a>
+    <a target="_blank" href="https://github.com/AyaKhaled1/ask-a-fellow-laravel/"><img class="contact_logo" src="{{asset('/art/github.png')}}"></a>
 </div>
 
 
