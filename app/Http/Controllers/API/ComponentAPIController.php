@@ -14,18 +14,26 @@ use App\User;
 class ComponentAPIController extends Controller
 {
 
+    public function __construct()
+    {
+        $this->middleware('auth', ['only' => [
+            'component_ask'
+        ]]);
+    }
+
+    // Get a list of the available components
 	public function view_components()
     {
-    	$Components = Component::paginate(10);
+    	$Components = Component::paginate(25);
 
         if(!$Components){
 
-        	$returnData['status'] = false;
+        	$returnData['status'] = '404 not found';
             $returnData['message'] = 'There are no components';
 
         } else{
 
-        	$returnData['status'] = true;
+        	$returnData['status'] = '200 ok';
 
             foreach ($Components as $Component) {
 
@@ -43,6 +51,7 @@ class ComponentAPIController extends Controller
         return response()->json($returnData);
     }
 
+    // Ask a question about a component
     public function component_ask(Request $request, $component_id)
     {
         $this->validate($request, [
