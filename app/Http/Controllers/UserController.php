@@ -23,7 +23,7 @@ class UserController extends Controller
     {
         $user = User::find($id);
         if (!$user)
-            return 'Ooops! User doesn\'t exit';
+            return 'Ooops! User doesn\'t exist';
         return view('user.questions', compact(['user']));
     }
 
@@ -31,7 +31,7 @@ class UserController extends Controller
     {
         $user = User::find($id);
         if (!$user)
-            return 'Ooops! User doesn\'t exit';
+            return 'Ooops! User doesn\'t exist';
         return view('user.answers', compact(['user']));
     }
 
@@ -47,7 +47,6 @@ class UserController extends Controller
         
         return view('user.store_details', compact(['store']));
     }
-
 
     public function updateInfoPage()
     {

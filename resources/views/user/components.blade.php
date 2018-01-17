@@ -9,22 +9,20 @@
     </style>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/t/zf/dt-1.10.11/datatables.min.css"/>
     <div class="container">
-        <table class="table table-striped table-bordered" style="width:100%;" id="stores_table">
+        <table class="table table-striped table-bordered" style="width:100%;" id="components_table">
             <thead>
             <tr>
-                <th>Store Name</th>
-                <th>Rate</th>
-                <th>Phone Number</th>
-                <th>Location</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Price</th>
             </tr>
             </thead>
             <tbody>
-                @foreach($stores as $store)
+                @foreach($components as $component)
                 <tr>
-                    <td><a href="/user/stores/{{ $store->id }}">{{ $store->name }}</a></td>
-                    <td>{{ $store->rate }}</td>
-                    <td>{{ $store->phone}}</td>
-                    <td>{{ $store->location }}</td>
+                    <td><a href="/user/components/{{ $component->id }}">{{ $component->title }}</a></td>
+                    <td>{{ $component->category()->name }}</td>
+                    <td>{{ $component->price}}</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -34,12 +32,12 @@
     <script type="text/javascript" src="https://cdn.datatables.net/t/zf/dt-1.10.11/datatables.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#stores_table').DataTable();
+            $('#components_table').DataTable();
         });
     </script>
 
     <style>
-        #stores_table_wrapper
+        #components_table_wrapper
         {
             width: 70%;
         }
@@ -48,7 +46,7 @@
             background-color: #FFECDC !important;
         }
 
-        #stores_table thead tr {
+        #components_table thead tr {
             background-color: #FFCEA5;
         }
     </style>

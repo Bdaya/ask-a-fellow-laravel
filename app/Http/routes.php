@@ -36,7 +36,8 @@ Route::group(['middleware' => ['web']], function () {
 
     Route::get('/about', 'StaticController@about');
     Route::get('/howitworks', 'StaticController@howitworks');
-
+    Route::get('/user/components', 'AppController@view_components');
+    Route::get('/user/components/{id}', 'AppController@component_details');
     Route::get('/user/update', 'UserController@updateInfoPage');
     Route::post('/user/update', 'UserController@updateInfo');
     Route::get('/user/stores', 'UserController@view_storelist');

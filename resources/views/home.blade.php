@@ -19,6 +19,9 @@ $pages = ceil($count_questions/$take);
 
         <h2>Hello {{Auth::user()->first_name}}!</h2>
         <p>Showing questions from your <a href="{{url('/subscriptions')}}">subscribed courses</a>.</p>
+        <h4 class="pull-right"><a href="{{url('/add_component')}}">Add a new component</a></h4>
+        <h3><a href="{{url('/user/components')}}">View all the available components</a></h3>
+        <h3><a href="{{url('/user/stores')}}">View all the available stores</a></h3>
         <h4 class="pull-right"><a href="{{url('/browse')}}">Ask a question</a></h4>
         <h3><a href="{{url('/browse')}}">Browse all courses</a></h3>
         <hr>
