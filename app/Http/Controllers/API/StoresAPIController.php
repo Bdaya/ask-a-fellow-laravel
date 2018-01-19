@@ -32,10 +32,29 @@ class StoresAPIController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
-        $stores = Store::paginate(25);
-        return response()->json($stores, 200);
+        if ($request->has('id')){
+            $Stores = Store::find($request->get('id'));
+        }else{
+            if (!$request->has('name'))
+                $name = null;
+            if (!$request->has('location'))
+                $location = null;
+            if (!$request->has('orderby') || !$request->has('ordertype'))
+                $Stores = Store::where('name', 'LIKE', '%'.$request->get('name').'%')->where('location', 'LIKE', '%'.$request->get('location').'%')->paginate(10);
+            else
+                $Stores = Store::where('name', 'LIKE', '%'.$request->get('name').'%')->where('location', 'LIKE', '%'.$request->get('location').'%')->orderBy($request->get('orderby'), $request->get('ordertype'))->paginate(10);
+            $Stores->setPath('api/v1/');
+        }
+        if(!$Stores){
+        	$returnData['status'] = false;
+            $returnData['message'] = 'There are no stores';
+        } else{
+        	$returnData['status'] = true;
+            $returnData['data'] = $Stores;
+        }
+        return response()->json($returnData);
     }
 
     /**
@@ -90,31 +109,5 @@ class StoresAPIController extends Controller
         $store->save();
         $review->save();
         return response()->json($review, 200);
-    }
-
-    // Search and sort with all attributes. Empty attributes are set '_'. Default order is by rate descendingly
-    public function search_and_sort_stores($id, $name, $location, $orderby, $ordertype){
-        if ($id != '_'){
-            $Stores = Store::find($id);
-        }else{
-            if ($name == '_')
-                $name = null;
-            if ($location == '_')
-                $location = null;
-            if ($orderby == '_')
-                $orderby = 'rate';
-            if ($ordertype == '_')
-                $ordertype = 'desc';
-            $Stores = Store::where('name', 'LIKE', '%'.$name.'%')->where('location', 'LIKE', '%'.$location.'%')->orderBy($orderby, $ordertype)->paginate(10);
-            $Stores->setPath('api/v1/');
-        }
-        if(!$Stores){
-        	$returnData['status'] = false;
-            $returnData['message'] = 'There are no stores';
-        } else{
-        	$returnData['status'] = true;
-            $returnData['data'] = $Stores;
-        }
-        return response()->json($returnData);
     }
 }

@@ -293,10 +293,6 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      * Post a review of a store
      */
     Route::post('/stores/{store_id}/reviews', 'API\StoresAPIController@addReview');
-     /*
-     *  Search and sort stores
-     */
-    Route::get('/stores/searchandsort/{id}/{name}/{location}/{orderby}/{ordertype}', 'API\StoresAPIController@search_and_sort_stores');
     /*
      *  Search a component by its category
      */
