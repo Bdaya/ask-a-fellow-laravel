@@ -66,6 +66,39 @@ class ComponentAPIController extends Controller
         
         return ['state' => '200 ok', 'error' => false,'data'=>$question];
     }
+    
+    /**
+    *   Post an answer to a component question and notifies
+    *   the asker
+    *
+    *   @param Request $request
+    *   @param $question_id
+    *   @return status
+    */
+    public function post_answer(Request $request,$question_id)
+    {
+        $this->validate($request, [
+                'answer' => 'required|min:5',
+        ]);
+        
+        $answer = new ComponentAnswer();
+        $answer->answer = $request->answer;
+        $answer->responder_id = Auth::user()->id;
+        $answer->question_id = $question_id;
+        $answer->save();
+        
+        $asker_id = ComponentQuestion::find($question_id)->asker_id;
+        $component_id = ComponentQuestion::find($question_id)->component_id;
+        $item_title = Component::find($component_id)->title;
+            
+        $description = Auth::user()->first_name.' '.Auth::user()->last_name.' posted an answer to your question about the item '.$item_title;
+        $link = url('/component/answers/'.$question_id);
+        Notification::send_notification($asker_id,$description,$link);
+        
+        
+        return ['state' => '200 ok', 'error' => false,'data'=>$answer];
+    }
+    
 
     // search by title
     public function search_by_title($title){
