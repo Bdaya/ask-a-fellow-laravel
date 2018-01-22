@@ -213,6 +213,19 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
         |--------------------------
     */
 
+    /**
+     * Users Authentication
+     */
+    Route::post('register', 'API\AuthAPIController@register');
+    Route::get('register/verify/{token}', 'API\AuthAPIController@verify');
+    Route::post('login', 'API\AuthAPIController@login');
+    Route::post('logout', 'API\AuthAPIController@logout');
+
+     /**
+     * API documentaion
+     */    
+    Route::get('/', 'ApiController@documentation');
+
     /*
      * Question header viewing
      */
@@ -222,15 +235,6 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      * Question viewing with answers and sorting.
      * */
     Route::get('answers/{id}/{order}', 'API\QuestionAPIController@view_answers');
-
-    /**
-     * Users Authentication
-     */
-    Route::post('register', 'API\AuthAPIController@register');
-    Route::get('register/verify/{token}', 'API\AuthAPIController@verify');
-    Route::post('login', 'API\AuthAPIController@login');
-    Route::post('logout', 'API\AuthAPIController@logout');
-
 
     /**
      *  Users Profile
