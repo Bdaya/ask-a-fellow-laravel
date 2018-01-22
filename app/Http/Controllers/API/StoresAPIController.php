@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Review;
 use App\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Validator;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
 
 class StoresAPIController extends Controller
 {
@@ -29,29 +28,31 @@ class StoresAPIController extends Controller
 
     /**
      * Get a list of the available stores
-     *
+     * 
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
-        if ($request->has('id')){
+        if ($request->has('id')) {
             $Stores = Store::find($request->get('id'));
-        }else{
-            if (!$request->has('name'))
-                $name = null;
-            if (!$request->has('location'))
-                $location = null;
-            if (!$request->has('orderby') || !$request->has('ordertype'))
-                $Stores = Store::where('name', 'LIKE', '%'.$request->get('name').'%')->where('location', 'LIKE', '%'.$request->get('location').'%')->paginate(10);
-            else
-                $Stores = Store::where('name', 'LIKE', '%'.$request->get('name').'%')->where('location', 'LIKE', '%'.$request->get('location').'%')->orderBy($request->get('orderby'), $request->get('ordertype'))->paginate(10);
+        } else {
+            $orderby = 'id';
+            $ordertype = 'asc';
+            if ($request->has('orderby')) {
+                $orderby = $request->get('orderby');
+            }
+            if ($request->has('ordertype')) {
+                $ordertype = $request->get('ordertype');
+            }
+            $Stores = Store::where('name', 'LIKE', '%' . $request->get('name') . '%')->where('location', 'LIKE', '%' . $request->get('location') . '%')->orderBy($orderby, $ordertype)->paginate(25);
             $Stores->setPath('api/v1/');
         }
-        if(!$Stores){
-        	$returnData['status'] = false;
+        if (!$Stores) {
+            $returnData['status'] = false;
             $returnData['message'] = 'There are no stores';
-        } else{
-        	$returnData['status'] = true;
+        } else {
+            $returnData['status'] = true;
             $returnData['data'] = $Stores;
         }
         return response()->json($returnData);
@@ -96,7 +97,7 @@ class StoresAPIController extends Controller
         }
         $validator = $this->validator($request->all());
 
-        if ($validator->fails())
+        if ($validator->fails()) 
             return response()->json($validator->errors(), 302);
 
         $review = new Review($request->all());
