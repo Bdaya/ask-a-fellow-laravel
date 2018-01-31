@@ -213,6 +213,19 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
         |--------------------------
     */
 
+    /**
+     * Users Authentication
+     */
+    Route::post('register', 'API\AuthAPIController@register');
+    Route::get('register/verify/{token}', 'API\AuthAPIController@verify');
+    Route::post('login', 'API\AuthAPIController@login');
+    Route::post('logout', 'API\AuthAPIController@logout');
+
+     /**
+     * API documentaion
+     */    
+    Route::get('/', 'ApiController@documentation');
+
     /*
      * Question header viewing
      */
@@ -222,15 +235,6 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      * Question viewing with answers and sorting.
      * */
     Route::get('answers/{id}/{order}', 'API\QuestionAPIController@view_answers');
-
-    /**
-     * Users Authentication
-     */
-    Route::post('register', 'API\AuthAPIController@register');
-    Route::get('register/verify/{token}', 'API\AuthAPIController@verify');
-    Route::post('login', 'API\AuthAPIController@login');
-    Route::post('logout', 'API\AuthAPIController@logout');
-
 
     /**
      *  Users Profile
@@ -268,7 +272,7 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
     /*
      * Get the available components
      */
-    Route::get('/components', 'API\ComponentAPIController@view_components');
+    Route::get('/components', 'API\ComponentAPIController@index');
     /*
      *  Post a question about a component
      */
@@ -293,21 +297,4 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      * Post a review of a store
      */
     Route::post('/stores/{store_id}/reviews', 'API\StoresAPIController@addReview');
-     /*
-     *  Search and sort stores
-     */
-    Route::get('/stores/searchandsort/{id}/{name}/{location}/{orderby}/{ordertype}', 'API\StoresAPIController@search_and_sort_stores');
-    /*
-     *  Search a component by its category
-     */
-    Route::get('/components/search_category/{category}', 'API\ComponentAPIController@search_by_category');
-    /*
-     *  Search a component by its price
-     */
-    Route::get('/components/search_price/{price}', 'API\ComponentAPIController@search_by_price');
-    /*
-     *  Search a component by its title
-     */
-    Route::get('/components/search_title/{title}', 'API\ComponentAPIController@search_by_title');
-
 });

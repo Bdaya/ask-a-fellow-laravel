@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use App\ComponentQuestion;
-use App\ComponentCategory;
-use App\Http\Requests;
 use App\Component;
+use App\ComponentQuestion;
+use App\Http\Controllers\Controller;
 use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ComponentAPIController extends Controller
 {
@@ -21,96 +19,58 @@ class ComponentAPIController extends Controller
         ]]);
     }
 
-    // Get a list of the available components
-	public function view_components()
+    /**
+     * Get a list of the components
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index(Request $request)
     {
-    	$Components = Component::paginate(25);
+        if ($request->has('id')) {
+            $Components = Component::join('component_categories', 'components.category_id', '=', 'component_categories.id')->join('users', 'components.creator_id', '=', 'users.id')->select('components.*', 'component_categories.name as category_name', 'users.first_name as creator_first_name', 'users.last_name as creator_last_name')->find($request->get('id'));
+        } else {
+            $orderby = 'id';
+            $ordertype = 'asc';
+            if ($request->has('orderby'))
+                $orderby = $request->get('orderby');
+            if ($request->has('ordertype'))
+                $ordertype = $request->get('ordertype');
+            $Components = Component::join('component_categories', 'components.category_id', '=', 'component_categories.id')->join('users', 'components.creator_id', '=', 'users.id')->select('components.*', 'component_categories.id as category_id', 'component_categories.name as category_name', 'users.id as creator_id', 'users.first_name as creator_first_name', 'users.last_name as creator_last_name')->where('title', 'LIKE', '%' . $request->get('title') . '%')->where('component_categories.name', 'LIKE', '%' . $request->get('category') . '%')->where('users.first_name', 'LIKE', '%' . $request->get('creator_first_name') . '%')->where('users.last_name', 'LIKE', '%' . $request->get('creator_last_name') . '%')->orderBy($orderby, $ordertype)->paginate(25);
+            $Components->setPath('api/v1/');
+        }
+        if (!$Components) {
 
-        if(!$Components){
-
-        	$returnData['status'] = '404 not found';
+            $returnData['status'] = '404 not found';
             $returnData['message'] = 'There are no components';
 
-        } else{
+        } else {
 
-        	$returnData['status'] = '200 ok';
-
-            foreach ($Components as $Component) {
-
-            	$Component['category'] = $Component->category()->name;
-            	$Component['creator_first_name'] = $Component->creator()->first_name;
-            	$Component['creator_last_name'] = $Component->creator()->last_name;
-               
-            }
-
-            $Components->setPath('api/v1/');
+            $returnData['status'] = '200 ok';
             $returnData['data'] = $Components;
 
         }
-
         return response()->json($returnData);
     }
 
-    // Ask a question about a component
+    /**
+     * Ask a question about a component
+     *
+     * @param Request $request
+     * @param $component_id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function component_ask(Request $request, $component_id)
     {
         $this->validate($request, [
             'question' => 'required'
         ]);
-
         $question = new ComponentQuestion;
         $question->asker_id = Auth::user()->id;
         $question->question = $request->question;
         $question->component_id = $component_id;
         $question->save();
-        
-        return ['state' => '200 ok', 'error' => false,'data'=>$question];
-    }
 
-    // search by title
-    public function search_by_title($title){
-        $Components = Component::where('title', $title)->orderBy('title', 'asc')->get();
-        if(!$Components || count($Components) == 0){
-            $returnData['status'] = false;
-            $returnData['message'] = 'There are no components with that title';
-        }else{
-            $returnData['status'] = true;
-            $returnData['data'] = $Components;
-        }
-        return response()->json($returnData);
+        return ['state' => '200 ok', 'error' => false, 'data' => $question];
     }
-
-    // search by price
-    public function search_by_price($price){
-        $Components = Component::where('price', $price)->orderBy('price', 'asc')->get();
-        if(!$Components || count($Components) == 0){
-            $returnData['status'] = false;
-            $returnData['message'] = 'There are no components with that price';
-        }else{
-            $returnData['status'] = true;
-            $returnData['data'] = $Components;
-        }
-        return response()->json($returnData);
-    }
-
-    // search by category
-    public function search_by_category($category){
-        $categoryid = ComponentCategory::where('name', $category)->first(); // get the category id from the component_categories table
-        if(!$categoryid){
-            $returnData['status'] = false;
-            $returnData['message'] = 'Component category not found';
-            return response()->json($returnData);
-        }
-        $Components = Component::where('category_id', $categoryid->id)->orderBy('title', 'asc')->get(); // get all components under this category
-        
-        if(!$Components || count($Components) == 0){
-            $returnData['status'] = false;
-            $returnData['message'] = 'There are no components under that category';
-        }else{
-            $returnData['status'] = true;
-            $returnData['data'] = $Components;
-        }
-        return response()->json($returnData);
-    }
-
 }

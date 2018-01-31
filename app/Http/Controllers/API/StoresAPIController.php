@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Review;
 use App\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Validator;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
 
 class StoresAPIController extends Controller
 {
@@ -29,13 +28,34 @@ class StoresAPIController extends Controller
 
     /**
      * Get a list of the available stores
-     *
+     * 
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
-        $stores = Store::paginate(25);
-        return response()->json($stores, 200);
+        if ($request->has('id')) {
+            $Stores = Store::find($request->get('id'));
+        } else {
+            $orderby = 'id';
+            $ordertype = 'asc';
+            if ($request->has('orderby')) {
+                $orderby = $request->get('orderby');
+            }
+            if ($request->has('ordertype')) {
+                $ordertype = $request->get('ordertype');
+            }
+            $Stores = Store::where('name', 'LIKE', '%' . $request->get('name') . '%')->where('location', 'LIKE', '%' . $request->get('location') . '%')->orderBy($orderby, $ordertype)->paginate(25);
+            $Stores->setPath('api/v1/');
+        }
+        if (!$Stores) {
+            $returnData['status'] = false;
+            $returnData['message'] = 'There are no stores';
+        } else {
+            $returnData['status'] = true;
+            $returnData['data'] = $Stores;
+        }
+        return response()->json($returnData);
     }
 
     /**
@@ -77,7 +97,7 @@ class StoresAPIController extends Controller
         }
         $validator = $this->validator($request->all());
 
-        if ($validator->fails())
+        if ($validator->fails()) 
             return response()->json($validator->errors(), 302);
 
         $review = new Review($request->all());
@@ -90,31 +110,5 @@ class StoresAPIController extends Controller
         $store->save();
         $review->save();
         return response()->json($review, 200);
-    }
-
-    // Search and sort with all attributes. Empty attributes are set '_'. Default order is by rate descendingly
-    public function search_and_sort_stores($id, $name, $location, $orderby, $ordertype){
-        if ($id != '_'){
-            $Stores = Store::find($id);
-        }else{
-            if ($name == '_')
-                $name = null;
-            if ($location == '_')
-                $location = null;
-            if ($orderby == '_')
-                $orderby = 'rate';
-            if ($ordertype == '_')
-                $ordertype = 'desc';
-            $Stores = Store::where('name', 'LIKE', '%'.$name.'%')->where('location', 'LIKE', '%'.$location.'%')->orderBy($orderby, $ordertype)->paginate(10);
-            $Stores->setPath('api/v1/');
-        }
-        if(!$Stores){
-        	$returnData['status'] = false;
-            $returnData['message'] = 'There are no stores';
-        } else{
-        	$returnData['status'] = true;
-            $returnData['data'] = $Stores;
-        }
-        return response()->json($returnData);
     }
 }
