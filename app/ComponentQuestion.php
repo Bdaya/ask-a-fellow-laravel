@@ -9,6 +9,7 @@ class ComponentQuestion extends Model
     protected $fillable = [
         'question'
     ];
+    protected $table = "components_questions";
 
     public function asker()
     {

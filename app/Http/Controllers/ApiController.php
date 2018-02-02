@@ -24,6 +24,31 @@ class ApiController extends Controller
         ]]);
     }
 
+    public function documentation(){
+        return '
+        <!DOCTYPE html>
+        <head>
+        <h1 style="color:green">API Documentation</h1>
+        </head>
+        <body>
+        <h3>1. /register (Post Request)</h3>
+        <p>Sends confirmation mail and creates user. Returns welcome message and status code 200</p>
+        </br>
+        <h3>2. /register/verify/{token} (Get Request)</h3>
+        <p>Verifies user with confirmation code from email. Returns message of verification and status code 200</p>
+        </br>
+        <h3>3. /login (Post Request)</h3>
+        <p>Login for user. Params: "email" and "password". Returns user token upon successful and error upon failure</p>
+        </br>
+        <h3>4. /logout (Post Request)</h3>
+        <p>Logout for user. Header: "x-access-token". Returns message and status code 200</p>
+        </body>
+        ';
+    }
+
+    /**
+     * Return majors and and semesters 
+     */
     public function browse()
     {
         $majors = Major::all();
