@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Component;
 use App\ComponentQuestion;
+use App\ComponentAnswer;
+use App\Notification;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Http\Request;
@@ -15,7 +17,8 @@ class ComponentAPIController extends Controller
     public function __construct()
     {
         $this->middleware('auth', ['only' => [
-            'component_ask'
+            'component_ask',
+            'post_answer'
         ]]);
     }
 

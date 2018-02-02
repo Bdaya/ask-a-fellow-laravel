@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ComponentAnswer extends Model
 {
+    protected $table = "components_answers";
+
     protected $fillable = [
         'answer'
     ];
