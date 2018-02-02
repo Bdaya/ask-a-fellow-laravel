@@ -278,6 +278,11 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      */
     Route::post('/component/ask/{component_id}', 'API\ComponentAPIController@component_ask');
     /*
+     *  Post an answer about a component
+     */
+    Route::post('/component/answers/{question_id}', 'API\ComponentApiController@post_answer');
+    
+    /*
      * Get the events of a specific course
      */
     Route::get('/events/{course_id}', 'API\EventsAPIController@index');
