@@ -424,7 +424,6 @@ class AdminController extends Controller
             'store_name' => 'required',
             'store_address' => 'required',
             'store_rate' => 'required',
-            'store_review' => 'required',
             'logoPath' => 'image|max:1000',
             'store_description' => 'required',
             'store_phone_number' => 'required',
@@ -445,7 +444,6 @@ class AdminController extends Controller
             $store->logo = $image["url"];
         }
         $store->description = $request->store_description;
-        $store->review = $request->store_review;
         $store->phone = $request->store_phone_number;
         $store->save();
         
@@ -471,7 +469,6 @@ class AdminController extends Controller
             'store_name' => 'required',
             'store_address' => 'required',
             'store_rate' => 'required',
-            'store_review' => 'required',
             'logoPath' => 'image|max:1000',
             'store_description' => 'required',
             'store_phone_number' => 'required',
@@ -480,7 +477,6 @@ class AdminController extends Controller
         $store->name = $request->store_name;
         $store->location = $request->store_address;
         $store->rate_count = $request->store_rate;
-        $store->review = $request->store_review;
         if ($request->file('logoPath')) {
             \Cloudinary::config(array(
                 "cloud_name" => env("CLOUDINARY_NAME"),

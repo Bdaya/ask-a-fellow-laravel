@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use App\Store;
+use App\Review;
 use App\Http\Requests;
 use Auth;
 use App\Major;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
 use Cloudinary\Uploader;
 
 class UserController extends Controller
@@ -47,7 +49,32 @@ class UserController extends Controller
         
         return view('user.store_details', compact(['store']));
     }
-
+    
+    // Add review for a specific store
+    public function add_review($id,Request $request)
+    {
+        $user = Auth::user();
+        if (!$user)
+            // TODO modify a suitable view for such exceptions  
+            return 'Ooops! Not authorized';
+        
+        
+        $count_reviews = DB::table('reviews')->where("user_id","=",$user->id)->where("store_id",'=',$id)->count();
+        
+        // Checks if the user has already made a review for this store
+        if($count_reviews>0)
+            return 'You have already made a review for this store';
+        
+        $review = new Review();
+        $review->review = $request->review;
+        $review->rate = 0;
+        $review->user_id = $user->id;
+        $review->store_id = $id;
+        
+        $review->save();
+        
+    }
+    
     public function updateInfoPage()
     {
         $user = Auth::user();

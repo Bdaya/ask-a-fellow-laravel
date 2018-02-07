@@ -42,6 +42,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('/user/update', 'UserController@updateInfo');
     Route::get('/user/stores', 'UserController@view_storelist');
     Route::get('/user/stores/{id}', 'UserController@view_store_details');
+                Route::post('/user/stores/{id}','UserController@add_review');
     Route::get('/user/{id}', 'UserController@show');
     Route::get('/user/{id}/questions', 'UserController@show');
     Route::get('/user/{id}/answers', 'UserController@showProfileAnswers');
