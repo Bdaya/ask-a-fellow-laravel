@@ -46,8 +46,12 @@ class UserController extends Controller
     public function view_store_details($id)
     {
         $store = Store::find($id);
-        
-        return view('user.store_details', compact(['store']));
+        $reviews = Review::where("store_id",$id)->get();
+        $reviews = DB::table('reviews')
+                ->join('users','users.id','=','reviews.user_id')
+                ->select("reviews.rate","reviews.review","users.id","users.first_name","users.last_name")
+                ->get();
+        return view('user.store_details', compact('store','reviews'));
     }
     
     // Add review for a specific store

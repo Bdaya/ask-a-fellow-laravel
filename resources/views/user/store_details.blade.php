@@ -33,6 +33,25 @@
                 </div>
 
             </div>
+
+            <div class="panel panel-default">
+
+                <div class="panel-heading">
+                    <h1>Store Reviews</h1>
+                </div>
+
+                <div class="panel-body">
+                    @foreach($reviews as $review)
+                    <div class="rev">
+                        <div>
+                            <h6><i>by <a href="/user/{{$review->id}}">{{$review->first_name}} {{$review->last_name}}</a></i></h6>
+                            <p>{{$review->review}}</p>
+                        </div>
+                    </div>
+                    <hr> @endforeach
+                </div>
+
+            </div>
         </div>
     </div>
 </div>
