@@ -22,16 +22,22 @@
             @foreach($components as $component)
                 <tr>
                     <td>{{$component->title}}</td>
-                    <td><a onclick="return confirm('Are you sure?');" href="{{url('admin/delete_component/'.$component->id)}}">Delete</a></td>
+                    @if ($component->accepted == 0)
+                        <td></td>
+                    @else
+                        <td><a onclick="return confirm('Are you sure?');" href="{{url('admin/delete_component/'.$component->id)}}">Delete</a></td>
+                    @endif
+                    
                     @if ($component->accepted == 0)
                         <td><a href="{{url('admin/accept_component/'.$component->id)}}">Accept</a></td>
                     @else
                         <td>Accepted</td>
                     @endif
+                    
                     @if ($component->accepted == 0)
                         <td><a onclick="return confirm('Component will get deleted and you will be redirected to send an email to the creator\nAre you sure?');" href="{{url('admin/reject_component/'.$component->id)}}">Reject</a></td>
                     @else
-                        <td>Accepted</td>
+                        <td></td>
                     @endif
                 </tr>
             @endforeach

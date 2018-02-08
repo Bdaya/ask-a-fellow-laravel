@@ -30,14 +30,18 @@ Route::group(['middleware' => ['web']], function () {
         return view('welcome');
     });
 
+    /*
+     * Get the available components
+     */
 
     Route::get('/about', 'StaticController@about');
     Route::get('/howitworks', 'StaticController@howitworks');
-
+    Route::get('/user/components', 'AppController@view_components');
+    Route::get('/user/components/{id}', 'AppController@component_details');
     Route::get('/user/update', 'UserController@updateInfoPage');
     Route::post('/user/update', 'UserController@updateInfo');
-     Route::get('/user/stores', 'UserController@view_storelist');
-    Route::get('/user/stores/{{ $store->id }}', 'UserController@view_storedetails');
+    Route::get('/user/stores', 'UserController@view_storelist');
+    Route::get('/user/stores/{id}', 'UserController@view_store_details');
     Route::get('/user/{id}', 'UserController@show');
     Route::get('/user/{id}/questions', 'UserController@show');
     Route::get('/user/{id}/answers', 'UserController@showProfileAnswers');
@@ -91,7 +95,6 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('admin/view_note/{id}', 'AdminController@viewNote');
 
 
-
     Route::get('/browse', 'AppController@browse');
     Route::get('/list_courses/{major}/{semester}', 'AjaxController@getCourses');
     Route::get('/browse/{course_id}', 'AppController@list_questions');
@@ -124,10 +127,10 @@ Route::group(['middleware' => ['web']], function () {
 
     Route::get('/add_component', 'AppController@add_component');
     Route::post('/user/post_component', 'AppController@post_component');
-    
-    Route::get('/admin/delete_note/{id}','AdminController@deleteNoteAdmin');
-    Route::get('/browse/notes/{course_id}','AppController@list_notes');
-    Route::get('/browse/notes/view_note/{note_id}','AppController@view_note');
+
+    Route::get('/admin/delete_note/{id}', 'AdminController@deleteNoteAdmin');
+    Route::get('/browse/notes/{course_id}', 'AppController@list_notes');
+    Route::get('/browse/notes/view_note/{note_id}', 'AppController@view_note');
 
 
     /**
@@ -170,7 +173,7 @@ Route::group(['middleware' => ['web']], function () {
      *  Vote a note
      */
     Route::get('/vote/note/{note_id}/{type}', 'NotesController@vote_note');
-     /**
+    /**
      *  View specific note details
      */
     Route::get('/notes/view_note_details/{note_id}', 'NotesController@view_note_details');
@@ -210,6 +213,19 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
         |--------------------------
     */
 
+    /**
+     * Users Authentication
+     */
+    Route::post('register', 'API\AuthAPIController@register');
+    Route::get('register/verify/{token}', 'API\AuthAPIController@verify');
+    Route::post('login', 'API\AuthAPIController@login');
+    Route::post('logout', 'API\AuthAPIController@logout');
+
+     /**
+     * API documentaion
+     */    
+    Route::get('/', 'ApiController@documentation');
+
     /*
      * Question header viewing
      */
@@ -219,15 +235,6 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      * Question viewing with answers and sorting.
      * */
     Route::get('answers/{id}/{order}', 'API\QuestionAPIController@view_answers');
-
-    /**
-     * Users Authentication
-     */
-    Route::post('register', 'API\AuthAPIController@register');
-    Route::get('register/verify/{token}', 'API\AuthAPIController@verify');
-    Route::post('login', 'API\AuthAPIController@login');
-    Route::post('logout', 'API\AuthAPIController@logout');
-
 
     /**
      *  Users Profile
@@ -262,5 +269,37 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      * Home page data
      */
     Route::get('/home', 'ApiController@home');
-
+    /*
+     * Get the available components
+     */
+    Route::get('/components', 'API\ComponentAPIController@index');
+    /*
+     *  Post a question about a component
+     */
+    Route::post('/component/ask/{component_id}', 'API\ComponentAPIController@component_ask');
+    /*
+     *  Post an answer about a component
+     */
+    Route::post('/component/answers/{question_id}', 'API\ComponentApiController@post_answer');
+    
+    /*
+     * Get the events of a specific course
+     */
+    Route::get('/events/{course_id}', 'API\EventsAPIController@index');
+    /*
+     * Create an event of a specific course
+     */
+    Route::post('/events/{course_id}', 'API\EventsAPIController@create');
+    /*
+     * Get a list of all of stores
+     */
+    Route::get('/stores', 'API\StoresAPIController@index');
+    /*
+     * Get the full details of a specific store
+     */
+    Route::get('/stores/{store_id}', 'API\StoresAPIController@show');
+    /*
+     * Post a review of a store
+     */
+    Route::post('/stores/{store_id}/reviews', 'API\StoresAPIController@addReview');
 });

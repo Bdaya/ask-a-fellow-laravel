@@ -1,8 +1,8 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-        <form method="POST" action="{{url('admin/update_store/'.$store->id)}}" style="padding: 50px; width: 50%;">
-            {{csrf_field()}}
+        <form method="POST" action="{{url('admin/update_store/'.$store->id)}}"  enctype="multipart/form-data" style="padding: 50px; width: 50%;">
+            
             <div class="form-group">
                 <label for="store_name">Store Name</label>
                 <input type="text" class="form-control" id="store_name" name="store_name" value="{{$store->name}}">
@@ -25,7 +25,7 @@
 
             <div class="form-group">
                 <label for="logoPath">Store Logo</label>
-                <input type="file" id="logoPath" name="logoPath">
+                <input type="file" id="logoPath" name="logoPath" accept="image/*">
             </div> 
 
             <div class="form-group">
@@ -38,7 +38,7 @@
                 <input type="text" class="form-control" id="store_phone_number" name="store_phone_number" value="{{$store->phone}}"">
             </div>
 
-            <button type="submit" class="btn btn-default">Update Course</button>
+            <button type="submit" class="btn btn-default">Update Store</button>
 
             <div class="error" style="color:red">
                 @include('errors')

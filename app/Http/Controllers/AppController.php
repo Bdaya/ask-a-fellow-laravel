@@ -38,6 +38,8 @@ class AppController extends Controller
             'subscription_page',
             'post_question_all',
             'add_component',
+            'view_components',
+            'component_details',
             'post_component'
         ]]);
 
@@ -291,6 +293,18 @@ class AppController extends Controller
       'Content-Type' => 'application/pdf',
       'Content-Disposition' => 'inline; filename="'.$note->title.'"'
       ]);
+    }
+
+    public function view_components()
+    {
+        $components = Component::all()->where('accepted',1);
+        return view('user.components')->with('components',$components);
+    }
+
+    public function component_details($id)
+    {
+        $component = Component::find($id);
+        return view('user.component_details', compact(['component']));
     }
 
     public function add_component(Request $request)
