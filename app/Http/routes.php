@@ -25,8 +25,9 @@
 
 Route::group(['middleware' => ['web']], function () {
     Route::get('/', function () {
-        if (Auth::user())
+        if (Auth::user()) {
             return redirect('/home');
+        }
         return view('welcome');
     });
 
@@ -42,7 +43,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('/user/update', 'UserController@updateInfo');
     Route::get('/user/stores', 'UserController@view_storelist');
     Route::get('/user/stores/{id}', 'UserController@view_store_details');
-                Route::post('/user/stores/{id}','UserController@add_review');
+    Route::post('/user/stores/{id}', 'UserController@add_review');
     Route::get('/user/{id}', 'UserController@show');
     Route::get('/user/{id}/questions', 'UserController@show');
     Route::get('/user/{id}/answers', 'UserController@showProfileAnswers');
@@ -187,8 +188,6 @@ Route::group(['middleware' => ['web']], function () {
      * Upload a note
      */
     Route::post('/course/{courseID}/uploadNote', 'NotesController@upload_notes');
-
-
 });
 
 Route::group(['middleware' => 'web'], function () {
@@ -224,7 +223,7 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
 
      /**
      * API documentaion
-     */    
+     */
     Route::get('/', 'ApiController@documentation');
 
     /*
@@ -282,7 +281,7 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      *  Post an answer about a component
      */
     Route::post('/component/answers/{question_id}', 'API\ComponentApiController@post_answer');
-    
+
     /*
      * Get the events of a specific course
      */

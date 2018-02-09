@@ -1,4 +1,6 @@
-@extends('layouts.app') @section('content')
+@extends('layouts.app')
+@section('content')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <div class="container">
     <div class="row">
@@ -18,18 +20,28 @@
                     <h3>Location: {{ $store->location }}</h3>
                     <h3>Phone Number: {{ $store->phone }}</h3>
                     <br>
-                    <a href="#" id="show">Add a review for this store</a>
+                    <a href="#" id="show">Review this store</a>
                     <div id="form" hidden="true">
+
                         <form method="post" action="/user/stores/{{ $store->id }}">
 
+                          <div class=" form-group ">
+                          <input type="hidden" name="rate" value="10">
+
+                          <h4>Rate this store</h4>
+                          @for($i = 0;$i<10;++$i)
+                            <span class="fa fa-star star checked" id="star{{$i}}"></span>
+                          @endfor
+                          </div>
 
                             <div class=" form-group ">
-                                <textarea class="form-control " name="review"></textarea>
+                                <textarea class="form-control " name="review" placeholder="Optional: write a review"></textarea>
                             </div>
 
-                            <button type="submit " class="btn btn-primary ">Submit Review</button>
+                            <input type="button" onclick="submit()" value="Submit Review">
                         </form>
                     </div>
+
                 </div>
 
             </div>
@@ -42,13 +54,14 @@
 
                 <div class="panel-body">
                     @foreach($reviews as $review)
-                    <div class="rev">
+                    <div>
                         <div>
                             <h6><i>by <a href="/user/{{$review->id}}">{{$review->first_name}} {{$review->last_name}}</a></i></h6>
                             <p>{{$review->review}}</p>
                         </div>
                     </div>
-                    <hr> @endforeach
+                    <hr>
+                   @endforeach
                 </div>
 
             </div>
@@ -57,10 +70,32 @@
 </div>
 
 <script>
-    $("#show ").on("click ", function() {
-        $("#show ").hide();
-        $("#form ").show();
+
+    $(document).ready(function(){
+
+    $("#show").on("click", function() {
+        $("#show").hide();
+        $("#form").show();
     });
+
+    for (var i = 0; i < 10; i++)
+    {
+      $("#star"+i).click({param1: i},color);
+    }
+
+    function color(rate)
+    {
+        rate = rate.data.param1;
+        for(var i = 0;i<10;++i)
+        {
+          if(i<=rate)
+            $("#star"+i).addClass("checked");
+          else
+            $("#star"+i).removeClass("checked");
+        }
+        $("[name='rate']").val(rate+1);
+    }
+  });
 
 </script>
 
@@ -68,6 +103,15 @@
     textarea {
         max-width: 100%;
         max-height: 100%;
+    }
+
+
+    .checked {
+        color: orange;
+    }
+
+    .star:hover{
+      cursor: pointer;
     }
 
 </style>
