@@ -56,7 +56,7 @@ class AuthController extends Controller
         return Validator::make($data, [
             'first_name' => 'required|max:255',
             'last_name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
+            'email' => 'required|email|max:255|unique:users|regex:".guc.edu.eg$"',
             'password' => 'required|confirmed|min:6',
         ]);
     }
@@ -105,7 +105,7 @@ class AuthController extends Controller
                 $request, $validator
             );
         }
-
+     
         $this->create($request->all());
         Session::flash('register','Thank you for registering. Kindly go to your email and follow the link to verify your account.');
         return redirect($this->redirectPath());
