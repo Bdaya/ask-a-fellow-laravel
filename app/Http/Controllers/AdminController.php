@@ -66,6 +66,7 @@ class AdminController extends Controller
         $course->semester = $request->semester;
         $course->save();
         $course->majors()->attach($request->majors);
+        Session::flash('Added', 'New course is added successfully!');
         return redirect('admin/add_course');
     }
 
@@ -106,6 +107,7 @@ class AdminController extends Controller
         $course->save();
         $course->majors()->detach();
         $course->majors()->attach($request->majors);
+        Session::flash('Updated', 'Course is updated!');
         return redirect('admin/add_course');
     }
 
@@ -126,6 +128,7 @@ class AdminController extends Controller
         $major->faculty = $request->faculty;
         $major->major = $request->major;
         $major->save();
+        Session::flash('Added', 'New major is added!');
         return redirect('/admin/add_major');
     }
 
@@ -153,6 +156,7 @@ class AdminController extends Controller
         $major->faculty = $request->faculty;
         $major->major = $request->major;
         $major->save();
+        Session::flash('Updated', 'Major is updated!');
         return redirect('admin/add_major');
     }
 
@@ -170,6 +174,7 @@ class AdminController extends Controller
         $category = new ComponentCategory();
         $category->name = $request->category_name;
         $category->save();
+        Session::flash('Added', 'New component category is added!');
         return redirect('/admin/add_component_category');
     }
 
@@ -189,12 +194,13 @@ class AdminController extends Controller
     public function update_component_category($id, Request $request)
     {
         $this->validate($request, [
-            'category_name' => 'required|unique:components_categories,name'
+            'category_name' => 'required|unique:component_categories,name'
         ]);
 
         $category = ComponentCategory::find($id);
         $category->name = $request->category_name;
         $category->save();
+        Session::flash('Updated', 'Component category is updated!');
         return redirect('admin/add_component_category');
     }
 
@@ -446,7 +452,7 @@ class AdminController extends Controller
         $store->description = $request->store_description;
         $store->phone = $request->store_phone_number;
         $store->save();
-        
+        Session::flash('Added', 'Store is added successfully!');
         return redirect('admin/add_store');
     }
 
@@ -491,6 +497,7 @@ class AdminController extends Controller
         $store->description = $request->store_description;
         $store->phone = $request->store_phone_number;
         $store->save();
+        Session::flash('Updated', 'Store is updated successfully!');
         return redirect('admin/add_store');
     }
 

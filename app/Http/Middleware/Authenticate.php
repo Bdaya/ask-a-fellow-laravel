@@ -36,7 +36,6 @@ class Authenticate
             catch(TokenInvalidException $e)
             {
                 $authenticated = false;
-                dd($e);
             }
         }
         else if(Auth::guard($guard)->guest())

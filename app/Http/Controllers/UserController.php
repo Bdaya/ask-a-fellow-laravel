@@ -76,6 +76,9 @@ class UserController extends Controller
         // Returns any previous review made by the user to the current store
         $entry = DB::table('reviews')->where("user_id", "=", $user->id)->get();
 
+        $currentStore = Store::find($id);
+        $current_rate_count = $currentStore["rate_count"];
+        $current_rate = $currentStore["rate"];
 
         // If the user didn't make a review before
         if (empty($entry)) {
@@ -87,6 +90,9 @@ class UserController extends Controller
             $review->store_id = $id;
 
             $review->save();
+
+            $new_rate_count = $current_rate_count + 1;
+            $new_rate = $current_rate + $review["rate"] / $new_rate_count;
         } else {
             // Else update the user's previous review with the new input
 
