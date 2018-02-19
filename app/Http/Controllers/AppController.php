@@ -41,8 +41,11 @@ class AppController extends Controller
             'post_question_all',
             'add_component',
             'view_components',
-            //'component_details',
-            'post_component'
+            'component_details',
+            'post_component',
+            'post_component_question',
+            'post_component_answer',
+            'view_component_answers'
         ]]);
 
     }
