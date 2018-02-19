@@ -21,6 +21,32 @@
                 <h3>Contact Info: {{ $component->contact_info }}</h3>
               </div>
 
+              <div class="panel-heading">
+                <h1>Questions</h1>
+              </div>
+              
+              <div>
+                @foreach($questions as $question)
+                  <p>{{ $question->question }}</p>
+                  <h5>Asked By: {{ $question->asker()->first_name }}</h5>
+                  <a href="{{ url('/user/view_component_answers/' . $question->id) }}" class="btn btn-xs btn-info pull-right">View Answers</a>
+                @endforeach
+              </div>
+              <br>
+              <br>
+              <div>
+                  <form id="component_question_form" action="{{ url('user/post_component_question/'.$component->id) }}" method="POST">
+                      {{--  {{csrf_field()}}  --}}
+                      <div class="form-group">
+                          <label for="component_question_text">Ask a question:</label>
+                          <textarea required class="form-control" id="component_question_text" name="question"
+                                    placeholder="Type your question here"></textarea>
+                          <input type="submit" value="Post Question" class="btn btn-default pull-right"
+                                 id="component_question_submit">
+                      </div>
+                  </form>
+              </div>
+
             </div>
         </div>
     </div>
