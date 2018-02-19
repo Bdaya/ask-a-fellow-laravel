@@ -18,7 +18,9 @@
                 <h3>Description: {{ $component->description }}</h3>
                 <h3>Category: {{ $component->category()->name }}</h3>
                 <h3>Posted by: {{ $component->creator()->first_name }} {{ $component->creator()->last_name }}</h3>
-                <h3>Contact Info: {{ $component->contact_info }}</h3>
+                <h3>Contact Info:</h3>
+                <p>Email: {{ $component->creator()->email }}</p>
+                <p>Other: {{ $component->contact_info }}</p>
               </div>
 
               <div class="panel-heading">
