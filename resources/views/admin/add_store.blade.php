@@ -36,22 +36,17 @@
             
             <div class="form-group">
                 <label for="store_name">Store Name</label>
-                <input type="text" class="form-control" id="store_name" name="store_name" placeholder="Store Name">
+                <input type="text" class="form-control" id="store_name" name="store_name" placeholder="Store Name" value="{{ old('store_name') }}">
             </div>
 
             <div class="form-group">
                 <label for="store_address">Store Address</label>
-                <input type="text" class="form-control" id="store_address" name="store_address" placeholder="Store Address">
+                <input type="text" class="form-control" id="store_address" name="store_address" placeholder="Store Address" value="{{ old('store_address') }}">
             </div>
 
             <div class="form-group">
                 <label for="store_rate">Store Rate</label>
-                <input type="number" min="1" max="5" class="form-control" id="store_rate" name="store_rate" placeholder="Store Rate">
-            </div>
-
-            <div class="form-group">
-                <label for="store_review">Store Review</label>
-                <input type="text" class="form-control" id="store_review" name="store_review" placeholder="Store Review">
+                <input type="number" min="1" max="5" class="form-control" id="store_rate" name="store_rate" placeholder="Store Rate" value="{{ old('store_rate') }}">
             </div>
 
             <div class="form-group">
@@ -61,19 +56,25 @@
 
             <div class="form-group">
                 <label for="store_address">Store Description</label>
-                <input type="text" class="form-control" id="store_description" name="store_description" placeholder="Store Description">
+                <input type="text" class="form-control" id="store_description" name="store_description" placeholder="Store Description" value="{{ old('store_description') }}">
             </div>
 
             <div class="form-group">
                 <label for="store_phone_number">Store Phone Number</label>
-                <input type="text" class="form-control" id="store_phone_number" name="store_phone_number" placeholder="Store Phone Number">
+                <input type="text" class="form-control" id="store_phone_number" name="store_phone_number" placeholder="Store Phone Number" value="{{ old('store_phone_number') }}">
             </div>
 
             <button type="submit" class="btn btn-default">Add Store</button>
-
+            <br></br>
             <div class="error" style="color:red">
                 @include('errors')
             </div>
+            @if (Session::has('Added'))
+                <div class="alert alert-info">{{ Session::get('Added') }}</div>
+            @endif
+            @if (Session::has('Updated'))
+                <div class="alert alert-info">{{ Session::get('Updated') }}</div>
+            @endif
         </form>
     </div>
 

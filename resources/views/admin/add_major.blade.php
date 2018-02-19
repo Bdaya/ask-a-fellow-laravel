@@ -44,18 +44,23 @@
             {{csrf_field()}}
             <div class="form-group">
                 <label for="faculty">Faculty</label>
-                <input type="text" class="form-control" id="faculty" name="faculty" placeholder="Faculty">
+                <input type="text" class="form-control" id="faculty" name="faculty" placeholder="Faculty" value="{{ old('faculty') }}">
             </div>
             <div class="form-group">
                 <label for="major">Major Name</label>
-                <input type="text" class="form-control" id="major" name="major" placeholder="Major">
+                <input type="text" class="form-control" id="major" name="major" placeholder="Major" value="{{ old('major') }}">
             </div>
-
-
             <button type="submit" class="btn btn-default">Add Major</button>
+            <br></br>
             <div class="error" style="color:red">
                 @include('errors')
             </div>
+            @if (Session::has('Added'))
+                <div class="alert alert-info">{{ Session::get('Added') }}</div>
+            @endif
+            @if (Session::has('Updated'))
+                <div class="alert alert-info">{{ Session::get('Updated') }}</div>
+            @endif
         </form>
     </div>
     <script type="text/javascript" src="https://cdn.datatables.net/t/zf/dt-1.10.11/datatables.min.js"></script>

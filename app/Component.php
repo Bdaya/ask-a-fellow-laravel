@@ -23,6 +23,6 @@ class Component extends Model
 
     public function questions()
     {
-        return $this->hasMany('App\ComponentQuestion');
+        return $this->hasMany('App\ComponentQuestion', 'component');
     }
 }
