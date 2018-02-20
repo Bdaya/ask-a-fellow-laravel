@@ -45,15 +45,15 @@
             {{csrf_field()}}
             <div class="form-group">
                 <label for="course_code">Course Code</label>
-                <input type="text" class="form-control" id="course_code" name="course_code" placeholder="Course Code">
+                <input type="text" class="form-control" id="course_code" name="course_code" placeholder="Course Code" value="{{ old('course_code') }}">
             </div>
             <div class="form-group">
                 <label for="course_name">Course Name</label>
-                <input type="text" class="form-control" id="course_name" name="course_name" placeholder="Course Name">
+                <input type="text" class="form-control" id="course_name" name="course_name" placeholder="Course Name" value="{{ old('course_name') }}">
             </div>
             <div class="form-group">
                 <label for="semester">Semester</label>
-                <input type="number" min="1" max="10" class="form-control" id="semester" name="semester" placeholder="Semester">
+                <input type="number" min="1" max="10" class="form-control" id="semester" name="semester" placeholder="Semester" value="{{ old('semester') }}">
             </div>
             <div class="form-group">
                 <label for="majors">Majors</label>
@@ -63,10 +63,16 @@
                 @endforeach
             </div>
             <button type="submit" class="btn btn-default">Add Course</button>
-
+            <br></br>
             <div class="error" style="color:red">
                 @include('errors')
             </div>
+            @if (Session::has('Added'))
+                <div class="alert alert-info">{{ Session::get('Added') }}</div>
+            @endif
+            @if (Session::has('Updated'))
+                <div class="alert alert-info">{{ Session::get('Updated') }}</div>
+            @endif
         </form>
     </div>
     <script type="text/javascript" src="https://cdn.datatables.net/t/zf/dt-1.10.11/datatables.min.js"></script>

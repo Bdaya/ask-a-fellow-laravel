@@ -19,11 +19,6 @@
             </div>
 
             <div class="form-group">
-                <label for="store_review">Store Review</label>
-                <input type="text" class="form-control" id="store_review" name="store_review" value="{{$store->review}}">
-            </div>
-
-            <div class="form-group">
                 <label for="logoPath">Store Logo</label>
                 <input type="file" id="logoPath" name="logoPath" accept="image/*">
             </div> 
@@ -39,7 +34,7 @@
             </div>
 
             <button type="submit" class="btn btn-default">Update Store</button>
-
+            <br></br>
             <div class="error" style="color:red">
                 @include('errors')
             </div>
