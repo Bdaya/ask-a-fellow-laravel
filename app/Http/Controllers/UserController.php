@@ -73,15 +73,16 @@ class UserController extends Controller
             'rate' => 'numeric|min:1|max:10'
         ]);
 
-        // Returns any previous review made by the user to the current store
-        $entry = DB::table('reviews')->where("user_id", "=", $user->id)->get();
-
         $currentStore = Store::find($id);
-        $current_rate_count = $currentStore["rate_count"];
-        $current_rate = $currentStore["rate"];
+
+        // Returns any previous review made by the user to the current store
+        $entry = Review::where([
+          ["user_id", "=", $user->id],
+          ["store_id", "=", $currentStore["id"]]
+        ])->get();
 
         // If the user didn't make a review before
-        if (empty($entry)) {
+        if (count($entry)==0) {
             // Create a new review
             $review = new Review();
             $review->review = $request->input("review");
@@ -91,21 +92,25 @@ class UserController extends Controller
 
             $review->save();
 
-            $new_rate_count = $current_rate_count + 1;
-            $new_rate = $current_rate + $review["rate"] / $new_rate_count;
+            $currentStore->add_rating($request->input("rate"));
         } else {
             // Else update the user's previous review with the new input
-
             $review = $request->input("review");
+
+
+            $entry = $entry[0];
 
             // If the user didn't enter a review then only the rate will be updated
             if ($review==null) {
-                $review = $entry[0]->review;
+                $review = $entry->review;
             }
 
-            DB::table("reviews")
-                  ->where("user_id", "=", $user->id)
-                  ->update(["rate"=>$request->input("rate") , "review"=>$review]);
+            $currentStore->alter_rating($entry["rate"], $request->input("rate"));
+
+            $entry->rate = $request->input("rate");
+            $entry->review = $review;
+
+            $entry->save();
         }
 
         return redirect(url('/user/stores/' . $id));
