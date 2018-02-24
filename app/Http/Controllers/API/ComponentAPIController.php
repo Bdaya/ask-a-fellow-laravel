@@ -57,6 +57,29 @@ class ComponentAPIController extends Controller
     }
 
     /**
+     * Get the details of a specific component
+     *
+     * @param $component_id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show($component_id)
+    {
+        $component = Component::find($component_id);
+        if (!$component) {
+            return response()->json(['status' => '404 not found', 'message' => 'Component not found']);
+        }
+        $component_questions = $component->questions()->get();
+        $returnedData = [];
+        $returnedData['status'] = '200 ok';
+        $returnedData['error'] = null;
+        $returnedData['data'] = [];
+        $returnedData['data']['component'] = $component;
+        $returnedData['data']['component']['questions'] = $component_questions;
+
+        return response()->json($returnedData, 200);
+    }
+
+    /**
      * Ask a question about a component
      *
      * @param Request $request

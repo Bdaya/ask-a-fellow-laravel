@@ -13,12 +13,12 @@ class ComponentQuestion extends Model
 
     public function asker()
     {
-        return $this->belongsTo('App\User')->first();
+        return $this->belongsTo('App\User','asker_id');
     }
 
     public function component()
     {
-        return $this->belongsTo('App\Component')->first();
+        return $this->belongsTo('App\Component', 'component_id');
     }
 
     public function answers()
