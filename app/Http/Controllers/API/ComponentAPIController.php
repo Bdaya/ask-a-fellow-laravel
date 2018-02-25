@@ -68,6 +68,9 @@ class ComponentAPIController extends Controller
         if (!$component) {
             return response()->json(['status' => '404 not found', 'message' => 'Component not found']);
         }
+        $component->creator_fname = $component->creator()->first_name;
+        $component->creator_lname = $component->creator()->last_name;
+        $component->creator_email = $component->creator()->email;
         $component_questions = $component->questions()->get();
         $returnedData = [];
         $returnedData['status'] = '200 ok';
