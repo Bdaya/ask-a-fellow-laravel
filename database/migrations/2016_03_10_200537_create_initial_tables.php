@@ -112,6 +112,18 @@ class CreateInitialTables extends Migration
             $table->boolean('seen');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
+
+        Schema::create('question_bookmarks', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamps();
+            $table->integer('user_id')->unsigned();
+            $table->integer('question_id')->unsigned();
+            $table->boolean('notify'); //to be notified on new answers or not
+            $table->text('question_link'); //could be not needed
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('question_id')->references('id')->on('questions')->onDelete('CASCADE');
+            $table->unique(array('user_id', 'question_id'));
+        });
     }
 
     /**
@@ -131,5 +143,7 @@ class CreateInitialTables extends Migration
         Schema::drop('question_votes');
         Schema::drop('answer_votes');
         Schema::drop('notifications');
+        Schema::drop('question_bookmarks');
+
     }
 }
