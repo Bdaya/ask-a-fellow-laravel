@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Note;
 use App\NoteComment;
-
 use Auth;
 use Log;
 
@@ -23,7 +22,7 @@ class NotesController extends Controller
   {
 
     $this->validate($request, [
-      'comment' => 'required',
+      'comment' => 'required'
     ]);
 
     $note = Note::find($note_id);
@@ -52,8 +51,8 @@ class NotesController extends Controller
   // view note details
     public function view_note_details($note_id)
     {
-
-        $note = Question::find($note_id);
+        //dd("ahooo " + $note_id);
+        $note = Note::find($note_id);
         if(!$note)
             return 'Ooops! note not found';
         //sort answers
@@ -75,8 +74,7 @@ class NotesController extends Controller
         $comment->user_id = Auth::user()->id;
         $comment->note_id = $note_id;
         $comment->save();
-        // return ['state' => '200 ok', 'error' => false,'data'=>$comment];
-        return redirect(url('/notes/view_note_details/'.$note_id);
+        return redirect(url('/notes/view_note_details/'.$note_id));
     }
 
     // vote note
@@ -116,7 +114,7 @@ class NotesController extends Controller
         $user = Auth::user();
         $this->validate($request, [
             'title' => 'alpha|required',
-            'description' => 'alpha|required',
+            'description' => 'required'
         ]);
         $file = $request->file('file');
         $destinationPath= storage_path('Notes');

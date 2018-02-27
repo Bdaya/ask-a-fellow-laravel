@@ -9,13 +9,13 @@
   	@foreach($notes as $note)
   <li>
 
-    <a href="#" id="NoteA">
+    
       @if((!empty($role))&&$role==1)
-      <form action='/admin/delete_note/{{$note->id}}' Method="GET">
+        <form action='/admin/delete_note/{{$note->id}}' Method="GET">
 
-        <button style="float:right" class ="icon-button"><span class="glyphicon glyphicon-trash" style ="float:right"></span></button>
-      </form>
-  @endif
+        
+        </form>
+      @endif
       <h2  ><a  href="/notes/view_note_details/{{$note->id}}"> {{$note->title}} </a></h2>
       <hr />
       <p>{!! nl2br(e($note->description)) !!}</p>

@@ -99,7 +99,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/list_courses/{major}/{semester}', 'AjaxController@getCourses');
     Route::get('/browse/{course_id}', 'AppController@list_questions');
     Route::post('/browse/{course_id}', 'AppController@post_question');
-    Route::get('/browse/{major}/{semester}', 'AppController@list_questions_all');
+    Route::get('/browse/questions/{major_id}/{semester}', 'AppController@list_questions_all');
     Route::post('/browse/{major}/{semester}', 'AppController@post_question_all');
     Route::get('/answers/{question_id}', 'AppController@inside_question');
     Route::post('/answers/{question_id}', 'AppController@post_answer');
@@ -122,8 +122,6 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/report_question', 'AjaxController@send_report_question');
     Route::get('/report_answer', 'AjaxController@send_report_answer');
     Route::get('/verify/{token}', 'AuthController@verify');
-
-    Route::post('/note/{note_id}/requestDelete', 'NotesController@request_delete');
 
     Route::get('/add_component', 'AppController@add_component');
     Route::post('/user/post_component', 'AppController@post_component');

@@ -136,8 +136,6 @@ class AppController extends Controller
         if(!in_array($order,$allowed))
             $order = 'latest';
 
-
-
         $questions_ordered = array();
         if($order == 'votes')
             $questions_ordered = $questions->orderBy('votes','desc')->orderBy('created_at','desc')->get();

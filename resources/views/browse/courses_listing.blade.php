@@ -13,12 +13,15 @@
                 <td>{{$course->course_code}}</td>
                 <td>{{$course->course_name}}</td>
                 <td>{{count($course->questions()->get())}}</td>
-                <td><a href="{{url('browse/notes/'.$course->id)}}">View Notes</a></td>
+                <td>
+                    <a href="{{url('browse/notes/'.$course->id)}}">View Notes</a>
+                    <a href="{{url('/course/'.$course->id.'/uploadNote')}}">Upload Note</a>
+                </td>
         </tr>
     @endforeach
     <tr>
         <td>
-            <a href="{{url('/browse/'.$major->id.'/'.$semester)}}">View questions from all courses</a>
+            <a href="{{url('/browse/questions/'.$major->id.'/'.$semester)}}">View questions from all courses</a>
         </td>
     </tr>
 </table>
