@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 @extends('layouts.app') @section('content')
 <style>
     table td,
@@ -96,7 +95,6 @@
 
 </style>
 @endsection
-=======
 @extends('layouts.app')
 @section('content')
     <style>
@@ -132,7 +130,7 @@
         </table>
 
         <form method="POST" action="{{url('admin/add_store')}}"  enctype="multipart/form-data" style="padding: 50px; width: 50%;">
-            
+
             <div class="form-group">
                 <label for="store_name">Store Name</label>
                 <input type="text" class="form-control" id="store_name" name="store_name" placeholder="Store Name" value="{{ old('store_name') }}">
@@ -151,7 +149,7 @@
             <div class="form-group">
                 <label for="logoPath">Store Logo</label>
                 <input name="logoPath" id="logoPath" type="file" accept="image/*">
-            </div> 
+            </div>
 
             <div class="form-group">
                 <label for="store_address">Store Description</label>
@@ -199,4 +197,3 @@
         }
     </style>
 @endsection
->>>>>>> 37613ae98d5352bb62b93c404f4976d9aedd6345
