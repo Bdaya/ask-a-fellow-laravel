@@ -84,6 +84,9 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/admin/mail/log', 'AdminController@showMailLog');
     Route::get('/admin/statistics', 'AdminController@statistics');
 
+    // Events Routes
+    Route::get('/admin/add_event', 'AdminController@add_event_page');
+
     Route::get('/admin/event_requests', 'AdminController@eventRequests'); //viewing event request
     Route::get('/admin/request/{id}', 'AdminController@viewRequest'); //viewing event information
     Route::get('/admin/accept/{id}', 'AdminController@acceptRequest'); //accepting an event
