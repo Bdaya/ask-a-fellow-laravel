@@ -130,10 +130,18 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/add_component', 'AppController@add_component');
     Route::post('/user/post_component', 'AppController@post_component');
 
+    //WIP
+    Route::post('/user/post_component_question/{component_id}', 'AppController@post_component_question');
+    Route::post('/user/post_component_answer/{question_id}', 'AppController@post_component_answer');
+    Route::get('/user/view_component_answers/{question_id}', 'AppController@View_component_answers');
+    //END WIP
+
     Route::get('/admin/delete_note/{id}', 'AdminController@deleteNoteAdmin');
     Route::get('/browse/notes/{course_id}', 'AppController@list_notes');
     Route::get('/browse/notes/view_note/{note_id}', 'AppController@view_note');
 
+
+    
 
     /**
      * Create a new calender for the user
