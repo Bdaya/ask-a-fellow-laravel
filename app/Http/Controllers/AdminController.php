@@ -238,6 +238,33 @@ class AdminController extends Controller
         $courses = Course::all();
         return view('admin.add_event', compact(['courses']));
     }
+    public function add_event(Request $request)
+    {
+        $this->validate($request, [
+          'title' => 'required',
+          'course' => 'required',
+          'date' => 'required',
+          'place' => 'required',
+          'description' => 'required'
+      ]);
+
+        $event = new Event();
+
+        $event['creator_id'] = Auth::user()->id;
+        $event['title'] = $request['title'];
+        $event['course_id'] = $request['course'];
+        $event['date'] = $request['date'];
+        $event['place'] = $request['place'];
+        $event['description'] = $request['description'];
+
+        $event->save();
+
+        return redirect('home');
+    }
+
+
+
+
     public function view_feedbacks()
     {
         $feedbacks = Feedback::all();

@@ -86,6 +86,7 @@ Route::group(['middleware' => ['web']], function () {
 
     // Events Routes
     Route::get('/admin/add_event', 'AdminController@add_event_page');
+    Route::post('/admin/add_event', 'AdminController@add_event');
 
     Route::get('/admin/event_requests', 'AdminController@eventRequests'); //viewing event request
     Route::get('/admin/request/{id}', 'AdminController@viewRequest'); //viewing event information
