@@ -235,7 +235,8 @@ class AdminController extends Controller
     // Events Controller
     public function add_event_page()
     {
-        return view('admin.add_event');
+        $courses = Course::all();
+        return view('admin.add_event', compact(['courses']));
     }
     public function view_feedbacks()
     {
