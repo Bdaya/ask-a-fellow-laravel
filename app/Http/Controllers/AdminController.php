@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Storage;
 use Response;
 use File;
 use App\Http\Requests;
@@ -527,9 +528,18 @@ class AdminController extends Controller
 
     //deletes note using its ID
     public function deleteNote($id) {
-          $note = Note::find($id);
-          File::delete($note->path);
-          Note::destroy($id);
+        $note = Note::find($id);
+        $disk = Storage::disk('google');
+        $contents = collect($disk->listContents());
+        foreach ($contents as $content) {
+            if($content['type'] == 'file' && $content['extension'] == pathinfo($note->path, PATHINFO_EXTENSION)
+                && $content['filename'] == pathinfo($note->path, PATHINFO_FILENAME)){
+                    $file = $content;
+                    break;
+            }
+        }
+        $disk->delete($file['path']);
+        $note->delete();
 
         return redirect('admin/note_requests');
     }
@@ -549,13 +559,22 @@ class AdminController extends Controller
         if(Auth::user()){
             $role  = Auth::user()->role;
             if($role==1){
-              $note = Note::find($id);
-              $course_id = $note->course_id;
-              $note->delete();
-              return Redirect::back();
-          } else {
+                $note = Note::find($id);
+                $disk = Storage::disk('google');
+                $contents = collect($disk->listContents());
+                foreach ($contents as $content) {
+                    if($content['type'] == 'file' && $content['extension'] == pathinfo($note->path, PATHINFO_EXTENSION)
+                        && $content['filename'] == pathinfo($note->path, PATHINFO_FILENAME)){
+                            $file = $content;
+                            break;
+                    }
+                }
+                $disk->delete($file['path']);
+                $note->delete();
                 return Redirect::back();
-          }
+            } else {
+                return Redirect::back();
+            }
         }
     }
 }
