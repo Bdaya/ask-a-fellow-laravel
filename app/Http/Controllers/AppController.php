@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
-
 use App\AnswerReport;
 use App\QuestionReport;
 use Illuminate\Http\Request;
