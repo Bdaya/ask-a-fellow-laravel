@@ -111,10 +111,11 @@ class NotesController extends Controller
         $user = Auth::user();
         $this->validate($request, [
             'title' => 'alpha|required',
-            'description' => 'required'
+            'description' => 'required',
+            'file' => 'required'
         ]);
         $file = $request->file('file');
-        $fileName = $file->getClientOriginalName();
+        $fileName = $request->title.'_'.$file->getClientOriginalName();
         $mainDisk = Storage::disk('google');
         $mainDisk->put($fileName, fopen($file, 'r+'));
         $note = new Note;
@@ -125,7 +126,7 @@ class NotesController extends Controller
         $note->description = $request->description;
         $note->request_upload = true;
         $note->comment_on_delete="";
-        $course = Course::find($courseID);
+
         Session::flash('success', 'Your request to upload this note is successfull');
         $note->save();
 
