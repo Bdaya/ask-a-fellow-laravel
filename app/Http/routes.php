@@ -25,8 +25,9 @@
 
 Route::group(['middleware' => ['web']], function () {
     Route::get('/', function () {
-        if (Auth::user())
+        if (Auth::user()) {
             return redirect('/home');
+        }
         return view('welcome');
     });
 
@@ -42,6 +43,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('/user/update', 'UserController@updateInfo');
     Route::get('/user/stores', 'UserController@view_storelist');
     Route::get('/user/stores/{id}', 'UserController@view_store_details');
+    Route::post('/user/stores/{id}', 'UserController@add_review');
     Route::get('/user/{id}', 'UserController@show');
     Route::get('/user/{id}/questions', 'UserController@show');
     Route::get('/user/{id}/answers', 'UserController@showProfileAnswers');
@@ -126,10 +128,18 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/add_component', 'AppController@add_component');
     Route::post('/user/post_component', 'AppController@post_component');
 
+    //WIP
+    Route::post('/user/post_component_question/{component_id}', 'AppController@post_component_question');
+    Route::post('/user/post_component_answer/{question_id}', 'AppController@post_component_answer');
+    Route::get('/user/view_component_answers/{question_id}', 'AppController@View_component_answers');
+    //END WIP
+
     Route::get('/admin/delete_note/{id}', 'AdminController@deleteNoteAdmin');
     Route::get('/browse/notes/{course_id}', 'AppController@list_notes');
     Route::get('/browse/notes/view_note/{note_id}', 'AppController@view_note');
 
+
+    
 
     /**
      * Create a new calender for the user
@@ -184,8 +194,6 @@ Route::group(['middleware' => ['web']], function () {
      * Upload a note
      */
     Route::post('/course/{courseID}/uploadNote', 'NotesController@upload_notes');
-
-
 });
 
 Route::group(['middleware' => 'web'], function () {
@@ -221,7 +229,7 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
 
      /**
      * API documentaion
-     */    
+     */
     Route::get('/', 'ApiController@documentation');
 
     /*
@@ -283,7 +291,7 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      *  Post an answer about a component
      */
     Route::post('/component/answers/{question_id}', 'API\ComponentApiController@post_answer');
-    
+
     /*
      * Get the events of a specific course
      */

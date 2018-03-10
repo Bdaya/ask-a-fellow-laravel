@@ -14,7 +14,9 @@ use App\Answer;
 use App\Notification;
 use App\Feedback;
 use App\Component;
+use App\ComponentAnswer;
 use App\ComponentCategory;
+use App\ComponentQuestion;
 use App\Note;
 use Auth;
 use Illuminate\Support\Facades\Session;
@@ -38,7 +40,10 @@ class AppController extends Controller
             'add_component',
             'view_components',
             'component_details',
-            'post_component'
+            'post_component',
+            'post_component_question',
+            'post_component_answer',
+            'view_component_answers'
         ]]);
 
     }
@@ -297,10 +302,48 @@ class AppController extends Controller
         return view('user.components')->with('components',$components);
     }
 
+    public function post_component_question(Request $request, $component_id)
+    {
+        
+        $this->validate($request, [
+            'question' => 'required'
+        ]);
+        $question = new ComponentQuestion;
+        $question->asker_id = Auth::user()->id;
+        $question->question = $request->question;
+        $question->component_id = $component_id;
+        $question->save();
+        
+        return redirect(url('user/components/'.$component_id));
+    }
+
+    public function post_component_answer(Request $request, $question_id)
+    {
+        
+        $this->validate($request, [
+            'answer' => 'required'
+        ]);
+        $answer = new ComponentAnswer;
+        $answer->responder_id = Auth::user()->id;
+        $answer->answer = $request->answer;
+        $answer->question_id = $question_id;
+        $answer->save();
+        
+        return redirect(url('user/view_component_answers/'.$question_id));
+    }
+
+    public function view_component_answers($id)
+    {
+        $question = ComponentQuestion::find($id);
+        $answers = ComponentAnswer::where('question_id', $id)->get();
+        return view('user.component_question_answers', compact(['question', 'answers']));
+    }
+
     public function component_details($id)
     {
         $component = Component::find($id);
-        return view('user.component_details', compact(['component']));
+        $questions = ComponentQuestion::where('component_id', $id)->get();
+        return view('user.component_details', compact(['component', 'questions']));
     }
 
     public function add_component(Request $request)
