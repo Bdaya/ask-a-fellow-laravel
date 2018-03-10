@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Note;
+use App\Course;
 use App\NoteComment;
-
 use Auth;
 use Log;
-
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Session;
 use App\Http\Requests;
 
 class NotesController extends Controller
@@ -23,11 +24,10 @@ class NotesController extends Controller
   {
 
     $this->validate($request, [
-      'comment' => 'required',
+      'comment' => 'required'
     ]);
 
     $note = Note::find($note_id);
-    //$user = User::find(1);
 
     if(Auth::user() &&  Auth::user()->id == $note->user_id){
       if($note->request_delete == true)
@@ -36,10 +36,6 @@ class NotesController extends Controller
       $note->request_delete = true;
       $note->comment_on_delete = $request -> $delete_comment;
       $note->save();
-
-      // Log::info('saved');
-      // Log::info($note);
-      // return response($note);
 
       Session::flash('updated', 'Your request to delete this note is now handled');
       redirect(url('/note/'.$note->id));
@@ -52,8 +48,8 @@ class NotesController extends Controller
   // view note details
     public function view_note_details($note_id)
     {
-
-        $note = Question::find($note_id);
+        
+        $note = Note::find($note_id);
         if(!$note)
             return 'Ooops! note not found';
         //sort answers
@@ -75,8 +71,7 @@ class NotesController extends Controller
         $comment->user_id = Auth::user()->id;
         $comment->note_id = $note_id;
         $comment->save();
-        // return ['state' => '200 ok', 'error' => false,'data'=>$comment];
-        return redirect(url('/notes/view_note_details/'.$note_id);
+        return redirect(url('/notes/view_note_details/'.$note_id));
     }
 
     // vote note
@@ -116,23 +111,25 @@ class NotesController extends Controller
         $user = Auth::user();
         $this->validate($request, [
             'title' => 'alpha|required',
-            'description' => 'alpha|required',
+            'description' => 'required'
         ]);
         $file = $request->file('file');
-        $destinationPath= storage_path('Notes');
         $fileName = $file->getClientOriginalName();
+        $mainDisk = Storage::disk('google');
+        $mainDisk->put($fileName, fopen($file, 'r+'));
         $note = new Note;
         $note->user_id = Auth::user()->id;
         $note->course_id = $courseID;
         $note->title = $request->title;
-        $note->path = $destinationPath."/".$fileName;
+        $note->path = $fileName;
         $note->description = $request->description;
         $note->request_upload = true;
         $note->comment_on_delete="";
-        $file->move($destinationPath,$fileName);
-
+        $course = Course::find($courseID);
+        Session::flash('success', 'Your request to upload this note is successfull');
         $note->save();
-        return redirect('/');
+
+        return back();
 
     }
 

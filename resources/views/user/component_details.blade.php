@@ -32,6 +32,7 @@
                   <p>{{ $question->question }}</p>
                   <h5>Asked By: {{ $question->asker()->first_name }}</h5>
                   <a href="{{ url('/user/view_component_answers/' . $question->id) }}" class="btn btn-xs btn-info pull-right">View Answers</a>
+                  <br></br>
                 @endforeach
               </div>
               <br>

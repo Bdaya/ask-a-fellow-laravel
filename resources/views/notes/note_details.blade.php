@@ -93,7 +93,7 @@
         </div>
 
         @if(Auth::user())
-        <form id="post_comment_form" action="/note_comment/{{note_id}}" method="POST">
+        <form id="post_comment_form" action="/note_comment/{{$note->id}}" method="POST">
             {{csrf_field()}}
             <div class="form-group">
                 <label for="post_comment_body">Post a comment:</label>

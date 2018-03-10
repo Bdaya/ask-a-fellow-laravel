@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
-
 use App\AnswerReport;
 use App\QuestionReport;
 use Illuminate\Http\Request;
@@ -140,8 +138,6 @@ class AppController extends Controller
         $allowed = ['votes','oldest','latest','answers'];
         if(!in_array($order,$allowed))
             $order = 'latest';
-
-
 
         $questions_ordered = array();
         if($order == 'votes')
