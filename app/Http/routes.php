@@ -94,7 +94,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('admin/note_requests', 'AdminController@noteRequests');
     Route::get('admin/approve_note/{id}', 'AdminController@approveNoteUpload');
     Route::get('admin/delete_note/{id}', 'AdminController@deleteNote');
-    Route::get('admin/view_note/{id}', 'AdminController@viewNote');
+    // Route::get('admin/view_note/{id}', 'AdminController@viewNote');
 
 
     Route::get('/browse', 'AppController@browse');
@@ -136,7 +136,7 @@ Route::group(['middleware' => ['web']], function () {
 
     Route::get('/admin/delete_note/{id}', 'AdminController@deleteNoteAdmin');
     Route::get('/browse/notes/{course_id}', 'AppController@list_notes');
-    Route::get('/browse/notes/view_note/{note_id}', 'AppController@view_note');
+    Route::get('/browse/notes/view_note/{note_id}', 'NotesController@downloadNote');
 
 
     

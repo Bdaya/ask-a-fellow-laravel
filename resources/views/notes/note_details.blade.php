@@ -1,62 +1,61 @@
  @extends('layouts.app');
 @section('content')
 
-<link href="{{asset('/css/formInput.css')}}" rel="stylesheet">
-<script src="{{asset('/js/classie.js')}}" type="text/javascript"></script>
-
-    <div class="container" style="padding-left: 80px;">
+    <div class="container">
         <div class="media question">
             <div style="text-align: center" class="media-left">
 
                 <a href="{{url('user/'.$note->user_id)}}">
-
-                    @if($note->user->profile_picture)
-                        <img class="media-object" src="{{asset($question->useer->profile_picture)}}" alt="...">
-
-                    @else
-                        <img class="media-object" src="{{asset('art/default_pp.png')}}" alt="...">
-
-                    @endif
+                  @if($note->user->profile_picture)
+                    <img class="media-object" src="{{asset($note->user->profile_picture)}}" alt="Profile Photo not Found!" width="75" height="75">
+                  @else
+                    <img class="media-object" src="{{asset('art/default_pp.png')}}" alt="..." width="75" height="75">
+                  @endif
                 </a>
 
-                @if(Auth::user())
-                    <a class="upvote_note vote" value="{{$note->id}}" title="upvote" style="color:green;"><span class="glyphicon glyphicon-thumbs-up"></span></a>
+                <br>
+                @if(Auth::user() && (Auth::user()->role >= 1))
+                  <form action='/admin/delete_note/{{$note->id}}' Method="GET">
+                    <button class ="icon-button"><span class="glyphicon glyphicon-trash" style="font-size:30px"></span></button>
+                  </form>
                 @endif
-                @if($note->votes > 0)
-                    <span class="note_votes" style="color:green;">{{$note->votes}} </span>
-                @elseif($note->votes == 0)
-                    <span class="note_votes" style="">{{$note->votes}} </span>
-                @else
-                    <span class="note_votes" style="color:red;">{{$note->votes}} </span>
-                @endif
-                @if(Auth::user())
-                    <a class="downvote_note vote" value="{{$note->id}}"  title="downvote"  style="color:red"><span class="glyphicon glyphicon-thumbs-down"></span></a>
-                @endif
+
             </div>
 
             <div class="media-body">
-                @if(Auth::user() && (Auth::user()->role >= 1))
-                   <form action='/admin/delete_note/{{$note->id}}' Method="GET">
-                    <button style="float:right" class ="icon-button"><span class="glyphicon glyphicon-trash" style ="float:right"></span></button>
-                </form>
+               @if($note->user->verified_badge >=1)
+                  <h3>Uploaded by <a href="{{url('user/'.$note->user_id)}}">{{$note->user->first_name.' '.$note->user->last_name}} <span class="verified"></span></a></h3>
+                @else
+                  <h3>Uploaded by <a href="{{url('user/'.$note->user_id)}}">{{$note->user->first_name.' '.$note->user->last_name}} </a></h3>
                 @endif
-                    @if($note->user->verified_badge >=1)
-                        <a href="{{url('user/'.$note->user_id)}}"><h3>{{$note->user->first_name.' '.$note->user->last_name}} <span class="verified"></span></h3></a>
-                    @else
-                        <a href="{{url('user/'.$note->user_id)}}"><h3>{{$note->user->first_name.' '.$note->user->last_name}} </h3></a>
-                    @endif
 
-                <h3>{{$note->title}}</h3>
+                <h2>{{$note->title}}</h2>
                 <div class="note_description">
-                    {{$note->description}}
+                    <h4>{{$note->description}}</h4>
                 </div>
-
-                <form action='/browse/notes/view_note/{{$note->id}}' Method="GET">
-                    <button style="float:right" class ="icon-button2">View Note</button>
-                </form>
 
                 <p style="font-weight: bold; font-style: italic; ">{{ date("F j, Y, g:i a",strtotime($note->created_at)) }} </p>
             </div>
+        </div>
+
+        <div>
+          @if(Auth::user())
+              <a class="upvote_note vote" value="{{$note->id}}" title="upvote" style="color:green; font-size:50px"><span class="glyphicon glyphicon-thumbs-up"></span></a>
+          @endif
+          @if($note->votes > 0)
+              <span class="note_votes" style="color:green;">{{$note->votes}} </span>
+          @elseif($note->votes == 0)
+              <span class="note_votes" style="">{{$note->votes}} </span>
+          @else
+              <span class="note_votes" style="color:red;">{{$note->votes}} </span>
+          @endif
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          @if(Auth::user())
+              <a class="downvote_note vote" value="{{$note->id}}"  title="downvote"  style="color:red; font-size:50px"><span class="glyphicon glyphicon-thumbs-down"></span></a>
+          @endif
+
+          <h4><a href="{{url('browse/notes/view_note/'.$note->id)}}">Click to download</a></h4>
+
         </div>
 
         <h2 style="">{{count($note->comments()->get())}} Comment(s)</h2>
@@ -70,9 +69,9 @@
                         <a href="{{url('user/'.$comment->user_id)}}">
 
                             @if($comment->commenter->profile_picture)
-                                <img class="media-object" src="{{asset($comment->commenter->profile_picture)}}" alt="...">
+                                <img class="media-object" src="{{asset($comment->commenter->profile_picture)}}" alt="..."  width="75" height="75">
                             @else
-                                <img class="media-object" src="{{asset('art/default_pp.png')}}" alt="...">
+                                <img class="media-object" src="{{asset('art/default_pp.png')}}" alt="..."  width="75" height="75">
                             @endif
                         </a>
                     </div>
@@ -108,8 +107,6 @@
 
 
 
-
-
 <style>
 .icon-button {
     appearance: none;
@@ -119,18 +116,7 @@
     border: 0;
     background: transparent;
 }
-.icon-button2{
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    outline: none;
-    border: 0;
-    background: transparent;
-}
-.icon-button2:hover{
-  background-color: #40a0ff; /* Green */
-color: white;
-}
+
 #Header h1{
   position:absolute;
   left:40%;
@@ -138,125 +124,6 @@ color: white;
   margin:auto;
 
    text-decoration: underline;
-}
-#Note * {
-    margin: 0;
-    padding: 0;
-}
-
-#Note body {
-    font-family: arial, sans-serif;
-    font-size: 100%;
-    margin: 3em;
-    background: #666;
-    color: #fff;
-}
-
-#Note h2, p {
-    font-size: 100%;
-    font-weight: normal;
-    margin-left:-20px;
-}
-#Note a p{
-  margin-left:-20px;
-}
-
-#Note ul, li {
-    list-style: none;
-}
-
-#Note ul {
-    overflow: hidden;
-    padding: 3em;
-}
-
-#NoteA {
-    text-decoration: none;
-    color: #000;
-    background: #ffc;
-    display: block;
-    height: 20em;
-    width: 20em;
-    padding: 2em;
-    word-wrap:break-word;
-}
-
-#Note ul li {
-    margin: 1em;
-    float: left;
-
-}
-
-#Note ul li h2{
-  font-size:140%;
-  font-weight:bold;
-  padding-bottom:10px;
-}
-
-#NoteA {
-  text-decoration:none;
-  color:#000;
-  background:#ffc;
-  display:block;
-  height:20em;
-  width:20em;
-  padding:2em;
-
-  -moz-box-shadow:5px 5px 7px rgba(33,33,33,1);
-
-  -webkit-box-shadow: 5px 5px 7px rgba(33,33,33,.7);
-
-  box-shadow: 5px 5px 7px rgba(33,33,33,.7); }
-#NoteA {
-  -webkit-transform:rotate(-6deg);
-  -o-transform:rotate(-6deg);
-  -moz-transform:rotate(-6deg);
-}
-#Note ul li:nth-child(even) a{
-  -o-transform:rotate(4deg);
-  -webkit-transform:rotate(4deg);
-  -moz-transform:rotate(4deg);
-  position:relative;
-  top:5px;
-}
-#Note ul li:nth-child(3n) a{
-  -o-transform:rotate(-3deg);
-  -webkit-transform:rotate(-3deg);
-  -moz-transform:rotate(-3deg);
-  position:relative;
-  top:-5px;
-}
-#Note ul li:nth-child(5n) a{
-  -o-transform:rotate(5deg);
-  -webkit-transform:rotate(5deg);
-  -moz-transform:rotate(5deg);
-  position:relative;
-  top:-10px;
-}
-#Note ul li a:hover,ul li a:focus{
-  -moz-box-shadow:10px 10px 7px rgba(0,0,0,.7);
-  -webkit-box-shadow: 10px 10px 7px rgba(0,0,0,.7);
-  box-shadow:10px 10px 7px rgba(0,0,0,.7);
-  -webkit-transform: scale(1.25);
-  -moz-transform: scale(1.25);
-  -o-transform: scale(1.25);
-  position:relative;
-  z-index:5;
-}
-#NoteA {
-  text-decoration:none;
-  color:#000;
-  background:#ffc;
-  display:block;
-  height:20em;
-  width:20em;
-  padding:2em;
-  -moz-box-shadow:5px 5px 7px rgba(33,33,33,1);
-  -webkit-box-shadow: 5px 5px 7px rgba(33,33,33,.7);
-  box-shadow: 5px 5px 7px rgba(33,33,33,.7);
-  -moz-transition:-moz-transform .15s linear;
-  -o-transition:-o-transform .15s linear;
-  -webkit-transition:-webkit-transform .15s linear;
 }
 
 .note
@@ -370,8 +237,6 @@ color: white;
     }
 
 
-
-
 }
 span.verified{
     display: inline-block;
@@ -383,8 +248,6 @@ span.verified{
     z-index: 200000;
 
 }
-
-
 
 </style>
 

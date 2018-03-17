@@ -9,12 +9,10 @@ use App\Question;
 use App\QuestionReport;
 use App\Note;
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Storage;
-use Response;
+use Illuminate\Support\Facades\Storage;;
 use File;
 use App\Http\Requests;
 use App\Major;
@@ -530,28 +528,13 @@ class AdminController extends Controller
     public function deleteNote($id) {
         $note = Note::find($id);
         $disk = Storage::disk('google');
-        $contents = collect($disk->listContents());
-        foreach ($contents as $content) {
-            if($content['type'] == 'file' && $content['extension'] == pathinfo($note->path, PATHINFO_EXTENSION)
-                && $content['filename'] == pathinfo($note->path, PATHINFO_FILENAME)){
-                    $file = $content;
-                    break;
-            }
-        }
+        $file = collect($disk->listContents())->where('type', 'file')
+                ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
+                ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
         $disk->delete($file['path']);
         $note->delete();
 
         return redirect('admin/note_requests');
-    }
-
-    //opens the note file inline in the browser
-    public function viewNote($id) {
-       $note =  Note::find($id);
-
-        return Response::make(file_get_contents($note->path), 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$note->title.'"'
-        ]);
     }
 
     //Function to Delete the note as an admin
@@ -561,17 +544,13 @@ class AdminController extends Controller
             if($role==1){
                 $note = Note::find($id);
                 $disk = Storage::disk('google');
-                $contents = collect($disk->listContents());
-                foreach ($contents as $content) {
-                    if($content['type'] == 'file' && $content['extension'] == pathinfo($note->path, PATHINFO_EXTENSION)
-                        && $content['filename'] == pathinfo($note->path, PATHINFO_FILENAME)){
-                            $file = $content;
-                            break;
-                    }
-                }
+                $file = collect($disk->listContents())->where('type', 'file')
+                ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
+                ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
                 $disk->delete($file['path']);
+                $course = $note->course->id;
                 $note->delete();
-                return Redirect::back();
+                return redirect('/browse/notes/'.$course);
             } else {
                 return Redirect::back();
             }
