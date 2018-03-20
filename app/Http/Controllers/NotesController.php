@@ -116,7 +116,7 @@ class NotesController extends Controller
             'file' => 'required'
         ]);
         $file = $request->file('file');
-        $fileName = $request->title.'_'.$file->getClientOriginalName();
+        $fileName = $request->title.'_'.time().'_'.$file->getClientOriginalName();
         $mainDisk = Storage::disk('google');
         $mainDisk->put($fileName, fopen($file, 'r+'));
         $note = new Note;

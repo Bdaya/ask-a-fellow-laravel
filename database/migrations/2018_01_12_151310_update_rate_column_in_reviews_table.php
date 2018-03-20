@@ -14,7 +14,6 @@ class UpdateRateColumnInReviewsTable extends Migration
     {
         Schema::table('reviews', function (Blueprint $table) {
             $table->float('rate')->default(0)->change(); //cumulative sum
-            ;
         });
     }
 

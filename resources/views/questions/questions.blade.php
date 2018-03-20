@@ -167,14 +167,25 @@ if (isset($_GET['sort']))
                 </div><!-- /.modal-dialog -->
             </div>
 
-            <form id="post_question_form" action="" method="POST">
+            <form id="post_question_form" action="" enctype="multipart/form-data" method="POST">
                 {{csrf_field()}}
                 <div class="form-group">
                     <label for="post_question_text">Ask a question:</label>
                     <textarea required class="form-control" id="post_question_text" name="question"
                               placeholder="Type your question here"></textarea>
-                    <input type="submit" value="Post Question" class="btn btn-default pull-right"
-                           id="post_question_submit">
+                    <br>
+                      <div class="form-group">
+                        <div class="col-sm-6 pull-right">
+                            <input name="file" id="file" type="file">
+                        </div>
+                        <label for="file" class="col-sm-1.5 control-label pull-right">Attach file</label>
+                      </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="col-sm-offset-3">
+                            <button type="submit" class="btn btn-default pull-right" id="post_question_submit">Post Question</button>
+                        </div>
+                    </div>
                     @if(isset($all))
                         <div class="form-group" style="width:50%;">
                             <label for="course" style="">Post question to: </label>

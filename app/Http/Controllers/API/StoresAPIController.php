@@ -90,25 +90,55 @@ class StoresAPIController extends Controller
      */
     public function addReview($store_id, Request $request)
     {
-        $store = Store::find($store_id);
+        $currentStore = Store::find($store_id);
         $data = $request->all();
-        if (!$store) {
+
+        if (!$currentStore) {
             return response()->json(['status' => '404 not found', 'message' => 'store not found'], 404);
         }
+
         $validator = $this->validator($request->all());
 
         if ($validator->fails()) 
             return response()->json($validator->errors(), 302);
 
-        $review = new Review($request->all());
-        $review['store_id'] = $store_id;
-        $review['user_id'] = Auth::user()->id;
+        $entry = Review::where([
+          ["user_id", "=", Auth::user()->id],
+          ["store_id", "=", $currentStore["id"]]
+        ])->get();
 
-        $store['rate_count'] += 1;
-        $store['rate'] = ($data['rate'] + $store['rate']) / ($store['rate_count']);
 
-        $store->save();
-        $review->save();
+        // If the user didn't make a review before
+        if (count($entry)==0) {
+            // Create a new review
+            $review = new Review($request->all());
+            $review['store_id'] = $store_id;
+            $review['user_id'] = Auth::user()->id;
+
+            $review->save();
+
+            $currentStore->add_rating($request->input("rate"));
+            
+        } else {
+
+            // Else update the user's previous review with the new input
+            $review = $request->input("review");
+
+            $entry = $entry[0];
+
+            // If the user didn't enter a review then only the rate will be updated
+            if ($review==null) {
+                $review = $entry->review;
+            }
+
+            $currentStore->alter_rating($entry["rate"], $request->input("rate"));
+
+            $entry->rate = $request->input("rate");
+            $entry->review = $review;
+
+            $entry->save();
+        }
+
         return response()->json($review, 200);
     }
 }

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\AnswerReport;
 use App\QuestionReport;
 use Illuminate\Http\Request;
-
 use App\Http\Requests;
 use App\Major;
 use App\Course;
@@ -20,6 +19,7 @@ use App\ComponentQuestion;
 use App\Note;
 use Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redirect;
 use Cloudinary\Uploader;
 use Response;
@@ -171,6 +171,13 @@ class AppController extends Controller
         $question->asker_id = Auth::user()->id;
         $question->question = $request->question;
         $question->course_id = $course_id;
+        $file = $request->file('file');
+        if($file){
+            $fileName = 'question_'.time().'_'.$file->getClientOriginalName();
+            $mainDisk = Storage::disk('google');
+            $mainDisk->put($fileName, fopen($file, 'r+'));
+            $question->attachement_path = $fileName;
+        }
         $question->save();
         return redirect('/browse/'.$course_id);
     }
@@ -208,6 +215,13 @@ class AppController extends Controller
         $answer->answer = $request->answer;
         $answer->responder_id = Auth::user()->id;
         $answer->question_id = $question_id;
+        $file = $request->file('file');
+        if($file){
+            $fileName = 'ans_'.time().'_'.$file->getClientOriginalName();
+            $mainDisk = Storage::disk('google');
+            $mainDisk->put($fileName, fopen($file, 'r+'));
+            $answer->attachement_path = $fileName;
+        }
         $answer->save();
 
         $asker_id = Question::find($question_id)->asker_id;
@@ -312,6 +326,13 @@ class AppController extends Controller
         $question->asker_id = Auth::user()->id;
         $question->question = $request->question;
         $question->component_id = $component_id;
+        $file = $request->file('filepath');
+        if($file){
+            $fileName = 'cq_'.time().'_'.$file->getClientOriginalName();
+            $mainDisk = Storage::disk('google');
+            $mainDisk->put($fileName, fopen($file, 'r+'));
+            $question->attachement_path = $fileName;
+        }
         $question->save();
         
         return redirect(url('user/components/'.$component_id));
@@ -327,6 +348,13 @@ class AppController extends Controller
         $answer->responder_id = Auth::user()->id;
         $answer->answer = $request->answer;
         $answer->question_id = $question_id;
+        $file = $request->file('file');
+        if($file){
+            $fileName = 'ca_'.time().'_'.$file->getClientOriginalName();
+            $mainDisk = Storage::disk('google');
+            $mainDisk->put($fileName, fopen($file, 'r+'));
+            $answer->attachement_path = $fileName;
+        }
         $answer->save();
         
         return redirect(url('user/view_component_answers/'.$question_id));
