@@ -18,15 +18,26 @@
               </div>
               <br>
               <br>
-              <div>
-                  <form id="component_answer_form" action="{{ url('user/post_component_answer/'.$question->id) }}" method="POST">
-                      {{--  {{csrf_field()}}  --}}
+              <div class="panel-body">
+                  <form id="component_answer_form" action="{{ url('user/post_component_answer/'.$question->id) }}" enctype="multipart/form-data" method="POST">
+                      {{ csrf_field() }}
                       <div class="form-group">
                           <label for="component_answer_text">Post an answer:</label>
                           <textarea required class="form-control" id="component_answer_text" name="answer"
                                     placeholder="Type your answer here"></textarea>
-                          <input type="submit" value="Post Answer" class="btn btn-default pull-right"
-                                 id="component_answer_submit">
+                          <br>
+                          <div class="form-group">
+                            <div class="col-sm-5 pull-right">
+                                <input name="file" id="file" type="file">
+                            </div>
+                            <label for="file" class="col-sm-1.5 control-label pull-right">Attach file</label>
+                          </div>
+                          <br>
+                          <div class="form-group">
+                              <div class="col-sm-offset-3">
+                                  <button type="submit" class="btn btn-default pull-right">Post Answer</button>
+                              </div>
+                          </div>
                       </div>
                   </form>
               </div>

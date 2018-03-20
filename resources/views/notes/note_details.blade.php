@@ -15,7 +15,7 @@
 
                 <br>
                 @if(Auth::user() && (Auth::user()->role >= 1))
-                  <form action='/admin/delete_note/{{$note->id}}' Method="GET">
+                  <form onclick="return confirm('Are you sure want to delete this note?');" action='/admin/delete_note/{{$note->id}}' Method="GET">
                     <button class ="icon-button"><span class="glyphicon glyphicon-trash" style="font-size:30px"></span></button>
                   </form>
                 @endif

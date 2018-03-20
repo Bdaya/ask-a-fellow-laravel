@@ -27,7 +27,7 @@
                 <h1>Questions</h1>
               </div>
               
-              <div>
+              <div class="panel-body">
                 @foreach($questions as $question)
                   <p>{{ $question->question }}</p>
                   <h5>Asked By: {{ $question->asker()->first_name }}</h5>
@@ -37,15 +37,26 @@
               </div>
               <br>
               <br>
-              <div>
-                  <form id="component_question_form" action="{{ url('user/post_component_question/'.$component->id) }}" method="POST">
-                      {{--  {{csrf_field()}}  --}}
+              <div class="panel-body">
+                  <form id="component_question_form" action="{{ url('user/post_component_question/'.$component->id) }}" enctype="multipart/form-data" method="POST">
+                      {{csrf_field()}}
                       <div class="form-group">
                           <label for="component_question_text">Ask a question:</label>
                           <textarea required class="form-control" id="component_question_text" name="question"
                                     placeholder="Type your question here"></textarea>
-                          <input type="submit" value="Post Question" class="btn btn-default pull-right"
-                                 id="component_question_submit">
+                          <br>
+                          <div class="form-group">
+                            <div class="col-sm-5 pull-right">
+                                <input name="filepath" id="filepath" type="file">
+                            </div>
+                            <label for="filepath" class="col-sm-1.5 control-label pull-right">Attach file</label>
+                          </div>
+                          <br>
+                          <div class="form-group">
+                              <div class="col-sm-offset-3">
+                                  <button type="submit" class="btn btn-default pull-right">Post Question</button>
+                              </div>
+                          </div>
                       </div>
                   </form>
               </div>

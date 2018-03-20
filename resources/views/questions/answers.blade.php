@@ -171,12 +171,24 @@
             </div><!-- /.modal-dialog -->
         </div>
         @if(Auth::user())
-        <form id="post_answer_form" action="" method="POST">
+        <form id="post_answer_form" action="" enctype="multipart/form-data" method="POST">
             {{csrf_field()}}
             <div class="form-group">
                 <label for="post_answer_text">Post an answer:</label>
                 <textarea required class="form-control" id="post_answer_text" name="answer" placeholder="Type your answer here"></textarea>
-                <input type="submit" value="Post Answer" class="btn btn-default pull-right" id="post_answer_submit">
+                <br>
+                  <div class="form-group">
+                    <div class="col-sm-6 pull-right">
+                        <input name="file" id="file" type="file">
+                    </div>
+                    <label for="file" class="col-sm-1.5 control-label pull-right">Attach file</label>
+                  </div>
+                <br>
+                <div class="form-group">
+                    <div class="col-sm-offset-3">
+                        <button type="submit" class="btn btn-default pull-right"  id="post_answer_submit">Post Answer</button>
+                    </div>
+                </div>
             </div>
         </form>
         @else
