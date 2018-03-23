@@ -39,6 +39,8 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/howitworks', 'StaticController@howitworks');
     Route::get('/user/components', 'AppController@view_components');
     Route::get('/user/components/{id}', 'AppController@component_details');
+    Route::get('/user/components/{component_id}/delete/{question_id}', 'AppController@delete_component_question');
+    Route::get('/user/delete_component_answers/{question_id}/{answer_id}', 'AppController@delete_component_answer');
     Route::get('/user/update', 'UserController@updateInfoPage');
     Route::post('/user/update', 'UserController@updateInfo');
     Route::get('/user/stores', 'UserController@view_storelist');
@@ -177,6 +179,10 @@ Route::group(['middleware' => ['web']], function () {
      *  Post comment on a note
      */
     Route::post('/note_comment/{note_id}', 'NotesController@post_note_comment');
+    /**
+     *  Delete comment on a note
+     */
+    Route::get('/delete_note_comment/{note_id}/{comment_id}', 'NotesController@delete_note_comment');
     /**
      *  Vote a note
      */

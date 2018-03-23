@@ -42,12 +42,13 @@
           @if(Auth::user())
               <a class="upvote_note vote" value="{{$note->id}}" title="upvote" style="color:green; font-size:50px"><span class="glyphicon glyphicon-thumbs-up"></span></a>
           @endif
+          &nbsp;&nbsp;&nbsp;&nbsp;
           @if($note->votes > 0)
-              <span class="note_votes" style="color:green;">{{$note->votes}} </span>
+              <span class="note_votes" style="color:green; font-size:30px">{{$note->votes}} </span>
           @elseif($note->votes == 0)
-              <span class="note_votes" style="">{{$note->votes}} </span>
+              <span class="note_votes" style="font-size:30px">{{$note->votes}} </span>
           @else
-              <span class="note_votes" style="color:red;">{{$note->votes}} </span>
+              <span class="note_votes" style="color:red; font-size:30px">{{$note->votes}} </span>
           @endif
           &nbsp;&nbsp;&nbsp;&nbsp;
           @if(Auth::user())
@@ -65,6 +66,15 @@
             @foreach($comments as $comment)
                 <div class="media answer">
                     <div style="text-align: center" class="media-left">
+
+                        @if(Auth::user())
+                          <div>
+                            @if(Auth::user()->id == $comment->user_id || Auth::user()->role >= 1)
+                                <a onclick="return confirm('Are you sure want to delete this comment?');" title="Delete Note Comment" href="{{url('delete_note_comment/'.$note->id.'/'.$comment->id)}}"><span style="color:#FFAF6C" class="glyphicon glyphicon-remove"></span></a>
+                                <br>
+                            @endif
+                          </div>
+                      @endif
 
                         <a href="{{url('user/'.$comment->user_id)}}">
 

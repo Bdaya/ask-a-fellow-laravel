@@ -43,7 +43,9 @@ class AppController extends Controller
             'post_component',
             'post_component_question',
             'post_component_answer',
-            'view_component_answers'
+            'view_component_answers',
+            'delete_component_question',
+            'delete_component_answer'
         ]]);
 
     }
@@ -185,12 +187,18 @@ class AppController extends Controller
     public function delete_question($question_id)
     {
         $question = Question::find($question_id);
-        if(Auth::user() && (Auth::user()->role > 0 ||  Auth::user()->id == $question->asker_id))
+        if(Auth::user() && (Auth::user()->role > 0 ||  Auth::user()->id == $question->asker_id)){
+            if($question->attachement_path){
+                $disk = Storage::disk('google');
+                $file = collect($disk->listContents())->where('type', 'file')
+                        ->where('extension', pathinfo($question->attachement_path, PATHINFO_EXTENSION))
+                        ->where('filename', pathinfo($question->attachement_path, PATHINFO_FILENAME))->first();
+                $disk->delete($file['path']);
+            }
             $question->delete();
+        }
         return redirect(url('browse/'.$question->course_id));
     }
-
-
 
     public function inside_question($question_id)
     {
@@ -235,8 +243,16 @@ class AppController extends Controller
     public function delete_answer($answer_id)
     {
         $answer = Answer::find($answer_id)->find($answer_id);
-        if(Auth::user() && (Auth::user()->role > 0 || Auth::user()->id == $answer->responder_id))
+        if(Auth::user() && (Auth::user()->role > 0 || Auth::user()->id == $answer->responder_id)){
+            if($answer->attachement_path){
+                $disk = Storage::disk('google');
+                $file = collect($disk->listContents())->where('type', 'file')
+                        ->where('extension', pathinfo($answer->attachement_path, PATHINFO_EXTENSION))
+                        ->where('filename', pathinfo($answer->attachement_path, PATHINFO_FILENAME))->first();
+                $disk->delete($file['path']);
+            }
             $answer->delete();
+        }
         return redirect(url('answers/'.$answer->question_id));
     }
 
@@ -336,6 +352,38 @@ class AppController extends Controller
         $question->save();
         
         return redirect(url('user/components/'.$component_id));
+    }
+
+    public function delete_component_question($component_id, $question_id)
+    {
+        $question = ComponentQuestion::find($question_id);
+        if(Auth::user() && (Auth::user()->role > 0 ||  Auth::user()->id == $question->asker_id)){
+            if($question->attachement_path){
+                $disk = Storage::disk('google');
+                $file = collect($disk->listContents())->where('type', 'file')
+                        ->where('extension', pathinfo($question->attachement_path, PATHINFO_EXTENSION))
+                        ->where('filename', pathinfo($question->attachement_path, PATHINFO_FILENAME))->first();
+                $disk->delete($file['path']);
+            }
+            $question->delete();
+        }
+        return redirect(url('user/components/'.$component_id));
+    }
+
+    public function delete_component_answer($question_id, $answer_id)
+    {
+        $answer = ComponentAnswer::find($answer_id);
+        if(Auth::user() && (Auth::user()->role > 0 ||  Auth::user()->id == $answer->responder_id)){
+            if($answer->attachement_path){
+                $disk = Storage::disk('google');
+                $file = collect($disk->listContents())->where('type', 'file')
+                        ->where('extension', pathinfo($answer->attachement_path, PATHINFO_EXTENSION))
+                        ->where('filename', pathinfo($answer->attachement_path, PATHINFO_FILENAME))->first();
+                $disk->delete($file['path']);
+            }
+            $answer->delete();
+        }
+        return redirect(url('/user/view_component_answers/'.$question_id));
     }
 
     public function post_component_answer(Request $request, $question_id)
