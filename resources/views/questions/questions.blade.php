@@ -80,21 +80,6 @@ if (isset($_GET['sort']))
                                 <img class="media-object" src="{{asset('art/default_pp.png')}}" alt="...">
                             @endif
                         </a>
-                        @if(Auth::user())
-                            <a class="upvote_question vote" value="{{$question->id}}" title="upvote"
-                               style="color:green;"><span class="glyphicon glyphicon-thumbs-up"></span></a>
-                        @endif
-                        @if($question->votes > 0)
-                            <span class="question_votes" style="color:green;">{{$question->votes}} </span>
-                        @elseif($question->votes == 0)
-                            <span class="question_votes" style="">{{$question->votes}} </span>
-                        @else
-                            <span class="question_votes" style="color:red;">{{$question->votes}} </span>
-                        @endif
-                        @if(Auth::user())
-                            <a class="downvote_question vote" value="{{$question->id}}" title="downvote"
-                               style="color:red"><span class="glyphicon glyphicon-thumbs-down"></span></a>
-                        @endif
                     </div>
                     <div class="media-body" style="cursor: pointer;">
                         @if(Auth::user())
@@ -124,8 +109,23 @@ if (isset($_GET['sort']))
                         </div>
                         <p style="font-weight: bold; font-style: italic; ">{{ date("F j, Y, g:i a",strtotime($question->created_at)) }} </p>
                     </div>
-
-
+                     <div>
+                         @if(Auth::user())
+                            <a class="upvote_question vote" value="{{$question->id}}" title="upvote"
+                               style="color:green;"><span class="glyphicon glyphicon-thumbs-up"></span></a>
+                        @endif
+                        @if($question->votes > 0)
+                            <span class="question_votes" style="color:green;">{{$question->votes}} </span>
+                        @elseif($question->votes == 0)
+                            <span class="question_votes" style="">{{$question->votes}} </span>
+                        @else
+                            <span class="question_votes" style="color:red;">{{$question->votes}} </span>
+                        @endif
+                        @if(Auth::user())
+                            <a class="downvote_question vote" value="{{$question->id}}" title="downvote"
+                               style="color:red"><span class="glyphicon glyphicon-thumbs-down"></span></a>
+                        @endif
+                    </div>
                 </div>
 
             @endforeach

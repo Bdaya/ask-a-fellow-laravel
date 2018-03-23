@@ -12,8 +12,15 @@
 
               <div class="panel-body">
                     @foreach($answers as $answer)
-                        <p>{{ $answer->answer }}</p>
-                        <h5>Answered By: {{ $answer->responder()->first_name }}</h5>
+                      @if(Auth::user())
+                        <div class="delete_answer pull-right">
+                          @if(Auth::user()->id == $answer->responder_id || Auth::user()->role >= 1)
+                              <a onclick="return confirm('Are you sure want to delete this answer?');" title="Delete Component Answer" href="{{url('user/delete_component_answers/'.$question->id.'/'.$answer->id)}}"><span style="color:#FFAF6C" class="glyphicon glyphicon-remove"></span></a>
+                          @endif
+                        </div>
+                      @endif
+                      <p>{{ $answer->answer }}</p>
+                      <h5>Answered By: {{ $answer->responder()->first_name }}</h5>
                     @endforeach
               </div>
               <br>

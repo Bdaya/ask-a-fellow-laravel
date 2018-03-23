@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Note;
+use App\NoteVote;
 use App\Course;
 use App\NoteComment;
 use Auth;
@@ -60,13 +61,12 @@ class NotesController extends Controller
     }
 
 
-    // post comment 
+    // post a comment about a note
     public function post_note_comment(Request $request, $note_id)
     {
         $user = Auth::user();
-        if (!$user) {
-            return ['state' => 'error', 'error' => true];
-        }
+        if (!$user)
+            return 'Ooops! Not authorized';
         $comment = new NoteComment();
         $comment->body = $request->comment;
         $comment->user_id = Auth::user()->id;
@@ -75,26 +75,57 @@ class NotesController extends Controller
         return redirect(url('/notes/view_note_details/'.$note_id));
     }
 
+    // delete a previously posted comment about a note
+    public function delete_note_comment($note_id, $comment_id)
+    {
+        $comment = NoteComment::find($comment_id);
+        if(Auth::user() && (Auth::user()->role > 0 ||  Auth::user()->id == $comment->user_id))
+            $comment->delete();
+        
+        return redirect(url('/notes/view_note_details/'.$note_id));
+    }
+
     // vote note
     public function vote_note($note_id, $type)
     {
         $user = Auth::user();
-        if (!$user) {
-            return ['state' => 'error', 'error' => true];
-        }
 
         if ($type == 0 && count($user->upvotesOnNote($note_id)))
-            return ['state' => 'cannot up vote twice', 'error' => true];
+            return '<span style="color:black">Cannot upvote twice</span>';
+
         if ($type == 1 && count($user->downvotesOnNote($note_id)))
-            return ['state' => 'cannot down vote twice', 'error' => true];
+            return '<span style="color:black">Cannot downvote twice</span>';
+
         if ($type == 0 && count($user->downvotesOnNote($note_id))) {
             $vote = NoteVote::where('user_id', '=', Auth::user()->id)->where('note_id', '=', $note_id)->first();
             $vote->delete();
         } else if ($type == 1 && count($user->upvotesOnNote($note_id))) {
             $vote = NoteVote::where('user_id', '=', Auth::user()->id)->where('note_id', '=', $note_id)->first();
             $vote->delete();
-        } else
-            $user->vote_on_note($note_id, $type);        
+        } else{ 
+            $user->vote_on_note($note_id, $type); 
+        }
+
+        $note = Note::find($note_id);
+        if(Auth::user()->id != $note->user_id)
+        {
+            //send notification
+            $user_id = $note->user_id;
+            $action = ($type == 0)?' upvoted':' downvoted';
+            $description = Auth::user()->first_name.' '.Auth::user()->last_name.$action.' your note.';
+            $link = url('/notes/view_note_details/'.$note_id);
+            Notification::send_notification($user_id,$description,$link);
+
+        }
+
+
+        $votes = $note->votes;
+        $color = 'black';
+        if($votes>0)
+            $color = 'green';
+        elseif($votes <0)
+            $color = 'red';
+        return '<span style="color:'.$color.'"">'.$votes.'</span>';     
     }
 
 

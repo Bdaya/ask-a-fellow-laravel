@@ -45,9 +45,11 @@ class AjaxController extends Controller
         $user = Auth::user();
 
         if($type == 0 && count($user->upvotesOnAnswer($answer_id)))
-            return 'Cannot upvote twice';
+            return '<span style="color:black">Cannot upvote twice</span>';
+
         if($type == 1 && count($user->downvotesOnAnswer($answer_id)))
-            return 'Cannot downvote twice';
+            return '<span style="color:black">Cannot downvote twice</span>';
+
         if($type == 0 && count($user->downvotesOnAnswer($answer_id))) {
             $vote = AnswerVote::where('user_id','=',Auth::user()->id)->where('answer_id','=',$answer_id)->first();
             $vote->delete();
@@ -86,9 +88,11 @@ class AjaxController extends Controller
         $user = Auth::user();
 
         if($type == 0 && count($user->upvotesOnQuestion($question_id)))
-            return 'Cannot upvote twice';
+            return '<span style="color:black">Cannot upvote twice</span>';
+
         if($type == 1 && count($user->downvotesOnQuestion($question_id)))
-            return 'Cannot downvote twice';
+            return '<span style="color:black">Cannot downvote twice</span>';
+
         if($type == 0 && count($user->downvotesOnQuestion($question_id))) {
 
 

@@ -29,6 +29,13 @@
               
               <div class="panel-body">
                 @foreach($questions as $question)
+                @if(Auth::user())
+                      <div class="delete_question pull-right">
+                        @if(Auth::user()->id == $question->asker_id || Auth::user()->role >= 1)
+                            <a onclick="return confirm('Are you sure want to delete this question?');" title="Delete Component Question" href="{{url('user/components/'.$component->id.'/delete/'.$question->id)}}"><span style="color:#FFAF6C" class="glyphicon glyphicon-remove"></span></a>
+                        @endif
+                      </div>
+                  @endif
                   <p>{{ $question->question }}</p>
                   <h5>Asked By: {{ $question->asker()->first_name }}</h5>
                   <a href="{{ url('/user/view_component_answers/' . $question->id) }}" class="btn btn-xs btn-info pull-right">View Answers</a>
