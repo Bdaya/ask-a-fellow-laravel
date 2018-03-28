@@ -69,6 +69,9 @@
 
                         @if(Auth::user())
                           <div>
+                            @if(Auth::user()->id == $comment->user_id)
+                                <a value="{{$comment->id}}" data-toggle="modal" data-target="#edit_modal" class="edit_comment" title="Edit Note Comment"><span class="glyphicon glyphicon-edit" style="color:#D24848;cursor:pointer;"></span></a>
+                            @endif
                             @if(Auth::user()->id == $comment->user_id || Auth::user()->role >= 1)
                                 <a onclick="return confirm('Are you sure want to delete this comment?');" title="Delete Note Comment" href="{{url('delete_note_comment/'.$note->id.'/'.$comment->id)}}"><span style="color:#FFAF6C" class="glyphicon glyphicon-remove"></span></a>
                                 <br>
@@ -99,6 +102,30 @@
                     </div>
                 </div>
             @endforeach
+        </div>
+
+         <div id="edit_modal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class=""  style="background-color:rgba(255,255,255,0.9)">
+
+                    <button style="margin-right:15px;margin:top:10px;"type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+
+                    <br>
+                    <div class="modal-body" style="padding: 0 50px 40px 50px;">
+                        <h3>Edit Comment</h3>
+                        <div class="form-group" style="width: 50%;">
+                            <textarea class="form-control" id="modified_comment">{{$comment->body}}</textarea>
+                        </div>
+
+                        <button onclick="editComment({{$comment->id}},{{$note->id}})" class="btn btn-default">Edit</button>
+                        @include('errors')
+                    </div>
+                    <!-- <div class="modal-footer"> -->
+
+                    <!-- </div> -->
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
         </div>
 
         @if(Auth::user())
@@ -267,7 +294,6 @@ span.verified{
             $('#post_comment').attr('disabled',true);
         else
             $('#post_comment_body').attr('disabled',false);
-        $('#report_other_text').hide();
     });
 
 
@@ -305,8 +331,22 @@ span.verified{
             $('#post_comment_submit').attr('disabled',false);
 
     });
+    
+    function editComment(comment_id, note_id){
+            var body = $('#modified_comment').val();
+            $.ajax({
+                type: "GET",
+                url : "{{url('edit_comment/')}}",
+                data : {comment:body,note_id:note_id,comment_id:comment_id},
+                success : function(data){
+                    $('#edit_modal').modal('hide');
+                }
+            });
+    }
+
+    $('#edit_modal').on('hidden.bs.modal', function () {
+     location.reload();
+    });
 </script>
-
-
 
 @endsection

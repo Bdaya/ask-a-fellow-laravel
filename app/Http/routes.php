@@ -143,6 +143,11 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/user/question/download_attachement/{question_id}', 'AppController@download_question_attachement');
     Route::get('/user/component_answer/download_attachement/{answer_id}', 'AppController@download_component_answer_attachement');
     Route::get('/user/answer/download_attachement/{answer_id}', 'AppController@download_answer_attachement');
+
+    /**
+     * Edit note comment
+     */
+    Route::get('/edit_comment', 'AjaxController@edit_note_comment');
     
 
     Route::get('/admin/delete_note/{id}', 'AdminController@deleteNoteAdmin');
