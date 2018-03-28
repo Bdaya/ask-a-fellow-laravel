@@ -22,8 +22,7 @@
                       <p>{{ $answer->answer }}</p>
                       @if($answer->attachement_path)
                         <div>
-                          <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-                          <i class="material-icons" style="vertical-align: bottom;">attachment</i>
+                          <span class="glyphicon glyphicon-paperclip"></span>
                           <a href="{{url('/user/component_answer/download_attachement/'.$answer->id)}}">{{ $answer->attachement_path }}</a>
                         </div>
                       @endif

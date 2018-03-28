@@ -16,6 +16,7 @@ use App\Notification;
 use App\QuestionReport;
 use App\AnswerReport;
 use App\User;
+use App\NoteComment;
 
 class AjaxController extends Controller
 {
@@ -27,14 +28,28 @@ class AjaxController extends Controller
             'view_notifications_partial',
             'mark_notification',
             'send_report_answer',
-            'send_report_question'
+            'send_report_question',
+            'edit_note_comment'
         ]]);
     }
 
+    public function edit_note_comment(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user)
+            return 'Ooops! Not authorized';
+        else{
+            $comment = NoteComment::find($request->comment_id);
+            if($user->id == $comment->user_id){
+                $comment->body = $request->comment;
+                $comment->save();
+            }
+            return back();
+        }
+    }
 
     public function getCourses($major, $semester)
     {
-//            return 'x';
         $major = Major::find($major);
         $courses = $major->courses()->where('semester','=',$semester)->get();
         return view('browse.courses_listing',compact(['courses','major','semester']));
