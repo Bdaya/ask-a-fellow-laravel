@@ -131,6 +131,13 @@
 
                         <div class="answer_text">
                             {{$answer->answer}}
+                            @if($answer->attachement_path)
+                                <div>
+                                    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+                                    <i class="material-icons" style="vertical-align: bottom;">attachment</i>
+                                    <a href="{{url('/user/answer/download_attachement/'.$answer->id)}}">{{ $answer->attachement_path }}</a>
+                                </div>
+                            @endif
                         </div>
                         <p style="font-weight: bold; font-style: italic; ">{{ date("F j, Y, g:i a",strtotime($answer->created_at)) }} </p>
                     </div>

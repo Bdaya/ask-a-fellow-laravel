@@ -106,6 +106,13 @@ if (isset($_GET['sort']))
                         @endif
                         <div class="question_text">
                             {{$question->question}}
+                             @if($question->attachement_path)
+                            <div>
+                              <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+                              <i class="material-icons" style="vertical-align: bottom;">attachment</i>
+                              <a href="{{url('/user/question/download_attachement/'.$question->id)}}">{{ $question->attachement_path }}</a>
+                            </div>
+                          @endif
                         </div>
                         <p style="font-weight: bold; font-style: italic; ">{{ date("F j, Y, g:i a",strtotime($question->created_at)) }} </p>
                     </div>

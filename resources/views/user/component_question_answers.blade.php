@@ -20,6 +20,13 @@
                         </div>
                       @endif
                       <p>{{ $answer->answer }}</p>
+                      @if($answer->attachement_path)
+                        <div>
+                          <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+                          <i class="material-icons" style="vertical-align: bottom;">attachment</i>
+                          <a href="{{url('/user/component_answer/download_attachement/'.$answer->id)}}">{{ $answer->attachement_path }}</a>
+                        </div>
+                      @endif
                       <h5>Answered By: {{ $answer->responder()->first_name }}</h5>
                     @endforeach
               </div>
