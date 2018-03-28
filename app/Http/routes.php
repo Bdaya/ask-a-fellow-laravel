@@ -136,12 +136,18 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/user/view_component_answers/{question_id}', 'AppController@View_component_answers');
     //END WIP
 
+    /**
+     * Download course and component question/answer attachements.
+     */
+    Route::get('/user/component_question/download_attachement/{question_id}', 'AppController@download_component_question_attachement');
+    Route::get('/user/question/download_attachement/{question_id}', 'AppController@download_question_attachement');
+    Route::get('/user/component_answer/download_attachement/{answer_id}', 'AppController@download_component_answer_attachement');
+    Route::get('/user/answer/download_attachement/{answer_id}', 'AppController@download_answer_attachement');
+    
+
     Route::get('/admin/delete_note/{id}', 'AdminController@deleteNoteAdmin');
     Route::get('/browse/notes/{course_id}', 'AppController@list_notes');
     Route::get('/browse/notes/view_note/{note_id}', 'NotesController@downloadNote');
-
-
-    
 
     /**
      * Create a new calender for the user

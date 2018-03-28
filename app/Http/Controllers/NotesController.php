@@ -167,16 +167,14 @@ class NotesController extends Controller
     }
 
     //download the note file
-    public function downloadNote($id) {
+    public function downloadNote($id){
         $note =  Note::find($id);
         $disk = Storage::disk('google');
         $file = collect($disk->listContents())->where('type', 'file')
                 ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
                 ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
 
-        return Response::make(file_get_contents($disk->url($file['path'])), 200, [
-            'Content-Disposition' => 'attachment; filename="'.$note->path.'"'
-        ]);
+        return response()->redirectTo($disk->url($file['path']));
     }
 
 }

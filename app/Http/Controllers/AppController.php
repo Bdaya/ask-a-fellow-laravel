@@ -19,6 +19,7 @@ use App\ComponentQuestion;
 use App\Note;
 use Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redirect;
 use Cloudinary\Uploader;
@@ -461,5 +462,53 @@ class AppController extends Controller
         $component->save();
         Session::flash('Added', 'Done, admins will review your component soon!');
         return redirect()->back();
+    }
+
+    public function download_component_question_attachement($question_id){
+
+        $question =  ComponentQuestion::find($question_id);
+        $disk = Storage::disk('google');
+        $file = collect($disk->listContents())->where('type', 'file')
+                ->where('extension', pathinfo($question->attachement_path, PATHINFO_EXTENSION))
+                ->where('filename', pathinfo($question->attachement_path, PATHINFO_FILENAME))->first();
+
+        return response()->redirectTo($disk->url($file['path']));
+
+    }
+
+    public function download_question_attachement($question_id){
+
+        $question =  Question::find($question_id);
+        $disk = Storage::disk('google');
+        $file = collect($disk->listContents())->where('type', 'file')
+                ->where('extension', pathinfo($question->attachement_path, PATHINFO_EXTENSION))
+                ->where('filename', pathinfo($question->attachement_path, PATHINFO_FILENAME))->first();
+
+        return response()->redirectTo($disk->url($file['path']));
+
+    }
+
+    public function download_component_answer_attachement($answer_id){
+
+        $answer =  ComponentAnswer::find($answer_id);
+        $disk = Storage::disk('google');
+        $file = collect($disk->listContents())->where('type', 'file')
+                ->where('extension', pathinfo($answer->attachement_path, PATHINFO_EXTENSION))
+                ->where('filename', pathinfo($answer->attachement_path, PATHINFO_FILENAME))->first();
+
+        return response()->redirectTo($disk->url($file['path']));
+
+    }
+
+    public function download_answer_attachement($answer_id){
+
+        $answer =  Answer::find($answer_id);
+        $disk = Storage::disk('google');
+        $file = collect($disk->listContents())->where('type', 'file')
+                ->where('extension', pathinfo($answer->attachement_path, PATHINFO_EXTENSION))
+                ->where('filename', pathinfo($answer->attachement_path, PATHINFO_FILENAME))->first();
+
+        return response()->redirectTo($disk->url($file['path']));
+
     }
 }
