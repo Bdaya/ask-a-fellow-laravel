@@ -84,11 +84,13 @@ if (isset($_GET['sort']))
                     <div class="media-body" style="cursor: pointer;">
                         @if(Auth::user())
                             <div class="delete_question pull-right">
+                                @if(Auth::user()->id == $question->asker_id)
+                                    <a value="{{$question}}" data-toggle="modal" data-target="#edit_modal" class="edit_question" title="Edit Question"><span class="glyphicon glyphicon-edit" style="color:#D24848;cursor:pointer;"></span></a>
+                                @endif
                                 @if(Auth::user()->id == $question->asker_id || Auth::user()->role >= 1)
 
                                     <a onclick="return confirm('Are you sure?');" title="Delete question"
-                                       href="{{url('delete_question/'.$question->id)}}"><span style="color:#FFAF6C"
-                                                                                              class="glyphicon glyphicon-remove"></span></a>
+                                       href="{{url('delete_question/'.$question->id)}}"><span style="color:#FFAF6C" class="glyphicon glyphicon-remove"></span></a>
 
                                 @endif
                                 <a value="{{$question->id}}" data-toggle="modal" data-target="#report_modal"
@@ -135,6 +137,29 @@ if (isset($_GET['sort']))
                 </div>
 
             @endforeach
+
+            <div id="edit_modal" class="modal fade" tabindex="-1" role="dialog">
+                <div class="modal-dialog">
+                    <div class=""  style="background-color:rgba(255,255,255,0.9)">
+
+                        <button style="margin-right:15px;margin:top:10px;"type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                        <br>
+                        <div class="modal-body" style="padding: 0 50px 40px 50px;">
+                            <h3>Edit Question</h3>
+                            <div class="form-group" style="width: 100%;">
+                                <textarea class="form-control modified_question"></textarea>
+                            </div>
+
+                            <button onclick="editQuestion()" class="btn btn-default">Edit</button>
+                            @include('errors')
+                        </div>
+                        <!-- <div class="modal-footer"> -->
+
+                        <!-- </div> -->
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div>
 
             <div id="report_modal" class="modal fade" tabindex="-1" role="dialog">
                 <div class="modal-dialog">
@@ -384,6 +409,27 @@ if (isset($_GET['sort']))
                 }
             });
         });
+
+      var question_id;
+      $('.edit_question').click(function () {
+          var question = $(this).attr('value');
+          question_id = JSON.parse(question)["id"];
+          var body = JSON.parse(question)["question"];
+          $('.modified_question').html(body);
+      });
+
+      function editQuestion(){
+        var body = $('.modified_question').val();
+        $.ajax({
+            type: "GET",
+            url : "{{url('edit_question/')}}",
+            data : {question:body,question_id:question_id},
+            success : function(data){
+                location.reload();
+            }
+        });
+      }
+
     </script>
 
 @endsection
