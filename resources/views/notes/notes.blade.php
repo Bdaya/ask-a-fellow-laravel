@@ -2,7 +2,7 @@
 @section('content')
 <div id = "Header">
 
-<h1 align="center"><em><Strong>NOTES WALL</Strong></em></h1>
+<h1 align="center"><em><Strong>Notes Page</Strong></em></h1>
 </div>
 <div id ="Note">
 <ul>

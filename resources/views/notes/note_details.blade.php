@@ -70,7 +70,7 @@
                         @if(Auth::user())
                           <div>
                             @if(Auth::user()->id == $comment->user_id)
-                                <a value="{{$comment->id}}" data-toggle="modal" data-target="#edit_modal" class="edit_comment" title="Edit Note Comment"><span class="glyphicon glyphicon-edit" style="color:#D24848;cursor:pointer;"></span></a>
+                                <a value="{{$comment}}" data-toggle="modal" data-target="#edit_modal" class="edit_comment" title="Edit Note Comment"><span class="glyphicon glyphicon-edit" style="color:#D24848;cursor:pointer;"></span></a>
                             @endif
                             @if(Auth::user()->id == $comment->user_id || Auth::user()->role >= 1)
                                 <a onclick="return confirm('Are you sure want to delete this comment?');" title="Delete Note Comment" href="{{url('delete_note_comment/'.$note->id.'/'.$comment->id)}}"><span style="color:#FFAF6C" class="glyphicon glyphicon-remove"></span></a>
@@ -114,11 +114,11 @@
                     <br>
                     <div class="modal-body" style="padding: 0 50px 40px 50px;">
                         <h3>Edit Comment</h3>
-                        <div class="form-group" style="width: 50%;">
-                            <textarea class="form-control" id="modified_comment">{{$comment->body}}</textarea>
+                        <div class="form-group" style="width: 100%;">
+                            <textarea class="form-control modified_comment"></textarea>
                         </div>
 
-                        <button onclick="editComment({{$comment->id}},{{$note->id}})" class="btn btn-default">Edit</button>
+                        <button onclick="editComment()" class="btn btn-default">Edit</button>
                         @include('errors')
                     </div>
                     <!-- <div class="modal-footer"> -->
@@ -331,22 +331,26 @@ span.verified{
             $('#post_comment_submit').attr('disabled',false);
 
     });
+
+    var comment_id;
+        $('.edit_comment').click(function () {
+            var comment = $(this).attr('value');
+            comment_id = JSON.parse(comment)["id"];
+            var body = JSON.parse(comment)["body"];
+            $('.modified_comment').html(body);
+        });
     
-    function editComment(comment_id, note_id){
-            var body = $('#modified_comment').val();
+    function editComment(){
+            var body = $('.modified_comment').val();
             $.ajax({
                 type: "GET",
                 url : "{{url('edit_comment/')}}",
-                data : {comment:body,note_id:note_id,comment_id:comment_id},
+                data : {comment:body,comment_id:comment_id},
                 success : function(data){
-                    $('#edit_modal').modal('hide');
+                    location.reload();
                 }
             });
     }
-
-    $('#edit_modal').on('hidden.bs.modal', function () {
-     location.reload();
-    });
 </script>
 
 @endsection

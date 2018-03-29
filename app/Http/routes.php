@@ -148,7 +148,22 @@ Route::group(['middleware' => ['web']], function () {
      * Edit note comment
      */
     Route::get('/edit_comment', 'AjaxController@edit_note_comment');
-    
+    /**
+     * Edit component question
+     */
+    Route::get('/edit_component_question', 'AjaxController@edit_component_question');
+    /**
+     * Edit course question
+     */
+    Route::get('/edit_question', 'AjaxController@edit_question');
+    /**
+     * Edit component answer
+     */
+    Route::get('/edit_component_answer', 'AjaxController@edit_component_answer');
+    /**
+     * Edit course answer
+     */
+    Route::get('/edit_answer', 'AjaxController@edit_answer');
 
     Route::get('/admin/delete_note/{id}', 'AdminController@deleteNoteAdmin');
     Route::get('/browse/notes/{course_id}', 'AppController@list_notes');
