@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers;
 use App\Http\Requests;
 use App\Question;
+use App\Answer;
+use App\QuestionVote;
+use App\AnswerVote;
 use Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -129,11 +132,11 @@ class QuestionAPIController extends Controller
             return response()->json($returnData);
         }
         if($type == 0 && count($user->downvotesOnAnswer($answer_id))) {
-            $vote = AnswerVote::where('user_id','=',Auth::user()->id)->where('answer_id','=',$answer_id)->first();
+            $vote = AnswerVote::where('user_id','=', Auth::user()->id)->where('answer_id','=',$answer_id)->first();
             $vote->delete();
         }
         else if($type == 1 && count($user->upvotesOnAnswer($answer_id))) {
-            $vote = AnswerVote::where('user_id','=',Auth::user()->id)->where('answer_id','=',$answer_id)->first();
+            $vote = AnswerVote::where('user_id','=', Auth::user()->id)->where('answer_id','=',$answer_id)->first();
             $vote->delete();
         }
         else
@@ -150,7 +153,6 @@ class QuestionAPIController extends Controller
             Notification::send_notification($responder_id,$description,$link);
 
         }
-
 
         $votes = $answer->votes;
         $color = 'black';
@@ -183,11 +185,11 @@ class QuestionAPIController extends Controller
             return response()->json($returnData);
         }
         if($type == 0 && count($user->downvotesOnQuestion($question_id))) {
-            $vote = QuestionVote::where('user_id','=',Auth::user()->id)->where('question_id','=',$question_id)->first();
+            $vote = QuestionVote::where('user_id','=', Auth::user()->id)->where('question_id','=',$question_id)->first();
             $vote->delete();
         }
         else if($type == 1 && count($user->upvotesOnQuestion($question_id))) {
-            $vote = QuestionVote::where('user_id','=',Auth::user()->id)->where('question_id','=',$question_id)->first();
+            $vote = QuestionVote::where('user_id','=', Auth::user()->id)->where('question_id','=',$question_id)->first();
             $vote->delete();
         }
         else
@@ -218,7 +220,6 @@ class QuestionAPIController extends Controller
         $returnData['color'] = $color;
 
         return response()->json($returnData);
-
 
     }
 }

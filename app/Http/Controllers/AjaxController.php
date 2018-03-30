@@ -41,76 +41,96 @@ class AjaxController extends Controller
 
     public function edit_note_comment(Request $request)
     {
+        $this->validate($request, [
+          'comment' => 'required'
+        ]);
+
         $user = Auth::user();
         if (!$user)
-            return 'Ooops! Not authorized';
+            redirect()->back()->with(Session::flash('success', 'Ooops! Not authorized'));
         else{
             $comment = NoteComment::find($request->comment_id);
             if($user->id == $comment->user_id){
                 $comment->body = $request->comment;
                 $comment->save();
             }
-            return back();
+            redirect()->back();
         }
     }
 
     public function edit_component_question(Request $request)
     {
+        $this->validate($request, [
+          'question' => 'required'
+        ]);
+
         $user = Auth::user();
         if (!$user)
-            return 'Ooops! Not authorized';
+            redirect()->back()->with(Session::flash('success', 'Ooops! Not authorized'));
         else{
             $question = ComponentQuestion::find($request->question_id);
             if($user->id == $question->asker_id){
                 $question->question = $request->question;
                 $question->save();
             }
-            return back();
+            redirect()->back();
         }
     }
 
     public function edit_question(Request $request)
     {
+        $this->validate($request, [
+          'question' => 'required'
+        ]);
+
         $user = Auth::user();
         if (!$user)
-            return 'Ooops! Not authorized';
+            redirect()->back()->with(Session::flash('success', 'Ooops! Not authorized'));
         else{
             $question = Question::find($request->question_id);
             if($user->id == $question->asker_id){
                 $question->question = $request->question;
                 $question->save();
             }
-            return back();
+            redirect()->back();
         }
     }
 
     public function edit_component_answer(Request $request)
     {
+        $this->validate($request, [
+          'answer' => 'required'
+        ]);
+
         $user = Auth::user();
         if (!$user)
-            return 'Ooops! Not authorized';
+            redirect()->back()->with(Session::flash('success', 'Ooops! Not authorized'));
         else{
             $answer = ComponentAnswer::find($request->answer_id);
             if($user->id == $answer->responder_id){
                 $answer->answer = $request->answer;
                 $answer->save();
             }
-            return back();
+            redirect()->back();
         }
     }
 
     public function edit_answer(Request $request)
     {
+        $this->validate($request, [
+          'answer' => 'required'
+        ]);
+
         $user = Auth::user();
         if (!$user)
-            return 'Ooops! Not authorized';
+            redirect()->back()->with(Session::flash('success', 'Ooops! Not authorized'));
         else{
             $answer = Answer::find($request->answer_id);
             if($user->id == $answer->responder_id){
                 $answer->answer = $request->answer;
                 $answer->save();
             }
-            return back();
+            redirect()->back();
         }
     }
 
@@ -237,10 +257,7 @@ class AjaxController extends Controller
 
         }
 
-
-
     }
-
 
     public function send_report_question(Request $request)
     {
@@ -264,7 +281,6 @@ class AjaxController extends Controller
         foreach($admins as $admin)
             Notification::send_notification($admin->id,$description,$link);
         return "Report submitted successfully";
-
 
     }
 

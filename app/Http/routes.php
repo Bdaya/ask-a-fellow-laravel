@@ -96,7 +96,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('admin/note_requests', 'AdminController@noteRequests');
     Route::get('admin/approve_note/{id}', 'AdminController@approveNoteUpload');
     Route::get('admin/delete_note/{id}', 'AdminController@deleteNote');
-    // Route::get('admin/view_note/{id}', 'AdminController@viewNote');
+    Route::get('admin/view_note/{id}', 'AdminController@viewNote');
 
 
     Route::get('/browse', 'AppController@browse');
@@ -112,7 +112,7 @@ Route::group(['middleware' => ['web']], function () {
 
 
     Route::get('/vote/answer/{answer_id}/{type}', 'AjaxController@vote_answer');
-    Route::get('/vote/question/{answer_id}/{type}', 'AjaxController@vote_question');
+    Route::get('/vote/question/{question_id}/{type}', 'AjaxController@vote_question');
 
 
     Route::get('/notifications_partial/', 'AjaxController@view_notifications_partial');
@@ -294,7 +294,11 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
     /*
      *  Vote a question
      */
-    Route::get('/vote/question/{answer_id}/{type}', 'ApiController@vote_question');
+    Route::post('/vote/question/{question_id}/{type}', 'API\QuestionAPIController@vote_question');
+    /*
+     *  Vote an answer
+     */
+    Route::post('/vote/answer/{answer_id}/{type}', 'API\QuestionAPIController@vote_answer');
     /*
      *  Post a question
      */
@@ -323,7 +327,6 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      *  Post an answer about a component
      */
     Route::post('/component/answers/{question_id}', 'API\ComponentApiController@post_answer');
-
     /*
      * Get the events of a specific course
      */
@@ -352,4 +355,12 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      * Get the full details of a note
      */
     Route::get('/note_details/{note_id}', 'API\NotesAPIController@show');
+    /*
+     *  Post a comment about a note
+     */
+    Route::post('/note/comment/{note_id}', 'API\NotesAPIController@post_comment');
+    /*
+     *  Vote a note
+     */
+    Route::post('/note/vote/{note_id}/{type}', 'API\NotesAPIController@vote_note');
 });

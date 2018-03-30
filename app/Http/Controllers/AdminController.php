@@ -49,7 +49,6 @@ class AdminController extends Controller
         return view('admin.add_course', compact(['courses', 'majors']));
     }
 
-
     public function add_course(Request $request)
     {
         $this->validate($request, [
@@ -555,5 +554,18 @@ class AdminController extends Controller
                 return Redirect::back();
             }
         }
+    }
+
+    public function viewNote($id){
+        $note = Note::find($id);
+        $disk = Storage::disk('google');
+        $file = collect($disk->listContents())->where('type', 'file')
+        ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
+        ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
+
+        return response()->make(file_get_contents(url($file['path'])), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$note->path.'"'
+        ]);
     }
 }

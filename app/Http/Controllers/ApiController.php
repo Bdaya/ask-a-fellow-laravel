@@ -91,47 +91,6 @@ class ApiController extends Controller
         return ['questions' => $questions, 'count_questions' => $count_questions];
     }
 
-
-    public function vote_question($question_id, $type)
-    {
-        $user = Auth::user();
-        if (!$user) {
-            return ['state' => 'error', 'error' => true];
-        }
-
-        if ($type == 0 && count($user->upvotesOnQuestion($question_id)))
-            return ['state' => 'cannot up vote twice', 'error' => true];
-        if ($type == 1 && count($user->downvotesOnQuestion($question_id)))
-            return ['state' => 'cannot down vote twice', 'error' => true];
-        if ($type == 0 && count($user->downvotesOnQuestion($question_id))) {
-            $vote = QuestionVote::where('user_id', '=', Auth::user()->id)->where('question_id', '=', $question_id)->first();
-            $vote->delete();
-        } else if ($type == 1 && count($user->upvotesOnQuestion($question_id))) {
-            $vote = QuestionVote::where('user_id', '=', Auth::user()->id)->where('question_id', '=', $question_id)->first();
-            $vote->delete();
-        } else
-            $user->vote_on_question($question_id, $type);
-
-        $question = Question::find($question_id);
-        if (Auth::user()->id != $question->asker_id) {
-            //send notification
-            $asker_id = $question->asker_id;
-            $action = ($type == 0) ? ' upvoted' : ' downvoted';
-            $description = Auth::user()->first_name . ' ' . Auth::user()->last_name . $action . ' your question.';
-            $link = url('/answers/' . $question_id);
-            Notification::send_notification($asker_id, $description, $link);
-
-        }
-
-        $votes = Question::find($question_id)->votes;
-        $color = 'black';
-        if ($votes > 0)
-            $color = 'green';
-        elseif ($votes < 0)
-            $color = 'red';
-        return ['state' => '200 ok', 'error' => false];
-    }
-
     public function post_question(Request $request, $course_id)
     {
         $this->validate($request, [
@@ -169,13 +128,12 @@ class ApiController extends Controller
         $questions = $user->home_questions();
         $count_questions = count($questions->get());
         $questions = $questions->orderBy('created_at','desc')->paginate(10);
-      // dd($questions);
         foreach ($questions as $question) {
            
             $question['asker'] = $question->asker()->get();
             $question['count_answers'] = $question->answers()->get()->count();
         }
-        $questions->setPath('http://localhost:8000/api/v1/');
+        $questions->setPath('api/v1/');
        return $questions;
     }
 }
