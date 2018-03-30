@@ -51,14 +51,14 @@ class QuestionAPIController extends Controller
         }
 
         $asker = $Question->asker()->first();
-        $file_url = null;
+        $attachement_url = null;
 
         if($Question->attachement_path){
             $disk = Storage::disk('google');
             $file = collect($disk->listContents())->where('type', 'file')
                     ->where('extension', pathinfo($Question->attachement_path, PATHINFO_EXTENSION))
                     ->where('filename', pathinfo($Question->attachement_path, PATHINFO_FILENAME))->first();
-            $file_url = $disk->url($file['path']);
+            $attachement_url = $disk->url($file['path']);
        }
 
         return response()->json([
@@ -67,7 +67,7 @@ class QuestionAPIController extends Controller
                 'creation' => $Question['created_at'],
                 'update' => $Question['updated_at'],
                 'votes' => $Question['votes'],
-                'file_url' => $file_url,
+                'attachement_url' => $attachement_url,
                 'asker_fname' => $asker['first_name'],
                 'asker_lname' => $asker['last_name']
             ]
@@ -101,13 +101,13 @@ class QuestionAPIController extends Controller
             $returnData['status'] = true;
             foreach ($answers as $answer) {
                $answer['responder'] = $answer->responder;
-               $answer['file_url'] = null;
+               $answer['attachement_url'] = null;
                if($answer->attachement_path){
                     $disk = Storage::disk('google');
                     $file = collect($disk->listContents())->where('type', 'file')
                             ->where('extension', pathinfo($answer->attachement_path, PATHINFO_EXTENSION))
                             ->where('filename', pathinfo($answer->attachement_path, PATHINFO_FILENAME))->first();
-                    $answer['file_url'] = $disk->url($file['path']);
+                    $answer['attachement_url'] = $disk->url($file['path']);
                }
             }
             $returnData['data'] = $answers;

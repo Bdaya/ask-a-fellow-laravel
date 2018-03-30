@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ComponentAPIController extends Controller
 {
@@ -72,6 +73,16 @@ class ComponentAPIController extends Controller
         $component->creator_lname = $component->creator()->last_name;
         $component->creator_email = $component->creator()->email;
         $component_questions = $component->questions()->get();
+        foreach ($component_questions as $component_question) {
+            $component_question['attachement_url'] = null;
+            if($component_question->attachement_path){
+                $disk = Storage::disk('google');
+                $file = collect($disk->listContents())->where('type', 'file')
+                ->where('extension', pathinfo($component_question->attachement_path, PATHINFO_EXTENSION))
+                ->where('filename', pathinfo($component_question->attachement_path, PATHINFO_FILENAME))->first();
+                $component_question['attachement_url'] = $disk->url($file['path']);
+           }
+        }
         $returnedData = [];
         $returnedData['status'] = '200 ok';
         $returnedData['error'] = null;
@@ -133,5 +144,37 @@ class ComponentAPIController extends Controller
         
         
         return ['state' => '200 ok', 'error' => false,'data'=>$answer];
+    }
+
+    public function view_answers($question_id, $order)
+    {
+
+        $question = ComponentQuestion::find($question_id);
+        $returnData = array();
+
+        if (!$question) {
+            $returnData['status'] = false;
+            $returnData['message'] = 'Invalid question id.';
+        } else {
+            $answers = ComponentAnswer::where('question_id', $id)->get();
+
+            $returnData['status'] = true;
+            foreach ($answers as $answer) {
+               $answer['responder'] = $answer->responder();
+               $answer['attachement_url'] = null;
+               if($answer->attachement_path){
+                    $disk = Storage::disk('google');
+                    $file = collect($disk->listContents())->where('type', 'file')
+                    ->where('extension', pathinfo($answer->attachement_path, PATHINFO_EXTENSION))
+                    ->where('filename', pathinfo($answer->attachement_path, PATHINFO_FILENAME))->first();
+                    $answer['attachement_url'] = $disk->url($file['path']);
+               }
+            }
+            $returnData['data']['question'] = $questions;
+            $returnData['data']['answers'] = $answers;
+        }
+
+
+        return response()->json($returnData);
     }
 }
