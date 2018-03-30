@@ -200,7 +200,7 @@ Route::group(['middleware' => ['web']], function () {
     /**
      * Request to delete a note
      */
-    Route::post('/note/{note_id}/requestDelete', 'NotesController@request_delete');
+    Route::get('/note/request_delete', 'NotesController@request_delete');
     /**
      *  Post comment on a note
      */
@@ -344,4 +344,12 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      * Post a review of a store
      */
     Route::post('/stores/{store_id}/reviews', 'API\StoresAPIController@addReview');
+    /*
+     * Get a list of all of notes of a specific course
+     */
+    Route::get('/notes/{course_id}', 'API\NotesAPIController@index');
+    /*
+     * Get the full details of a note
+     */
+    Route::get('/note_details/{note_id}', 'API\NotesAPIController@show');
 });

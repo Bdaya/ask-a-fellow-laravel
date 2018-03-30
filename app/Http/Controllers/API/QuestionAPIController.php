@@ -8,7 +8,7 @@ use App\Http\Controllers;
 use App\Http\Requests;
 use App\Question;
 use Auth;
-
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Class QuestionAPIController
@@ -47,7 +47,16 @@ class QuestionAPIController extends Controller
             ], 404);
         }
 
-        $asker = $Question->asker();
+        $asker = $Question->asker()->first();
+        $file_url = null;
+
+        if($Question->attachement_path){
+            $disk = Storage::disk('google');
+            $file = collect($disk->listContents())->where('type', 'file')
+                    ->where('extension', pathinfo($Question->attachement_path, PATHINFO_EXTENSION))
+                    ->where('filename', pathinfo($Question->attachement_path, PATHINFO_FILENAME))->first();
+            $file_url = $disk->url($file['path']);
+       }
 
         return response()->json([
             'data' => [
@@ -55,6 +64,7 @@ class QuestionAPIController extends Controller
                 'creation' => $Question['created_at'],
                 'update' => $Question['updated_at'],
                 'votes' => $Question['votes'],
+                'file_url' => $file_url,
                 'asker_fname' => $asker['first_name'],
                 'asker_lname' => $asker['last_name']
             ]
@@ -88,6 +98,14 @@ class QuestionAPIController extends Controller
             $returnData['status'] = true;
             foreach ($answers as $answer) {
                $answer['responder'] = $answer->responder;
+               $answer['file_url'] = null;
+               if($answer->attachement_path){
+                    $disk = Storage::disk('google');
+                    $file = collect($disk->listContents())->where('type', 'file')
+                            ->where('extension', pathinfo($answer->attachement_path, PATHINFO_EXTENSION))
+                            ->where('filename', pathinfo($answer->attachement_path, PATHINFO_FILENAME))->first();
+                    $answer['file_url'] = $disk->url($file['path']);
+               }
             }
             $returnData['data'] = $answers;
         }
@@ -154,7 +172,7 @@ class QuestionAPIController extends Controller
     {
         $user = Auth::user();
 
-        if($type == 0 && count($user->upvotesOnQuestion($question_id))){}
+        if($type == 0 && count($user->upvotesOnQuestion($question_id))){
             $returnData['status'] = false;
             $returnData['message'] = 'Cannot upvote twice';
             return response()->json($returnData);

@@ -290,7 +290,6 @@ class AppController extends Controller
         return redirect('/home');
     }
 
-
     public function send_feedback(Request $request)
     {
         $this->validate($request,[
@@ -305,6 +304,7 @@ class AppController extends Controller
         Session::flash('feedback','Feedback submitted successfully');
         return Redirect::back();
     }
+
     public function  list_notes($course_id)
     { //TODO : Pagination , Front end View , Offsets ,
         if(Auth::user())
@@ -316,16 +316,16 @@ class AppController extends Controller
         return view('notes.notes',compact('notes','role'));
     }
 
-    public function view_note($note_id){
-      $note = Note::find($note_id);
+    // public function view_note($note_id){
+    //   $note = Note::find($note_id);
 
-      $path = $note->path;
+    //   $path = $note->path;
 
-      return Response::make(file_get_contents($path), 200, [
-      'Content-Type' => 'application/pdf',
-      'Content-Disposition' => 'inline; filename="'.$note->title.'"'
-      ]);
-    }
+    //   return Response::make(file_get_contents($path), 200, [
+    //   'Content-Type' => 'application/pdf',
+    //   'Content-Disposition' => 'inline; filename="'.$note->title.'"'
+    //   ]);
+    // }
 
     public function view_components()
     {
