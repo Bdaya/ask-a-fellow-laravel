@@ -170,7 +170,7 @@ class ComponentAPIController extends Controller
                     $answer['attachement_url'] = $disk->url($file['path']);
                }
             }
-            $returnData['data']['question'] = $questions;
+            $returnData['data']['question'] = $question;
             $returnData['data']['answers'] = $answers;
         }
 
