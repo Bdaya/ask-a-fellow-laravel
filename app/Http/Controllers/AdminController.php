@@ -563,9 +563,6 @@ class AdminController extends Controller
         ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
         ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
 
-        return response()->make(file_get_contents(url($file['path'])), 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$note->path.'"'
-        ]);
+        return response()->redirectTo('https://drive.google.com/file/d/'.$file['path'].'/view');
     }
 }
