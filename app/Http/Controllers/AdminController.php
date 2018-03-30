@@ -519,7 +519,7 @@ class AdminController extends Controller
     //approved the uplaod of a note by changing its request_upload status to 0
     public function approveNoteUpload($id) {
         $note = Note::find($id);
-        $note->request_upload = 0;
+        $note->request_upload = false;
         $note->save();
         return redirect('admin/note_requests');
     }

@@ -22,28 +22,29 @@ class NotesController extends Controller
     $this->middleware('auth');
   }
 
-  public function request_delete(Request $request, $note_id)
+  public function request_delete(Request $request)
   {
 
     $this->validate($request, [
       'comment' => 'required'
     ]);
 
-    $note = Note::find($note_id);
+    $note = Note::find($request->note_id);
 
     if(Auth::user() &&  Auth::user()->id == $note->user_id){
-      if($note->request_delete == true)
-      return 'you already requested to delete this note';
-
-      $note->request_delete = true;
-      $note->comment_on_delete = $request -> $delete_comment;
-      $note->save();
-
-      Session::flash('updated', 'Your request to delete this note is now handled');
-      redirect(url('/note/'.$note->id));
+        if($note->request_delete == true)
+            $message = 'You already requested to delete this note';
+        else{
+            $note->request_delete = true;
+            $note->comment_on_delete = $request->comment;
+            $note->save();
+            $message = 'Your request to delete this note is now handled';
+        }
     }
     else
-    return 'Not allowed to delete this note';
+        $message = 'You are not allowed to delete this note';
+
+    redirect()->back()->with(Session::flash('success', $message));
 
   }
 
@@ -156,8 +157,9 @@ class NotesController extends Controller
         $note->title = $request->title;
         $note->path = $fileName;
         $note->description = $request->description;
-        $note->request_upload = true;
-        $note->comment_on_delete="";
+
+        if($user->role >= 1)
+            $note->request_upload = false;
 
         Session::flash('success', 'Your request to upload this note is successfull');
         $note->save();

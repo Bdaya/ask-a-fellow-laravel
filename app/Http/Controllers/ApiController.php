@@ -10,7 +10,7 @@ use App\Question;
 use App\QuestionVote;
 use App\User;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests;
 use Illuminate\Support\Facades\Auth;
 
@@ -74,8 +74,16 @@ class ApiController extends Controller
 
         $questions = $course->questions()->latest()->paginate(10);
         foreach ($questions as $question) {
+            $question['file_url'] = null;
             $question['asker'] = $question->asker()->get();
             $question['count_answers'] = $question->answers()->get()->count();
+            if($question->attachement_path){
+                $disk = Storage::disk('google');
+                $file = collect($disk->listContents())->where('type', 'file')
+                        ->where('extension', pathinfo($question->attachement_path, PATHINFO_EXTENSION))
+                        ->where('filename', pathinfo($question->attachement_path, PATHINFO_FILENAME))->first();
+                $question['file_url'] = $disk->url($file['path']);
+           }
         }
         $questions->setPath('api/v1/');
         $count_questions = count($course->questions()->get());

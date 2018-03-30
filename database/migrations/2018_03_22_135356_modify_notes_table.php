@@ -14,7 +14,6 @@ class ModifyNotesTable extends Migration
     {
         Schema::table('notes', function (Blueprint $table) {
             $table->integer('votes');
-            $table->dropColumn('comment_on_delete');
         });
 
 

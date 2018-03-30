@@ -2,7 +2,12 @@
 @section('content')
 
     <div class="container">
+
+         @if (Session::has('success'))
+                <div class="alert alert-info" style="width: 87.5%">{{ Session::get('success') }}</div>
+            @endif
         <div class="media question">
+
             <div style="text-align: center" class="media-left">
 
                 <a href="{{url('user/'.$note->user_id)}}">
@@ -14,12 +19,15 @@
                 </a>
 
                 <br>
-                @if(Auth::user() && (Auth::user()->role >= 1))
-                  <form onclick="return confirm('Are you sure want to delete this note?');" action='/admin/delete_note/{{$note->id}}' Method="GET">
-                    <button class ="icon-button"><span class="glyphicon glyphicon-trash" style="font-size:30px"></span></button>
-                  </form>
+                @if(Auth::user())
+                    @if(Auth::user()->role >= 1)
+                      <form onclick="return confirm('Are you sure want to delete this note?');" action='/admin/delete_note/{{$note->id}}' Method="GET">
+                        <button class ="icon-button"><span class="glyphicon glyphicon-trash" style="font-size:30px"></span></button>
+                      </form>
+                    @elseif(Auth::user()->id == $note->user_id)
+                        <a value="{{$note->id}}" data-toggle="modal" data-target="#delete_modal" class="deletion_comment" title="Note Delete Request"><span class="glyphicon glyphicon-trash" style="font-size:30px;cursor:pointer;"></span></a>
+                    @endif
                 @endif
-
             </div>
 
             <div class="media-body">
@@ -37,6 +45,27 @@
                 <p style="font-weight: bold; font-style: italic; ">{{ date("F j, Y, g:i a",strtotime($note->created_at)) }} </p>
             </div>
         </div>
+
+        <div id="delete_modal" class="modal fade" tabindex="-1" role="dialog">
+                <div class="modal-dialog">
+                    <div class=""  style="background-color:rgba(255,255,255,0.9)">
+
+                        <button style="margin-right:15px;margin:top:10px;"type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+
+                        <br>
+                        <div class="modal-body" style="padding: 0 50px 40px 50px;">
+                            <h3>Write your delete comment</h3>
+                            <div class="form-group" style="width: 100%;">
+                                <textarea class="form-control delete_note_comment"></textarea>
+                            </div>
+
+                            <button onclick="deleteNoteRequest()" class="btn btn-default">Submit</button>
+                            @include('errors')
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         <div>
           @if(Auth::user())
@@ -138,8 +167,9 @@
             </div>
         </form>
         @else
-            <div class="">You must be logged in to be able to answer. <a href="{{url('/login')}}">Login here.</a></div>
+            <div class="">You must be logged in to be able to comment. <a href="{{url('/login')}}">Login here.</a></div>
         @endif
+
     </div>
 
 
@@ -317,7 +347,6 @@ span.verified{
         $.ajax({
             'url': "{{url('')}}/vote/note/" + note_id + "/" + type,
             success: function (data) {
-                console.log(data);
                 note.parent().find('.note_votes').html(data);
             }
         });
@@ -347,6 +376,23 @@ span.verified{
                 url : "{{url('edit_comment/')}}",
                 data : {comment:body,comment_id:comment_id},
                 success : function(data){
+                    location.reload();
+                }
+            });
+    }
+
+    var note_id;
+        $('.deletion_comment').click(function () {
+            note_id = $(this).attr('value');
+        });
+    
+    function deleteNoteRequest(){
+            var body = $('.delete_note_comment').val();
+            $.ajax({
+                type: "GET",
+                url : "{{url('note/request_delete/')}}",
+                data : {comment:body,note_id:note_id},
+                success: function (data) {
                     location.reload();
                 }
             });
