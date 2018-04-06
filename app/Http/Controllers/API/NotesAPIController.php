@@ -18,7 +18,8 @@ class NotesAPIController extends Controller
     {
         $this->middleware('auth', ['only' => [
             'post_comment',
-            'vote_note'
+            'vote_note',
+            'request_delete'
         ]]);
     }
 
@@ -125,6 +126,49 @@ class NotesAPIController extends Controller
 
         return response()->json($returnData);
 
+    }
+
+    public function request_delete(Request $request, $note_id)
+    {
+
+        $this->validate($request, [
+          'comment' => 'required'
+        ]);
+
+        $note = Note::find($note_id);
+
+        if(Auth::user() &&  Auth::user()->id == $note->user_id){
+            if($note->request_delete == true)
+                $message = 'You already requested to delete this note';
+            else{
+                $note->request_delete = true;
+                $note->comment_on_delete = $request->comment;
+                $note->save();
+                $message = 'Your request to delete this note is now handled';
+            }
+        }
+        else
+            $message = 'You are not allowed to delete this note';
+
+        return response()->json(['message' => $message]);
+
+    }
+
+    public function edit_note_comment(Request $request, $comment_id)
+    {
+        $this->validate($request, [
+          'comment' => 'required'
+        ]);
+
+        $comment = NoteComment::find($comment_id);
+        if($comment){
+            $comment->body = $request->comment;
+            $comment->save();
+            return response()->json($comment, 200);
+        }
+        else{
+            return response()->json(['status' => '404 not found', 'message' => 'note comment not found'], 404);
+        }
     }
 
 }
