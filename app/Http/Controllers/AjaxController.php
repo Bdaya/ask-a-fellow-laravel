@@ -16,6 +16,9 @@ use App\Notification;
 use App\QuestionReport;
 use App\AnswerReport;
 use App\User;
+use App\NoteComment;
+use App\ComponentQuestion;
+use App\ComponentAnswer;
 
 class AjaxController extends Controller
 {
@@ -27,14 +30,112 @@ class AjaxController extends Controller
             'view_notifications_partial',
             'mark_notification',
             'send_report_answer',
-            'send_report_question'
+            'send_report_question',
+            'edit_note_comment',
+            'edit_component_question',
+            'edit_question',
+            'edit_component_answer',
+            'edit_answer'
         ]]);
     }
 
+    public function edit_note_comment(Request $request)
+    {
+        $this->validate($request, [
+          'comment' => 'required'
+        ]);
+
+        $user = Auth::user();
+        if (!$user)
+            redirect()->back()->with(Session::flash('success', 'Ooops! Not authorized'));
+        else{
+            $comment = NoteComment::find($request->comment_id);
+            if($user->id == $comment->user_id){
+                $comment->body = $request->comment;
+                $comment->save();
+            }
+            redirect()->back();
+        }
+    }
+
+    public function edit_component_question(Request $request)
+    {
+        $this->validate($request, [
+          'question' => 'required'
+        ]);
+
+        $user = Auth::user();
+        if (!$user)
+            redirect()->back()->with(Session::flash('success', 'Ooops! Not authorized'));
+        else{
+            $question = ComponentQuestion::find($request->question_id);
+            if($user->id == $question->asker_id){
+                $question->question = $request->question;
+                $question->save();
+            }
+            redirect()->back();
+        }
+    }
+
+    public function edit_question(Request $request)
+    {
+        $this->validate($request, [
+          'question' => 'required'
+        ]);
+
+        $user = Auth::user();
+        if (!$user)
+            redirect()->back()->with(Session::flash('success', 'Ooops! Not authorized'));
+        else{
+            $question = Question::find($request->question_id);
+            if($user->id == $question->asker_id){
+                $question->question = $request->question;
+                $question->save();
+            }
+            redirect()->back();
+        }
+    }
+
+    public function edit_component_answer(Request $request)
+    {
+        $this->validate($request, [
+          'answer' => 'required'
+        ]);
+
+        $user = Auth::user();
+        if (!$user)
+            redirect()->back()->with(Session::flash('success', 'Ooops! Not authorized'));
+        else{
+            $answer = ComponentAnswer::find($request->answer_id);
+            if($user->id == $answer->responder_id){
+                $answer->answer = $request->answer;
+                $answer->save();
+            }
+            redirect()->back();
+        }
+    }
+
+    public function edit_answer(Request $request)
+    {
+        $this->validate($request, [
+          'answer' => 'required'
+        ]);
+
+        $user = Auth::user();
+        if (!$user)
+            redirect()->back()->with(Session::flash('success', 'Ooops! Not authorized'));
+        else{
+            $answer = Answer::find($request->answer_id);
+            if($user->id == $answer->responder_id){
+                $answer->answer = $request->answer;
+                $answer->save();
+            }
+            redirect()->back();
+        }
+    }
 
     public function getCourses($major, $semester)
     {
-//            return 'x';
         $major = Major::find($major);
         $courses = $major->courses()->where('semester','=',$semester)->get();
         return view('browse.courses_listing',compact(['courses','major','semester']));
@@ -45,9 +146,11 @@ class AjaxController extends Controller
         $user = Auth::user();
 
         if($type == 0 && count($user->upvotesOnAnswer($answer_id)))
-            return 'Cannot upvote twice';
+            return '<span style="color:black">Cannot upvote twice</span>';
+
         if($type == 1 && count($user->downvotesOnAnswer($answer_id)))
-            return 'Cannot downvote twice';
+            return '<span style="color:black">Cannot downvote twice</span>';
+
         if($type == 0 && count($user->downvotesOnAnswer($answer_id))) {
             $vote = AnswerVote::where('user_id','=',Auth::user()->id)->where('answer_id','=',$answer_id)->first();
             $vote->delete();
@@ -86,9 +189,11 @@ class AjaxController extends Controller
         $user = Auth::user();
 
         if($type == 0 && count($user->upvotesOnQuestion($question_id)))
-            return 'Cannot upvote twice';
+            return '<span style="color:black">Cannot upvote twice</span>';
+
         if($type == 1 && count($user->downvotesOnQuestion($question_id)))
-            return 'Cannot downvote twice';
+            return '<span style="color:black">Cannot downvote twice</span>';
+
         if($type == 0 && count($user->downvotesOnQuestion($question_id))) {
 
 
@@ -152,10 +257,7 @@ class AjaxController extends Controller
 
         }
 
-
-
     }
-
 
     public function send_report_question(Request $request)
     {
@@ -180,9 +282,7 @@ class AjaxController extends Controller
             Notification::send_notification($admin->id,$description,$link);
         return "Report submitted successfully";
 
-
     }
-
 
     public function send_report_answer(Request $request)
     {

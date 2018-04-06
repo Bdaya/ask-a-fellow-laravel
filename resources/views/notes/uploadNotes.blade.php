@@ -9,13 +9,13 @@
             <div class="form-group">
                 <label for="title" class="col-sm-3 control-label">Title</label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control" id="Title" name="title">
+                    <input type="text" class="form-control" id="Title" name="title" value="{{ old('title') }}" placeholder="Note Title">
                 </div>
             </div>
             <div class="form-group">
                 <label for="description" class="col-sm-3 control-label">Description</label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control" id="description" name="description">
+                    <input type="text" class="form-control" id="description" name="description" value="{{ old('description') }}" placeholder="Note Description">
                 </div>
             </div>
             <div class="form-group">
@@ -32,6 +32,10 @@
             <div class="errors" style="color:red">
             @include('errors')
             </div>
+            <br>
+            @if (Session::has('success'))
+                <div class="alert alert-info">{{ Session::get('success') }}</div>
+            @endif
         </form>
     </div>
 

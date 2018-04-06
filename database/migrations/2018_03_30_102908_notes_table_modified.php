@@ -3,16 +3,18 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class UpdateStoreTable extends Migration
+class NotesTableModified extends Migration
 {
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up()
+     public function up()
     {
-        //
+        Schema::table('notes', function (Blueprint $table) {
+            $table->string('comment_on_delete');
+        });
     }
 
     /**
@@ -22,6 +24,6 @@ class UpdateStoreTable extends Migration
      */
     public function down()
     {
-        Schema::drop('stores');
+        Schema::drop('notes');
     }
 }

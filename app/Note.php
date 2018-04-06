@@ -21,6 +21,7 @@ class Note extends Model
     public function downvotes()
     {
         return $this->hasMany('App\NoteVote')->where('type','=',1)->get();
+    }
 
     public function user()
     {

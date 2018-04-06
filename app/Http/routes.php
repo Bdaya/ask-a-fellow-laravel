@@ -39,6 +39,8 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/howitworks', 'StaticController@howitworks');
     Route::get('/user/components', 'AppController@view_components');
     Route::get('/user/components/{id}', 'AppController@component_details');
+    Route::get('/user/components/{component_id}/delete/{question_id}', 'AppController@delete_component_question');
+    Route::get('/user/delete_component_answers/{question_id}/{answer_id}', 'AppController@delete_component_answer');
     Route::get('/user/update', 'UserController@updateInfoPage');
     Route::post('/user/update', 'UserController@updateInfo');
     Route::get('/user/stores', 'UserController@view_storelist');
@@ -105,7 +107,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/list_courses/{major}/{semester}', 'AjaxController@getCourses');
     Route::get('/browse/{course_id}', 'AppController@list_questions');
     Route::post('/browse/{course_id}', 'AppController@post_question');
-    Route::get('/browse/{major}/{semester}', 'AppController@list_questions_all');
+    Route::get('/browse/questions/{major_id}/{semester}', 'AppController@list_questions_all');
     Route::post('/browse/{major}/{semester}', 'AppController@post_question_all');
     Route::get('/answers/{question_id}', 'AppController@inside_question');
     Route::post('/answers/{question_id}', 'AppController@post_answer');
@@ -114,7 +116,7 @@ Route::group(['middleware' => ['web']], function () {
 
 
     Route::get('/vote/answer/{answer_id}/{type}', 'AjaxController@vote_answer');
-    Route::get('/vote/question/{answer_id}/{type}', 'AjaxController@vote_question');
+    Route::get('/vote/question/{question_id}/{type}', 'AjaxController@vote_question');
 
 
     Route::get('/notifications_partial/', 'AjaxController@view_notifications_partial');
@@ -129,8 +131,6 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/report_answer', 'AjaxController@send_report_answer');
     Route::get('/verify/{token}', 'AuthController@verify');
 
-    Route::post('/note/{note_id}/requestDelete', 'NotesController@request_delete');
-
     Route::get('/add_component', 'AppController@add_component');
     Route::post('/user/post_component', 'AppController@post_component');
 
@@ -140,12 +140,38 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/user/view_component_answers/{question_id}', 'AppController@View_component_answers');
     //END WIP
 
+    /**
+     * Download course and component question/answer attachements.
+     */
+    Route::get('/user/component_question/download_attachement/{question_id}', 'AppController@download_component_question_attachement');
+    Route::get('/user/question/download_attachement/{question_id}', 'AppController@download_question_attachement');
+    Route::get('/user/component_answer/download_attachement/{answer_id}', 'AppController@download_component_answer_attachement');
+    Route::get('/user/answer/download_attachement/{answer_id}', 'AppController@download_answer_attachement');
+
+    /**
+     * Edit note comment
+     */
+    Route::get('/edit_comment', 'AjaxController@edit_note_comment');
+    /**
+     * Edit component question
+     */
+    Route::get('/edit_component_question', 'AjaxController@edit_component_question');
+    /**
+     * Edit course question
+     */
+    Route::get('/edit_question', 'AjaxController@edit_question');
+    /**
+     * Edit component answer
+     */
+    Route::get('/edit_component_answer', 'AjaxController@edit_component_answer');
+    /**
+     * Edit course answer
+     */
+    Route::get('/edit_answer', 'AjaxController@edit_answer');
+
     Route::get('/admin/delete_note/{id}', 'AdminController@deleteNoteAdmin');
     Route::get('/browse/notes/{course_id}', 'AppController@list_notes');
-    Route::get('/browse/notes/view_note/{note_id}', 'AppController@view_note');
-
-
-    
+    Route::get('/browse/notes/view_note/{note_id}', 'NotesController@downloadNote');
 
     /**
      * Create a new calender for the user
@@ -178,11 +204,15 @@ Route::group(['middleware' => ['web']], function () {
     /**
      * Request to delete a note
      */
-    Route::post('/note/{note_id}/requestDelete', 'NotesController@request_delete');
+    Route::get('/note/request_delete', 'NotesController@request_delete');
     /**
      *  Post comment on a note
      */
     Route::post('/note_comment/{note_id}', 'NotesController@post_note_comment');
+    /**
+     *  Delete comment on a note
+     */
+    Route::get('/delete_note_comment/{note_id}/{comment_id}', 'NotesController@delete_note_comment');
     /**
      *  Vote a note
      */
@@ -268,7 +298,19 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
     /*
      *  Vote a question
      */
-    Route::get('/vote/question/{answer_id}/{type}', 'ApiController@vote_question');
+    Route::post('/vote/question/{question_id}/{type}', 'API\QuestionAPIController@vote_question');
+    /*
+     *  Edit a component question
+     */
+    Route::post('/question/edit/{question_id}', 'API\QuestionAPIController@edit_question');
+    /*
+     *  Edit a component question
+     */
+    Route::post('/answer/edit/{answer_id}', 'API\QuestionAPIController@edit_answer');
+    /*
+     *  Vote an answer
+     */
+    Route::post('/vote/answer/{answer_id}/{type}', 'API\QuestionAPIController@vote_answer');
     /*
      *  Post a question
      */
@@ -277,6 +319,14 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      *  Post an answer
      */
     Route::post('/answers/{question_id}', 'ApiController@post_answer');
+    /*
+     *  Edit a component question
+     */
+    Route::post('/component/edit_question/{question_id}', 'API\ComponentAPIController@edit_component_question');
+    /*
+     *  Edit a component question
+     */
+    Route::post('/component/edit_answer/{answer_id}', 'API\ComponentAPIController@edit_component_answer');
     /*
      * Home page data
      */
@@ -297,7 +347,10 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      *  Post an answer about a component
      */
     Route::post('/component/answers/{question_id}', 'API\ComponentApiController@post_answer');
-
+    /*
+     *  Get answers about a component question
+     */
+    Route::post('/component/view_answers/{question_id}', 'API\ComponentApiController@view_answer');
     /*
      * Get the events of a specific course
      */
@@ -318,4 +371,28 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      * Post a review of a store
      */
     Route::post('/stores/{store_id}/reviews', 'API\StoresAPIController@addReview');
+    /*
+     * Get a list of all of notes of a specific course
+     */
+    Route::get('/notes/{course_id}', 'API\NotesAPIController@index');
+    /*
+     * Get the full details of a note
+     */
+    Route::get('/note_details/{note_id}', 'API\NotesAPIController@show');
+    /*
+     *  Post a comment about a note
+     */
+    Route::post('/note/comment/{note_id}', 'API\NotesAPIController@post_comment');
+    /*
+     *  Vote a note
+     */
+    Route::post('/note/vote/{note_id}/{type}', 'API\NotesAPIController@vote_note');
+    /*
+     *  Vote a note
+     */
+    Route::post('/note/request_delete/{note_id}', 'API\NotesAPIController@request_delete');
+    /*
+     *  Edit a note comment
+     */
+    Route::post('/note/edit_comment/{comment_id}', 'API\NotesAPIController@edit_note_comment');
 });
