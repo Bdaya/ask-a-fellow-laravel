@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Event;
-
 use App\Http\Requests;
+use App\Course;
 
 class EventController extends Controller
 {
@@ -15,7 +15,7 @@ class EventController extends Controller
      */
     public function index()
     {
-        $events = Event::paginate(6);
+        $events = Event::where('verified', 1)->paginate(6);
         return view('events.index', compact('events'));
     }
 
@@ -30,5 +30,12 @@ class EventController extends Controller
         $event = Event::findOrFail($id);
         $announcements = $event->announcements()->orderBy('updated_at')->get();
         return view('events.show', compact('event', 'announcements'));
+    }
+
+    public function add_event_page($course_id)
+    {
+        $courses = [Course::find($course_id)];
+        
+        return view('admin.add_event', compact(['courses']));
     }
 }

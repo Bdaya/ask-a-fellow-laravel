@@ -234,8 +234,10 @@ class AdminController extends Controller
     public function add_event_page()
     {
         $courses = Course::all();
+
         return view('admin.add_event', compact(['courses']));
     }
+
     public function add_event(Request $request)
     {
         $this->validate($request, [
@@ -255,13 +257,13 @@ class AdminController extends Controller
         $event['place'] = $request['place'];
         $event['description'] = $request['description'];
 
+        if(Auth::user()->role == 1)
+            $event['verified'] = 1;
+
         $event->save();
 
-        return redirect('home');
+        return Redirect::back();
     }
-
-
-
 
     public function view_feedbacks()
     {
@@ -558,6 +560,15 @@ class AdminController extends Controller
         $disk->delete($file['path']);
         $note->delete();
 
+        return redirect('admin/note_requests');
+    }
+
+    public function reject_note_delete($id)
+    {
+        $note = Note::find($id);
+        $note->request_delete = false;
+        $note->comment_on_delete = "";
+        $note->save();
         return redirect('admin/note_requests');
     }
 

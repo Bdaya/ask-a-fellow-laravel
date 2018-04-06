@@ -305,15 +305,14 @@ class AppController extends Controller
         return Redirect::back();
     }
 
-    public function  list_notes($course_id)
+    public function list_notes($course_id)
     { 
-        //TODO : Pagination
         if(Auth::user())
         $role = Auth::user()->role;
         $course = Course::find($course_id);
         if(!$course)
            return 'Ooops! course not found';
-        $notes = $course->notes->where('request_upload', '=', false);
+        $notes = $course->notes()->where('request_upload', '=', false)->paginate(6);
         return view('notes.notes',compact('notes','role'));
     }
 
@@ -402,14 +401,14 @@ class AppController extends Controller
     public function view_component_answers($id)
     {
         $question = ComponentQuestion::find($id);
-        $answers = ComponentAnswer::where('question_id', $id)->get();
+        $answers = ComponentAnswer::where('question_id', $id)->paginate(5);
         return view('user.component_question_answers', compact(['question', 'answers']));
     }
 
     public function component_details($id)
     {
         $component = Component::find($id);
-        $questions = ComponentQuestion::where('component_id', $id)->get();
+        $questions = ComponentQuestion::where('component_id', $id)->paginate(5);
         return view('user.component_details', compact(['component', 'questions']));
     }
 

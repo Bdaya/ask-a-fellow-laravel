@@ -56,7 +56,7 @@ class NotesController extends Controller
         if(!$note)
             return 'Ooops! note not found';
         //sort answers
-        $comments = $note->comments()->get();
+        $comments = $note->comments()->paginate(5);
 
         return view('notes.note_details',compact(['note','comments']));
     }
@@ -143,7 +143,7 @@ class NotesController extends Controller
     {
         $user = Auth::user();
         $this->validate($request, [
-            'title' => 'alpha|required',
+            'title' => 'required',
             'description' => 'required',
             'file' => 'required'
         ]);

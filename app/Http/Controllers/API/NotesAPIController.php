@@ -30,7 +30,7 @@ class NotesAPIController extends Controller
         if (!$course) {
             return response()->json(['status' => '404 not found', 'message' => 'Course not found'], 404);
         }
-        $notes = $course->notes()->where('request_upload', false)->paginate(10); 
+        $notes = $course->notes()->where('request_upload', false)->paginate(6); 
         $notes->setPath('api/v1/');
         if (!$notes) {
             $returnData['status'] = false;
@@ -48,7 +48,7 @@ class NotesAPIController extends Controller
         if (!$note) {
             return response()->json(['status' => '404 not found', 'message' => 'note not found']);
         }
-        $comments = $note->comments()->get();
+        $comments = $note->comments()->paginate(5);
         $returnedData = [];
         $returnedData['status'] = '200 ok';
         $returnedData['error'] = null;
