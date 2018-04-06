@@ -77,16 +77,15 @@ class AdminController extends Controller
 
     public function update_course_page($id)
     {
-
         $course = Course::find($id);
         $majors = Major::all();
 
         $course_majors = array();
-        foreach ($course->majors()->get() as $major)
+        foreach ($course->majors()->get() as $major) {
             $course_majors[] = $major->id;
+        }
 
         return view('admin.update_course', compact(['course', 'majors', 'course_majors']));
-
     }
 
     public function update_course($id, Request $request)
@@ -205,7 +204,7 @@ class AdminController extends Controller
     public function delete_accept_component_page()
     {
         $components = Component::all();
-        return view('admin.delete_accept_component',  compact(['components']));
+        return view('admin.delete_accept_component', compact(['components']));
     }
 
     public function delete_component($id)
@@ -230,6 +229,39 @@ class AdminController extends Controller
         $creator_id = $component->creator_id;
         return redirect('/admin/mail/one/'.$creator_id);
     }
+
+    // Events Controller
+    public function add_event_page()
+    {
+        $courses = Course::all();
+        return view('admin.add_event', compact(['courses']));
+    }
+    public function add_event(Request $request)
+    {
+        $this->validate($request, [
+          'title' => 'required',
+          'course' => 'required',
+          'date' => 'required',
+          'place' => 'required',
+          'description' => 'required'
+      ]);
+
+        $event = new Event();
+
+        $event['creator_id'] = Auth::user()->id;
+        $event['title'] = $request['title'];
+        $event['course_id'] = $request['course'];
+        $event['date'] = $request['date'];
+        $event['place'] = $request['place'];
+        $event['description'] = $request['description'];
+
+        $event->save();
+
+        return redirect('home');
+    }
+
+
+
 
     public function view_feedbacks()
     {
@@ -259,8 +291,6 @@ class AdminController extends Controller
 
     public function processMailToUsers(Request $request, $type)
     {
-
-
         if ($type == 0) {
             $sendMail = $this->sendMailToOneUser($request->user_id, $request->mail_subject, $request->mail_content);
             if ($sendMail) {
@@ -280,8 +310,6 @@ class AdminController extends Controller
                 return redirect(url('admin/mail/many/'));
             }
         }
-
-
     }
 
 
@@ -298,13 +326,11 @@ class AdminController extends Controller
         }
 
         return $sendMail;
-
     }
 
 
     public function sendMailToManyUsers($users, $mail_subject, $mail_content)
     {
-
         $usersEmails = [];
         foreach ($users as $user) {
             $usersEmails[] = User::find($user)->email;
@@ -321,8 +347,6 @@ class AdminController extends Controller
         }
 
         return $sendMail;
-
-
     }
 
 
@@ -352,7 +376,6 @@ class AdminController extends Controller
 
     public function add_badge()
     {
-
         $users = User::orderBy('first_name', 'asc');
         return view('admin.badge', compact(['users']));
     }
@@ -386,8 +409,8 @@ class AdminController extends Controller
     //function to view all event requests
     public function eventRequests()
     {
-        $requests = Event::all()->where('verified',0);
-        return view('admin.event_requests')->with('requests',$requests);
+        $requests = Event::all()->where('verified', 0);
+        return view('admin.event_requests')->with('requests', $requests);
     }
 
     //to view information about the clicked event and its creator with the option to accept or delete it
@@ -500,23 +523,25 @@ class AdminController extends Controller
     }
 
     //function to get all node upload requests
-    public function noteRequests() {
-          $notes_upload = DB::table('notes')->where('notes.request_upload', '=', 1)
+    public function noteRequests()
+    {
+        $notes_upload = DB::table('notes')->where('notes.request_upload', '=', 1)
                   ->join('users', 'notes.user_id', '=', 'users.id')
                   ->join('courses', 'notes.course_id', '=', 'courses.id')
                   ->select('notes.*', 'users.first_name', 'users.last_name', 'courses.course_name', 'courses.course_code')
                   ->get();
-         $notes_delete = DB::table('notes')->where('notes.request_delete', '=', 1)
+        $notes_delete = DB::table('notes')->where('notes.request_delete', '=', 1)
                   ->join('users', 'notes.user_id', '=', 'users.id')
                   ->join('courses', 'notes.course_id', '=', 'courses.id')
                   ->select('notes.*', 'users.first_name', 'users.last_name', 'courses.course_name', 'courses.course_code')
                   ->get();
 
-          return view('admin.upload_delete_requests', compact(['notes_upload', 'notes_delete']));
+        return view('admin.upload_delete_requests', compact(['notes_upload', 'notes_delete']));
     }
 
     //approved the uplaod of a note by changing its request_upload status to 0
-    public function approveNoteUpload($id) {
+    public function approveNoteUpload($id)
+    {
         $note = Note::find($id);
         $note->request_upload = false;
         $note->save();
@@ -537,9 +562,11 @@ class AdminController extends Controller
     }
 
     //Function to Delete the note as an admin
-    public function deleteNoteAdmin($id) {
-        if(Auth::user()){
+    public function deleteNoteAdmin($id)
+    {
+        if (Auth::user()) {
             $role  = Auth::user()->role;
+
             if($role==1){
                 $note = Note::find($id);
                 $disk = Storage::disk('google');
@@ -550,6 +577,7 @@ class AdminController extends Controller
                 $course = $note->course->id;
                 $note->delete();
                 return redirect('/browse/notes/'.$course);
+
             } else {
                 return Redirect::back();
             }
