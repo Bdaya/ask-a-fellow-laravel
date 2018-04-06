@@ -47,7 +47,7 @@
                                 <textarea class="form-control modified_answer"></textarea>
                             </div>
 
-                            <button onclick="editAnswer()" class="btn btn-default">Edit</button>
+                            <button disabled="disabled" onclick="editAnswer()" class="btn btn-default">Edit</button>
                             @include('errors')
                         </div>
                         <!-- <div class="modal-footer"> -->
@@ -94,7 +94,17 @@
           var answer = $(this).attr('value');
           answer_id = JSON.parse(answer)["id"];
           var body = JSON.parse(answer)["answer"];
-          $('.modified_answer').html(body);
+          $('.modified_answer').val(body);
+      });
+
+      $(function() {
+        $('.modified_answer').on('input', function() {
+            if( $('.modified_answer').filter(function() { return !!this.value; }).length > 0 ) {
+                 $('button').prop('disabled', false);
+            } else {
+                 $('button').prop('disabled', true);
+            }
+        });
       });
 
       function editAnswer(){

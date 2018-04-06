@@ -177,4 +177,38 @@ class ComponentAPIController extends Controller
 
         return response()->json($returnData);
     }
+
+    public function edit_component_question(Request $request, $question_id)
+    {
+        $this->validate($request, [
+          'question' => 'required'
+        ]);
+
+        $question = ComponentQuestion::find($question_id);
+        if($question){
+            $question->question = $request->question;
+            $question->save();
+            return response()->json($question, 200);
+        }
+        else{
+            return response()->json(['status' => '404 not found', 'message' => 'component question not found'], 404);
+        }
+    }
+
+    public function edit_component_answer(Request $request, $answer_id)
+    {
+        $this->validate($request, [
+          'answer' => 'required'
+        ]);
+
+        $answer = ComponentAnswer::find($answer_id);
+        if($answer){
+            $answer->answer = $request->answer;
+            $answer->save();
+            return response()->json($answer, 200);
+        }
+        else{
+            return response()->json(['status' => '404 not found', 'message' => 'component answer not found'], 404);
+        }
+    }
 }

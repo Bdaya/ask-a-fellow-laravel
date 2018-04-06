@@ -147,7 +147,7 @@
                             <textarea class="form-control modified_comment"></textarea>
                         </div>
 
-                        <button onclick="editComment()" class="btn btn-default">Edit</button>
+                        <button disabled="disabled" onclick="editComment()" class="btn btn-default">Edit</button>
                         @include('errors')
                     </div>
                     <!-- <div class="modal-footer"> -->
@@ -366,8 +366,18 @@ span.verified{
             var comment = $(this).attr('value');
             comment_id = JSON.parse(comment)["id"];
             var body = JSON.parse(comment)["body"];
-            $('.modified_comment').html(body);
+            $('.modified_comment').val(body);
         });
+
+    $(function() {
+        $('.modified_comment').on('input', function() {
+            if( $('.modified_comment').filter(function() { return !!this.value; }).length > 0 ) {
+                 $('button').prop('disabled', false);
+            } else {
+                 $('button').prop('disabled', true);
+            }
+        });
+    });
     
     function editComment(){
             var body = $('.modified_comment').val();

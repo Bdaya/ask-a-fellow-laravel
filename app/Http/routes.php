@@ -296,6 +296,14 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      */
     Route::post('/vote/question/{question_id}/{type}', 'API\QuestionAPIController@vote_question');
     /*
+     *  Edit a component question
+     */
+    Route::post('/question/edit/{question_id}', 'API\QuestionAPIController@edit_question');
+    /*
+     *  Edit a component question
+     */
+    Route::post('/answer/edit/{answer_id}', 'API\QuestionAPIController@edit_answer');
+    /*
      *  Vote an answer
      */
     Route::post('/vote/answer/{answer_id}/{type}', 'API\QuestionAPIController@vote_answer');
@@ -307,6 +315,14 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      *  Post an answer
      */
     Route::post('/answers/{question_id}', 'ApiController@post_answer');
+    /*
+     *  Edit a component question
+     */
+    Route::post('/component/edit_question/{question_id}', 'API\ComponentAPIController@edit_component_question');
+    /*
+     *  Edit a component question
+     */
+    Route::post('/component/edit_answer/{answer_id}', 'API\ComponentAPIController@edit_component_answer');
     /*
      * Home page data
      */
@@ -367,4 +383,12 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      *  Vote a note
      */
     Route::post('/note/vote/{note_id}/{type}', 'API\NotesAPIController@vote_note');
+    /*
+     *  Vote a note
+     */
+    Route::post('/note/request_delete/{note_id}', 'API\NotesAPIController@request_delete');
+    /*
+     *  Edit a note comment
+     */
+    Route::post('/note/edit_comment/{comment_id}', 'API\NotesAPIController@edit_note_comment');
 });
