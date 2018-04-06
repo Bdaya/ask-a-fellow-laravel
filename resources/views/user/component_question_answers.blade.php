@@ -33,6 +33,10 @@
                     @endforeach
               </div>
 
+              <div style="text-align: center;">
+                 {{$answers->links()}}
+              </div>
+
               <div id="edit_modal" class="modal fade" tabindex="-1" role="dialog">
                 <div class="modal-dialog">
                     <div class=""  style="background-color:rgba(255,255,255,0.9)">

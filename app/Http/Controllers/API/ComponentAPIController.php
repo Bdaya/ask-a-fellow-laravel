@@ -72,7 +72,7 @@ class ComponentAPIController extends Controller
         $component->creator_fname = $component->creator()->first_name;
         $component->creator_lname = $component->creator()->last_name;
         $component->creator_email = $component->creator()->email;
-        $component_questions = $component->questions()->get();
+        $component_questions = $component->questions()->paginate(5);
         foreach ($component_questions as $component_question) {
             $component_question['attachement_url'] = null;
             if($component_question->attachement_path){
@@ -146,7 +146,7 @@ class ComponentAPIController extends Controller
         return ['state' => '200 ok', 'error' => false,'data'=>$answer];
     }
 
-    public function view_answers($question_id, $order)
+    public function view_answer($question_id)
     {
 
         $question = ComponentQuestion::find($question_id);
@@ -156,7 +156,7 @@ class ComponentAPIController extends Controller
             $returnData['status'] = false;
             $returnData['message'] = 'Invalid question id.';
         } else {
-            $answers = ComponentAnswer::where('question_id', $id)->get();
+            $answers = ComponentAnswer::where('question_id', $question_id)->paginate(5);
 
             $returnData['status'] = true;
             foreach ($answers as $answer) {

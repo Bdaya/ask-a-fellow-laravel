@@ -88,6 +88,7 @@ Route::group(['middleware' => ['web']], function () {
 
     // Events Routes
     Route::get('/admin/add_event', 'AdminController@add_event_page');
+    Route::get('/course/add_event/{course_id}', 'EventController@add_event_page');
     Route::post('/admin/add_event', 'AdminController@add_event');
 
     Route::get('/admin/event_requests', 'AdminController@eventRequests'); //viewing event request
@@ -100,6 +101,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('admin/note_requests', 'AdminController@noteRequests');
     Route::get('admin/approve_note/{id}', 'AdminController@approveNoteUpload');
     Route::get('admin/delete_note/{id}', 'AdminController@deleteNote');
+    Route::get('admin/reject_note_delete/{id}', 'AdminController@reject_note_delete');
     Route::get('admin/view_note/{id}', 'AdminController@viewNote');
 
 
@@ -346,11 +348,11 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
     /*
      *  Post an answer about a component
      */
-    Route::post('/component/answers/{question_id}', 'API\ComponentApiController@post_answer');
+    Route::post('/component/answers/{question_id}', 'API\ComponentAPIController@post_answer');
     /*
      *  Get answers about a component question
      */
-    Route::post('/component/view_answers/{question_id}', 'API\ComponentApiController@view_answer');
+    Route::get('/component/view_answers/{question_id}', 'API\ComponentAPIController@view_answer');
     /*
      * Get the events of a specific course
      */

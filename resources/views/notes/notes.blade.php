@@ -17,6 +17,11 @@
     </li>
   @endforeach
 </ul>
+
+<div style="text-align: center;">
+   {{$notes->links()}}
+</div>
+
 </div>
 
 @endsection

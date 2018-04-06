@@ -72,6 +72,10 @@
                   </div>
                 @endforeach
               </div>
+
+              <div style="text-align: center;">
+                 {{$questions->links()}}
+              </div>
               
               <div id="edit_modal" class="modal fade" tabindex="-1" role="dialog">
                 <div class="modal-dialog">
