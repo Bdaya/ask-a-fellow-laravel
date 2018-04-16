@@ -100,6 +100,13 @@ class ApiController extends Controller
         $question->asker_id = Auth::user()->id;
         $question->question = $request->question;
         $question->course_id = $course_id;
+        $file = $request->file('file');
+        if($file){
+            $fileName = 'question_'.time().'_'.$file->getClientOriginalName();
+            $mainDisk = Storage::disk('google');
+            $mainDisk->put($fileName, fopen($file, 'r+'));
+            $question->attachement_path = $fileName;
+        }
         $question->save();
         return ['state' => '200 ok', 'error' => false,'data'=>$question];
     }
@@ -113,6 +120,13 @@ class ApiController extends Controller
         $answer->answer = $request->answer;
         $answer->responder_id = Auth::user()->id;
         $answer->question_id = $question_id;
+        $file = $request->file('file');
+        if($file){
+            $fileName = 'ans_'.time().'_'.$file->getClientOriginalName();
+            $mainDisk = Storage::disk('google');
+            $mainDisk->put($fileName, fopen($file, 'r+'));
+            $answer->attachement_path = $fileName;
+        }
         $answer->save();
 
         $asker_id = Question::find($question_id)->asker_id;

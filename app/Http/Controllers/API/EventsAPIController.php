@@ -41,8 +41,28 @@ class EventsAPIController extends Controller
         if (!$course) {
             return response()->json(['status' => '404 not found', 'message' => 'Course not found'], 404);
         }
-        $events = $course->events()->where('verified', false)->paginate(10);
+
+        $events = $course->events()->where('verified', 1)->paginate(10);
         return response()->json($events, 200);
+    }
+
+    public function show($id)
+    {
+        $event = Event::find($id);
+
+        if (!$event) {
+            return response()->json(['status' => '404 not found', 'message' => 'Event not found']);
+        }
+
+        $announcements = $event->announcements()->orderBy('updated_at')->paginate(5);
+        $returnedData = [];
+        $returnedData['status'] = '200 ok';
+        $returnedData['error'] = null;
+        $returnedData['data'] = [];
+        $returnedData['data']['event'] = $event;
+        $returnedData['data']['event']['announcements'] = $announcements;
+
+        return response()->json($returnedData, 200);
     }
 
     /**
