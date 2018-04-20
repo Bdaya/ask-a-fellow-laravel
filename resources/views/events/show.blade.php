@@ -85,7 +85,7 @@
             @endforeach
         @endif
 
-        {{-- @if(Auth::user() && Auth::user()->role >= 1) --}}
+        @if(Auth::user() && Auth::user()->role >= 1)
 
             <h4>Add Announcement</h4>
             <form id="add_announcement_form" action="{{ url('event/add_announcement/'.$event->id) }}" method="POST">
@@ -109,7 +109,7 @@
                     </div>
                 </div>
             </form>
-        {{-- @endif --}}
+        @endif
         
 
     </div>
