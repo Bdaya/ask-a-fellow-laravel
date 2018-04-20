@@ -84,6 +84,34 @@
                 </div>
             @endforeach
         @endif
+
+        {{-- @if(Auth::user() && Auth::user()->role >= 1) --}}
+
+            <h4>Add Announcement</h4>
+            <form id="add_announcement_form" action="{{ url('event/add_announcement/'.$event->id) }}" method="POST">
+                <div class="form-group row">
+                    <label for="title" class="col-sm-2 col-form-label">Title</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" id="title" name="title" placeholder="title">
+                    </div>
+                </div>
+                
+                <div class="form-group row">
+                    <label for="description" class="col-sm-2 col-form-label">Description</label>
+                    <div class="col-sm-5">
+                        <textarea class="form-control" id="description" rows="3" name="description" placeholder="description"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="offset-sm-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary">Add announcement</button>
+                    </div>
+                </div>
+            </form>
+        {{-- @endif --}}
+        
+
     </div>
 
 

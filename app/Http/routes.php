@@ -86,6 +86,12 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/admin/mail/log', 'AdminController@showMailLog');
     Route::get('/admin/statistics', 'AdminController@statistics');
 
+    // Announcements Routes
+    Route::get('/admin/add_announcement', 'AdminController@add_announcement_page');//add announcement from admin roles page
+    Route::post('/admin/add_announcement', 'AdminController@add_announcement');
+
+    Route::post('/event/add_announcement/{event_id}', 'EventController@add_announcement');//add announcement from event page
+
     // Events Routes
     Route::get('/admin/add_event', 'AdminController@add_event_page');
     Route::get('/course/add_event/{course_id}', 'EventController@add_event_page');

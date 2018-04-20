@@ -1,10 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Http\Request;
 use App\Event;
+use App\Announcement;
 use App\Http\Requests;
 use App\Course;
+use Illuminate\Support\Facades\Redirect;
+use Auth;
 
 class EventController extends Controller
 {
@@ -37,5 +40,24 @@ class EventController extends Controller
         $courses = [Course::find($course_id)];
         
         return view('admin.add_event', compact(['courses']));
+    }
+
+    public function add_announcement(Request $request, $event_id)
+    {
+        $this->validate($request, [
+          'title' => 'required',
+          'description' => 'required'
+      ]);
+
+        $announcement = new Announcement();
+
+        $announcement['user_id'] = Auth::user()->id;
+        $announcement['title'] = $request['title'];
+        $announcement['event_id'] = $event_id;
+        $announcement['description'] = $request['description'];
+
+        $announcement->save();
+
+        return Redirect::back();
     }
 }

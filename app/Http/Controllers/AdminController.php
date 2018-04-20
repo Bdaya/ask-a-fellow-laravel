@@ -21,6 +21,7 @@ use App\Component;
 use App\ComponentCategory;
 use App\User;
 use App\Event;
+use App\Announcement;
 use App\AdminMail;
 use App\Store;
 use Mail;
@@ -228,6 +229,34 @@ class AdminController extends Controller
         $component->delete();
         $creator_id = $component->creator_id;
         return redirect('/admin/mail/one/'.$creator_id);
+    }
+
+    // Announcements Controller
+
+    public function add_announcement_page()
+    {
+        $events = Event::where('verified', 1)->paginate(6);
+        return view('admin.add_announcement', compact('events'));
+    }
+
+    public function add_announcement(Request $request)
+    {
+        $this->validate($request, [
+          'title' => 'required',
+          'event' => 'required',
+          'description' => 'required'
+      ]);
+
+        $announcement = new Announcement();
+
+        $announcement['user_id'] = Auth::user()->id;
+        $announcement['title'] = $request['title'];
+        $announcement['event_id'] = $request['event'];
+        $announcement['description'] = $request['description'];
+
+        $announcement->save();
+
+        return Redirect::back();
     }
 
     // Events Controller
