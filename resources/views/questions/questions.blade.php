@@ -67,6 +67,9 @@ if (isset($_GET['sort']))
                     @endif
                 </ul>
             </nav>
+            @if (Session::has('bookmark'))
+              <div class="alert alert-info" style="width: 75%">{{ Session::get('bookmark') }}</div>
+            @endif
             @foreach($questions_ordered as $question)
                 <div href="{{url('answers/'.$question->id)}}" class="media question">
                     <div style="text-align: center" class="media-left">
@@ -84,6 +87,7 @@ if (isset($_GET['sort']))
                     <div class="media-body" style="cursor: pointer;">
                         @if(Auth::user())
                             <div class="delete_question pull-right">
+                                <a title="Bookmark Question" href="{{url('user/bookmark/'.$question->id)}}"><span style="color:#FFAF6C" class="glyphicon glyphicon-bookmark"></span></a>
                                 @if(Auth::user()->id == $question->asker_id)
                                     <a value="{{$question}}" data-toggle="modal" data-target="#edit_modal" class="edit_question" title="Edit Question"><span class="glyphicon glyphicon-edit" style="color:#D24848;cursor:pointer;"></span></a>
                                 @endif
@@ -94,8 +98,7 @@ if (isset($_GET['sort']))
 
                                 @endif
                                 <a value="{{$question->id}}" data-toggle="modal" data-target="#report_modal"
-                                   class="report_question" title="Report question"><span style="color:#D24848;"
-                                                                                         class="glyphicon glyphicon-ban-circle"></span></a>
+                                   class="report_question" title="Report question"><span style="color:#D24848;" class="glyphicon glyphicon-ban-circle"></span></a>
                             </div>
                         @endif
                             @if($question->asker->verified_badge >=1)

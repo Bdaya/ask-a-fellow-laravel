@@ -4,8 +4,8 @@
     <div class="container">
 
          @if (Session::has('success'))
-                <div class="alert alert-info" style="width: 87.5%">{{ Session::get('success') }}</div>
-            @endif
+            <div class="alert alert-info" style="width: 87.5%">{{ Session::get('success') }}</div>
+        @endif
         <div class="media question">
 
             <div style="text-align: center" class="media-left">

@@ -4,6 +4,7 @@
         <a id="loginSwitch" style="margin-right:3%; color: #CA6A1B;  margin-left:5%; margin-bottom:15px; border-bottom:1px solid #CA6A1B;" href="#">Questions</a>
         <a id="registerSwitch" style="opacity:0.5;margin-left:3%;color: #CA6A1B;  margin-right:5%; border-bottom:1px solid #CA6A1B;" href="{{url('user/'.$user->id)}}/answers">Answers</a>
         <a id="registerSwitch" style="opacity:0.5;margin-left:3%;color: #CA6A1B;  margin-right:5%; border-bottom:1px solid #CA6A1B;" href="{{url('user/'.$user->id)}}/calender">Calender</a>
+        <a id="registerSwitch" style="opacity:0.5;margin-left:3%;color: #CA6A1B;  margin-right:5%; border-bottom:1px solid #CA6A1B;" href="{{url('user/'.$user->id)}}/bookmarks">Bookmarks</a>
     </nav>
 
     <h3>{{$user->first_name}} asked {{count($user->questions()->get())}} question(s).</h3>

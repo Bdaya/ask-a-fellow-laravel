@@ -16,6 +16,8 @@ use App\Component;
 use App\ComponentAnswer;
 use App\ComponentCategory;
 use App\ComponentQuestion;
+use App\BookmarkComponentQuestion;
+use App\BookmarkQuestion;
 use App\Note;
 use Auth;
 use Illuminate\Support\Facades\Session;
@@ -46,6 +48,8 @@ class AppController extends Controller
             'post_component_answer',
             'view_component_answers',
             'delete_component_question',
+            'bookmark_component_question',
+            'bookmark_question',
             'delete_component_answer'
         ]]);
 
@@ -374,6 +378,46 @@ class AppController extends Controller
             $answer->delete();
         }
         return redirect(url('/user/view_component_answers/'.$question_id));
+    }
+
+    public function bookmark_component_question($component_id, $question_id)
+    {
+        $bookmarked_question = BookmarkComponentQuestion::where('user_id', Auth::user()->id)->where('question_id', $question_id)->first();
+        if(Auth::user()){
+
+            if($bookmarked_question){
+                $bookmarked_question->delete();
+                Session::flash('bookmark', 'Question unmarked');
+            } else{
+                $bookmark = new BookmarkComponentQuestion;
+                $bookmark->user_id = Auth::user()->id;
+                $bookmark->question_id = $question_id;
+                $bookmark->save();
+                Session::flash('bookmark', 'Question bookmarked');
+            }
+
+        }
+        return redirect(url('user/components/'.$component_id));
+    }
+
+    public function bookmark_question($id)
+    {
+        $bookmarked_question = BookmarkQuestion::where('user_id', Auth::user()->id)->where('question_id', $id)->first();
+        if(Auth::user()){
+
+            if($bookmarked_question){
+                $bookmarked_question->delete();
+                Session::flash('bookmark', 'Question unmarked');
+            } else{
+                $bookmark = new BookmarkQuestion;
+                $bookmark->user_id = Auth::user()->id;
+                $bookmark->question_id = $id;
+                $bookmark->save();
+                Session::flash('bookmark', 'Question bookmarked');
+            }
+
+        }
+        return back();
     }
 
     public function post_component_answer(Request $request, $question_id)

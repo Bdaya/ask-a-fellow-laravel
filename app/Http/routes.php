@@ -40,6 +40,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/user/components', 'AppController@view_components');
     Route::get('/user/components/{id}', 'AppController@component_details');
     Route::get('/user/components/{component_id}/delete/{question_id}', 'AppController@delete_component_question');
+    Route::get('/user/components/{component_id}/bookmark/{question_id}', 'AppController@bookmark_component_question');
     Route::get('/user/delete_component_answers/{question_id}/{answer_id}', 'AppController@delete_component_answer');
     Route::get('/user/update', 'UserController@updateInfoPage');
     Route::post('/user/update', 'UserController@updateInfo');
@@ -48,7 +49,9 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('/user/stores/{id}', 'UserController@add_review');
     Route::get('/user/{id}', 'UserController@show');
     Route::get('/user/{id}/questions', 'UserController@show');
+    Route::get('/user/bookmark/{id}', 'AppController@bookmark_question');
     Route::get('/user/{id}/answers', 'UserController@showProfileAnswers');
+    Route::get('/user/{id}/bookmarks', 'UserController@showProfileBookmarks');
 
     Route::get('/admin', 'AdminController@index');
     Route::get('/admin/add_badge', 'AdminController@add_badge');
