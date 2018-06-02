@@ -400,5 +400,14 @@ class User extends Authenticatable
         return $this->hasMany('App\Review');
     }
 
+    public function bookmarked_questions()
+    {
+        return $this->hasMany('App\BookmarkQuestion', 'user_id');
+    }
+
+    public function bookmarked_components_questions()
+    {
+        return $this->hasMany('App\BookmarkComponentQuestion', 'user_id');
+    }
 
 }

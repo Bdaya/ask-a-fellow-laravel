@@ -6,6 +6,10 @@
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
 
+              @if (Session::has('bookmark'))
+                <div class="alert alert-info" style="width: 100%">{{ Session::get('bookmark') }}</div>
+              @endif
+
               <div class="panel-heading">
                 <h1>Component Details</h1>
               </div>
@@ -34,6 +38,7 @@
 
                       @if(Auth::user())
                           <div>
+                            <a title="Bookmark Component Question" href="{{url('user/components/'.$component->id.'/bookmark/'.$question->id)}}"><span style="color:#FFAF6C" class="glyphicon glyphicon-bookmark"></span></a>
                             @if(Auth::user()->id == $question->asker_id)
                                 <a value="{{$question}}" data-toggle="modal" data-target="#edit_modal" class="edit_question" title="Edit Component Question"><span class="glyphicon glyphicon-edit" style="color:#D24848;cursor:pointer;"></span></a>
                             @endif

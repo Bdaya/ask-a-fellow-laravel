@@ -40,6 +40,15 @@ class UserController extends Controller
         return view('user.answers', compact(['user']));
     }
 
+    public function showProfileBookmarks($id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return 'Ooops! User doesn\'t exist';
+        }
+        return view('user.bookmarks', compact(['user']));
+    }
+
     public function view_storelist()
     {
         $stores = Store::all();
