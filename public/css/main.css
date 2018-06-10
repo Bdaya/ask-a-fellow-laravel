@@ -46,6 +46,10 @@
   display: block;
 }
 
+.card__subtitle:hover {
+  color: #cc8400;
+}
+
 .card__actions {
   margin-bottom: 5px;
 }
