@@ -8,6 +8,7 @@ use App\Http\Controllers;
 use App\Http\Requests;
 use App\Question;
 use App\Answer;
+use App\BookmarkQuestion;
 use App\QuestionVote;
 use App\AnswerVote;
 use Auth;
@@ -24,7 +25,8 @@ class QuestionAPIController extends Controller
     {
         $this->middleware('auth', ['only' => [
             'vote_answer',
-            'vote_question'
+            'vote_question',
+            'bookmark_question'
         ]]);
 
     }
@@ -254,6 +256,22 @@ class QuestionAPIController extends Controller
         }
         else{
             return response()->json(['status' => '404 not found', 'message' => 'Answer not found'], 404);
+        }
+    }
+
+    public function bookmark_question($id)
+    {
+        $bookmarked_question = BookmarkQuestion::where('user_id', Auth::user()->id)->where('question_id', $id)->first();
+
+        if($bookmarked_question){
+            $bookmarked_question->delete();
+            return response()->json('Question unmarked', 200);
+        } else{
+            $bookmark = new BookmarkQuestion;
+            $bookmark->user_id = Auth::user()->id;
+            $bookmark->question_id = $id;
+            $bookmark->save();
+            return response()->json('Question bookmarked', 200);
         }
     }
 }

@@ -20,7 +20,7 @@
             <tbody>
                 @foreach($components as $component)
                 <tr>
-                    <td><a href="/user/components/{{ $component->id }}">{{ $component->title }}</a></td>
+                    <td><a href="/user/component/{{ $component->id }}">{{ $component->title }}</a></td>
                     <td>{{ $component->category()->name }}</td>
                     <td>{{ $component->price}}</td>
                 </tr>

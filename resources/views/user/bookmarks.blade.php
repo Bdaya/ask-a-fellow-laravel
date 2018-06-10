@@ -58,7 +58,7 @@
 
 		    <div class="media-body">
 		        <h4 class="media-heading">{{substr($bookmark->question->question,0,50).'...'}}</h4>
-		        {{substr($bookmark->question->question,0,300).'....'}}<a href="{{url('/answers/'.$bookmark->question->id)}}">See full question.</a>
+		        {{substr($bookmark->question->question,0,300).'....'}}<a href="{{url('/user/view_component_answers/'.$bookmark->question->id)}}">See full question.</a>
 		        <p style="font-weight: bold; font-style: italic; font-size: 13px;">{{ date("F j, Y, g:i a",strtotime($bookmark->question->created_at)) }} </p>
 		    </div>
 

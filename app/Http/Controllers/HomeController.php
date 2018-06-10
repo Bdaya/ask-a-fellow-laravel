@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 use Auth;
+use App\Store;
+use App\Major;
+use App\ComponentCategory;
 
 class HomeController extends Controller
 {
@@ -27,8 +30,9 @@ class HomeController extends Controller
     {
         $user  = Auth::user();
         $questions = $user->home_questions();
-
+        $categories = ComponentCategory::all();
         $count_questions = count($questions->get());
+        $count_stores = count(Store::all());
 
         if(isset($_GET['page']))
             $page = $_GET['page'];
@@ -44,6 +48,6 @@ class HomeController extends Controller
             $page = 0;
         $questions = $questions->orderBy('created_at','desc')->skip($page * $take)->take($take)->get();
 
-        return view('home',compact(['questions','count_questions']));
+        return view('home',compact(['questions','count_questions', 'categories', 'count_stores']));
     }
 }

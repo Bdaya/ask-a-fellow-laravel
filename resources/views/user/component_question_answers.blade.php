@@ -115,7 +115,7 @@
         var body = $('.modified_answer').val();
         $.ajax({
             type: "GET",
-            url : "{{url('edit_answer/')}}",
+            url : "{{url('edit_component_answer/')}}",
             data : {answer:body,answer_id:answer_id},
             success : function(data){
                 location.reload();
