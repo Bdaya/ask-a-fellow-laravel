@@ -36,7 +36,7 @@
 .card__text {
   margin: 0px;
   padding: 0px;
-  font-size: 16.5px;
+  font-size: 17px;
 }
 
 .card__subtitle {
@@ -44,6 +44,10 @@
   font-size: 14px;
   margin-top: 5px;
   display: block;
+}
+
+.card__subtitle:hover {
+  color: #cc8400;
 }
 
 .card__actions {
@@ -59,6 +63,7 @@
 .card__author {
   display: inline-block;
   margin-right: 10px;
+  font-size: 14px;
 }
 
 .card__controls {

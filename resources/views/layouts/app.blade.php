@@ -191,7 +191,6 @@
     #main_content {
 
         padding-top: 75px;
-        padding-bottom: 50px;
         min-height: 80vh;
         width: 100%;
         background-color: #f8f8f8;

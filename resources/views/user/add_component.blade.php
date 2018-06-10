@@ -2,7 +2,7 @@
 @section('content')
 
         <div class="container" style="padding-left: 100px; padding-right: 100px;">
-        <h1>Add Component</h1>
+        <h1>Add Product</h1>
         <br>
         <form class="form-horizontal" style="width: 80%;" method="POST" action="/user/post_component" enctype="multipart/form-data">
             <input type="hidden" name="_token" value="YHgdczFzLi67tiCSC1eWHgyLXNS7Ng0McIt9brWG">

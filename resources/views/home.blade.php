@@ -23,7 +23,7 @@ $pages = ceil($count_questions/$take);
     <div class="home-page__content">
 
       <h2>Hello {{Auth::user()->first_name}}!</h2>
-      <p>Showing questions from your <a class="text" href="{{url('/subscriptions')}}">subscribed courses</a>.</p>
+      <p style="font-size: 16px;">Showing questions from your <a class="text" href="{{url('/subscriptions')}}">subscribed courses</a>.</p>
 
       <div class="row">
         <div class="col-md-8">
@@ -52,8 +52,8 @@ $pages = ceil($count_questions/$take);
                 <div class="card__header">
                   <div class="row">
                     <div class="col-md-8">
-                      <h1 class="card__title">Java programming question?</h1>
-                      <a class="card__subtitle" href="#">{{$question->course->course_name}}</a>
+                      <h1 class="card__title">Semester {{$question->course->semester}}</h1>
+                      <a class="card__subtitle" href="{{url('/browse/'.$question->course->id)}}">{{$question->course->course_name}}</a>
                     </div>
                     <div class="col-md-4 card__controls">
                         <!-- <div class="card__actions">
@@ -88,7 +88,7 @@ $pages = ceil($count_questions/$take);
                     </div>
                   @endif
                 </p>
-                <p style=" font-style: italic; ">{{ date("F j, Y, g:i a",strtotime($question->created_at)) }} </p>
+                <p style=" font-style: italic; font-size: 12px;">{{ date("F j, Y, g:i a",strtotime($question->created_at)) }} </p>
                 @if(Auth::user())
                     <i class="fa fa-thumbs-up upvote_question" value="{{$question->id}}" title="upvote" style="color:green; font-size: 28px;"></i>
                 @endif
@@ -124,15 +124,23 @@ $pages = ceil($count_questions/$take);
                     </div>
                     <div class="media-body">
                         @if($question->answers()->orderBy('answers.votes','desc')->first()->responder->verified_badge >= 1)
-                            <h3>{{$question->answers()->orderBy('answers.votes','desc')->first()->responder->first_name.' '.$question->answers()->orderBy('answers.votes','desc')->first()->responder->last_name}}<span class="verified"></span> <span class="pull-right label label-success">Top Answer</span></h3>
+                            <h3>{{$question->answers()->orderBy('answers.votes','desc')->first()->responder->first_name.' '.$question->answers()->orderBy('answers.votes','desc')->first()->responder->last_name}}
+                              <i class="fa fa-check-circle" style="font-size: 20px;"></i>
+                              <span class="pull-right label label-success">Top Answer</span></h3>
                         @else
                             <h3>{{$question->answers()->orderBy('answers.votes','desc')->first()->responder->first_name.' '.$question->answers()->orderBy('answers.votes','desc')->first()->responder->last_name}} <span class="pull-right label label-success ">Top Answer</span></h3>
                         @endif
 
                         <div class="answer_text">
                             {{$question->answers()->orderBy('answers.votes','desc')->first()->answer}}
+                            @if($question->answers()->orderBy('answers.votes','desc')->first()->attachement_path)
+                              <div style="margin-top: 5px">
+                                <span class="glyphicon glyphicon-paperclip"></span>
+                                <a href="{{url('/user/answer/download_attachement/'.$question->answers()->orderBy('answers.votes','desc')->first()->id)}}">{{ $question->answers()->orderBy('answers.votes','desc')->first()->attachement_path }}</a>
+                              </div>
+                            @endif
                         </div>
-                        <p style=" font-style: italic; ">{{ date("F j, Y, g:i a",strtotime($question->answers()->orderBy('answers.votes','desc')->first()->created_at)) }} </p>
+                        <p style=" font-style: italic; font-size: 12px;">{{ date("F j, Y, g:i a",strtotime($question->answers()->orderBy('answers.votes','desc')->first()->created_at)) }} </p>
                     </div>
 
                 </div>
@@ -206,46 +214,13 @@ $pages = ceil($count_questions/$take);
 
 <style>
 
-.question
-{
-    background-color:  #FFF5E9;
-    padding: 15px;
-    margin-left: 80px;
-    width: 80%;
-    /*min-width: 200px;*/
-    margin-bottom: 10px;
-    border: 1px solid #E8DAC9;
-    border-radius: 10px;
-}
-.question img
-{
-    width: 50px;
-    height: 50px;
-    border-radius: 100px;
-    margin-bottom: 10px;
-}
-.question h3
-{
-    /*width: 100%;*/
-    font-size: 18px;
-    margin-top: 2px;
-    color: #621708;
-    /*font-weight: bold;*/
-}
-.question .question_text
-{
-    font-size: 18px;
-    background-color: #F9EBDA;
-    padding: 15px;
-    
-    /*display: inline-block;*/
-}
 .answer
 {
-    background-color:  #F5E0C2;
+    /*background-color:  #F5E0C2;*/
+    background-color: #ffe4b2;
     padding: 15px;
-    /*margin-left: 80px;*/
-    /*width: 60%;*/
+    margin-left: 70px;
+    margin-right: 20px;
     /*min-width: 200px;*/
     margin-bottom: 10px;
 }
@@ -258,15 +233,13 @@ $pages = ceil($count_questions/$take);
 }
 .answer h3
 {
-    /*width: 100%;*/
     font-size: 18px;
     margin-top: 2px;
     color: #621708;
-    /*font-weight: bold;*/
 }
 .answer .answer_text
 {
-    font-size: 15px;
+    font-size: 16px;
 }
 .pagination a
 {
@@ -287,15 +260,6 @@ $pages = ceil($count_questions/$take);
        min-width: 300px;
        width: 90%;
    }
-}
-span.verified{
-    display: inline-block;
-    vertical-align: middle;
-    height: 40px;
-    width: 40px;
-    background-image: url("{{asset('art/ver.png')}}");
-    background-repeat: no-repeat;
-    z-index: 200000;
 }
 </style>
 
