@@ -16,10 +16,12 @@
                 <td>{{count($course->questions()->get())}}</td>
                 <td>
                     <a href="{{url('browse/notes/'.$course->id)}}">View Notes</a>
+                    <br>
                     <a href="{{url('/course/'.$course->id.'/uploadNote')}}">Upload Note</a>
                 </td>
                 <td>
                     <a href="events">View Events</a>
+                    <br>
                     @if(Auth::user()->role >= 1)
                         <a href="{{url('/course/add_event/'.$course->id)}}">Add Event</a>
                     @endif

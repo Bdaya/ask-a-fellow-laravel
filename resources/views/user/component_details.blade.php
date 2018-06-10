@@ -51,7 +51,7 @@
 
                         <a href="{{url('user/'.$question->asker_id)}}">
 
-                            @if($question->asker()->profile_picture)
+                            @if($question->asker->profile_picture)
                                 <img class="media-object" src="{{asset($question->asker()->profile_picture)}}" alt="..."  width="50" height="50">
                             @else
                                 <img class="media-object" src="{{asset('art/default_pp.png')}}" alt="..."  width="50" height="50">
@@ -59,7 +59,7 @@
                         </a>
                     </div>
                     <div class="media-body">
-                        <h5>Asked By: {{ $question->asker()->first_name }}</h5>
+                        <h5>Asked By: {{ $question->asker->first_name }}</h5>
 
                         <div>
                           <p>{{ $question->question }}</p>

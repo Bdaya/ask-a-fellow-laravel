@@ -58,7 +58,7 @@ class AppController extends Controller
     public function browse()
     {
         $majors = Major::all();
-        $semesters = [1,2,3,4,5,6,7,8,9];
+        $semesters = [1,2,3,4,5,6,7,8,9,10];
         return view('browse.index',compact(['majors','semesters']));
     }
 
@@ -215,8 +215,6 @@ class AppController extends Controller
         $answers = $question->answers()->get();
 
         return view('questions.answers',compact(['question','answers']));
-
-
     }
 
     public function post_answer(Request $request,$question_id)
@@ -320,10 +318,15 @@ class AppController extends Controller
         return view('notes.notes',compact('notes','role'));
     }
 
-    public function view_components()
+    public function view_components($category_id)
     {
-        $components = Component::all()->where('accepted',1);
-        return view('user.components')->with('components',$components);
+        $category = ComponentCategory::find($category_id);
+        if($category){
+            $components = $category->components()->where('accepted',1)->get();
+            return view('user.components')->with('components',$components);
+        } else
+            return "Ooops, category not found";
+        
     }
 
     public function post_component_question(Request $request, $component_id)
@@ -429,7 +432,7 @@ class AppController extends Controller
         $answer = new ComponentAnswer;
         $answer->responder_id = Auth::user()->id;
         $answer->answer = $request->answer;
-        $answer->question_id = $question_id;
+        $answer->component_question_id = $question_id;
         $file = $request->file('file');
         if($file){
             $fileName = 'ca_'.time().'_'.$file->getClientOriginalName();
@@ -445,7 +448,7 @@ class AppController extends Controller
     public function view_component_answers($id)
     {
         $question = ComponentQuestion::find($id);
-        $answers = ComponentAnswer::where('question_id', $id)->paginate(5);
+        $answers = ComponentAnswer::where('component_question_id', $id)->paginate(5);
         return view('user.component_question_answers', compact(['question', 'answers']));
     }
 
@@ -472,8 +475,6 @@ class AppController extends Controller
             'price' => 'numeric|min:0|max:1000000',
             'category'=>'required'
         ]);
-        // seed the database first for testing
-        $categories = ComponentCategory::all();
         $component = new Component;
         $component->title = $request->title;
         $component->description = $request->description;
@@ -492,8 +493,13 @@ class AppController extends Controller
             $image = Uploader::upload($file->getRealPath(), ["width" => 300, "height" => 300, "crop" => "limit"]);
             $component->image_path = $image["url"];
         }
+        if(Auth::user()->role == 1){
+            $component->accepted = 1;
+            Session::flash('Added', 'Done, Component is added successfully!');
+        }
+        else
+            Session::flash('Added', 'Done, admins will review your component soon!');
         $component->save();
-        Session::flash('Added', 'Done, admins will review your component soon!');
         return redirect()->back();
     }
 

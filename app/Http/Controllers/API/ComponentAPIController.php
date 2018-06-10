@@ -6,6 +6,7 @@ use App\Component;
 use App\ComponentQuestion;
 use App\ComponentAnswer;
 use App\Notification;
+use App\BookmarkComponentQuestion;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Http\Request;
@@ -19,7 +20,8 @@ class ComponentAPIController extends Controller
     {
         $this->middleware('auth', ['only' => [
             'component_ask',
-            'post_answer'
+            'post_answer',
+            'bookmark_component_question'
         ]]);
     }
 
@@ -223,6 +225,22 @@ class ComponentAPIController extends Controller
         }
         else{
             return response()->json(['status' => '404 not found', 'message' => 'component answer not found'], 404);
+        }
+    }
+
+    public function bookmark_component_question($question_id)
+    {
+        $bookmarked_question = BookmarkComponentQuestion::where('user_id', Auth::user()->id)->where('question_id', $question_id)->first();
+
+        if($bookmarked_question){
+            $bookmarked_question->delete();
+            return response()->json('Question unmarked', 200);
+        } else{
+            $bookmark = new BookmarkComponentQuestion;
+            $bookmark->user_id = Auth::user()->id;
+            $bookmark->question_id = $question_id;
+            $bookmark->save();
+            return response()->json('Question bookmarked', 200);
         }
     }
 }

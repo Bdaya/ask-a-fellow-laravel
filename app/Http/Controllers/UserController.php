@@ -6,6 +6,7 @@ use App\Event;
 use App\User;
 use App\Store;
 use App\Review;
+use App\Component;
 use App\Http\Requests;
 use Auth;
 use App\Major;
@@ -173,6 +174,12 @@ class UserController extends Controller
         $user->save();
         Session::flash('updated', 'Info updated successfully!');
         return redirect(url('/user/' . $user->id));
+    }
+
+    public function pending_products()
+    {
+        $products = Component::all()->where('accepted', 0)->where('creator_id', Auth::user()->id);
+        return view('user.components')->with('components',$components);
     }
 
     /**

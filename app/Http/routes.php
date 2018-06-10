@@ -37,8 +37,8 @@ Route::group(['middleware' => ['web']], function () {
 
     Route::get('/about', 'StaticController@about');
     Route::get('/howitworks', 'StaticController@howitworks');
-    Route::get('/user/components', 'AppController@view_components');
-    Route::get('/user/components/{id}', 'AppController@component_details');
+    Route::get('/user/components/{category_id}', 'AppController@view_components');
+    Route::get('/user/component/{id}', 'AppController@component_details');
     Route::get('/user/components/{component_id}/delete/{question_id}', 'AppController@delete_component_question');
     Route::get('/user/components/{component_id}/bookmark/{question_id}', 'AppController@bookmark_component_question');
     Route::get('/user/delete_component_answers/{question_id}/{answer_id}', 'AppController@delete_component_answer');
@@ -52,6 +52,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/user/bookmark/{id}', 'AppController@bookmark_question');
     Route::get('/user/{id}/answers', 'UserController@showProfileAnswers');
     Route::get('/user/{id}/bookmarks', 'UserController@showProfileBookmarks');
+    Route::get('/pending_products', 'UserController@pending_products');
 
     Route::get('/admin', 'AdminController@index');
     Route::get('/admin/add_badge', 'AdminController@add_badge');
@@ -311,6 +312,10 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      */
     Route::post('/vote/question/{question_id}/{type}', 'API\QuestionAPIController@vote_question');
     /*
+     *  Bookmark a question
+     */
+    Route::post('/bookmark_question/{id}/', 'API\QuestionAPIController@bookmark_question');
+    /*
      *  Edit a component question
      */
     Route::post('/question/edit/{question_id}', 'API\QuestionAPIController@edit_question');
@@ -362,6 +367,10 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      *  Get answers about a component question
      */
     Route::get('/component/view_answers/{question_id}', 'API\ComponentAPIController@view_answer');
+    /*
+     *  Bookmark a component question
+     */
+    Route::post('/component/bookmark_question/{question_id}/', 'API\ComponentAPIController@bookmark_component_question');
     /*
      * Get the events of a specific course
      */
