@@ -36,7 +36,7 @@
 .card__text {
   margin: 0px;
   padding: 0px;
-  font-size: 16.5px;
+  font-size: 17px;
 }
 
 .card__subtitle {
@@ -63,6 +63,7 @@
 .card__author {
   display: inline-block;
   margin-right: 10px;
+  font-size: 14px;
 }
 
 .card__controls {

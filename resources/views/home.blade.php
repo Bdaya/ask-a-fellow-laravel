@@ -23,7 +23,7 @@ $pages = ceil($count_questions/$take);
     <div class="home-page__content">
 
       <h2>Hello {{Auth::user()->first_name}}!</h2>
-      <p>Showing questions from your <a class="text" href="{{url('/subscriptions')}}">subscribed courses</a>.</p>
+      <p style="font-size: 16px;">Showing questions from your <a class="text" href="{{url('/subscriptions')}}">subscribed courses</a>.</p>
 
       <div class="row">
         <div class="col-md-8">
@@ -88,7 +88,7 @@ $pages = ceil($count_questions/$take);
                     </div>
                   @endif
                 </p>
-                <p style=" font-style: italic; ">{{ date("F j, Y, g:i a",strtotime($question->created_at)) }} </p>
+                <p style=" font-style: italic; font-size: 12px;">{{ date("F j, Y, g:i a",strtotime($question->created_at)) }} </p>
                 @if(Auth::user())
                     <i class="fa fa-thumbs-up upvote_question" value="{{$question->id}}" title="upvote" style="color:green; font-size: 28px;"></i>
                 @endif
@@ -133,14 +133,14 @@ $pages = ceil($count_questions/$take);
 
                         <div class="answer_text">
                             {{$question->answers()->orderBy('answers.votes','desc')->first()->answer}}
-                            @if($question->answers()->orderBy('answers.votes','desc')->first()->answer->attachement_path)
+                            @if($question->answers()->orderBy('answers.votes','desc')->first()->attachement_path)
                               <div style="margin-top: 5px">
                                 <span class="glyphicon glyphicon-paperclip"></span>
                                 <a href="{{url('/user/answer/download_attachement/'.$question->answers()->orderBy('answers.votes','desc')->first()->id)}}">{{ $question->answers()->orderBy('answers.votes','desc')->first()->attachement_path }}</a>
                               </div>
                             @endif
                         </div>
-                        <p style=" font-style: italic; ">{{ date("F j, Y, g:i a",strtotime($question->answers()->orderBy('answers.votes','desc')->first()->created_at)) }} </p>
+                        <p style=" font-style: italic; font-size: 12px;">{{ date("F j, Y, g:i a",strtotime($question->answers()->orderBy('answers.votes','desc')->first()->created_at)) }} </p>
                     </div>
 
                 </div>
@@ -239,7 +239,7 @@ $pages = ceil($count_questions/$take);
 }
 .answer .answer_text
 {
-    font-size: 15px;
+    font-size: 16px;
 }
 .pagination a
 {
