@@ -289,6 +289,8 @@ class AdminController extends Controller
         if(Auth::user()->role == 1)
             $event['verified'] = 1;
 
+        Session::flash('Added', 'Done, Event is added successfully!');
+
         $event->save();
 
         return Redirect::back();
