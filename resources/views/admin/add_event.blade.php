@@ -68,4 +68,8 @@
   </form>
 {{-- </div> --}}
 
+  @if (Session::has('Added'))
+    <div class="alert alert-info">{{ Session::get('Added') }}</div>
+  @endif
+
 @endsection

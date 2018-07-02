@@ -42,6 +42,13 @@ class EventController extends Controller
         return view('admin.add_event', compact(['courses']));
     }
 
+    public function deleteEvent($id)
+    {
+        $event = Event::find($id);
+        $event->delete();
+        return Redirect::back();
+    }
+
     public function add_announcement(Request $request, $event_id)
     {
         $this->validate($request, [

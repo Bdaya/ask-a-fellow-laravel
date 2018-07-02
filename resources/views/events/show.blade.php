@@ -17,18 +17,6 @@
 
             </div>
             <div class="media-body" style="cursor: pointer;">
-                @if(Auth::user())
-                    <div class="delete_question pull-right">
-                        @if(Auth::user()->id == $event->creator_id || Auth::user()->role >= 1)
-
-                            <a onclick="return confirm('Are you sure?');" title="Delete event"
-                               href="{{url('delete_event/'.$event->id)}}"><span style="color:#FFAF6C"
-                                                                                class="glyphicon glyphicon-remove"></span></a>
-
-                        @endif
-
-                    </div>
-                @endif
                 @if($event->creator->verified_badge >=1)
                     <h3>{{$event->creator->first_name.' '.$event->creator->last_name}} <span class="verified"></span>
                     </h3>
@@ -45,7 +33,9 @@
 
 
         </div>
-        <h3>Announcement(s)</h3>
+
+        <div>
+            <h3>Announcement(s)</h3>
         @if($announcements->count() == 0)
             <p>There are no announcements yet for this event</p>
         @else
@@ -85,7 +75,7 @@
             @endforeach
         @endif
 
-        @if(Auth::user() && Auth::user()->role >= 1)
+        @if(Auth::user() && (Auth::user()->role >= 1 || Auth::user()->id == $event->creator->id))
 
             <h4>Add Announcement</h4>
             <form id="add_announcement_form" action="{{ url('event/add_announcement/'.$event->id) }}" method="POST">
@@ -104,13 +94,13 @@
                 </div>
 
                 <div class="form-group row">
-                    <div class="offset-sm-2 col-sm-10">
+                    <div class="col-sm-offset-3 col-sm-10">
                         <button type="submit" class="btn btn-primary">Add announcement</button>
                     </div>
                 </div>
             </form>
         @endif
-        
+        </div>        
 
     </div>
 
@@ -126,7 +116,7 @@
         .question {
             background-color: #FFF5E9;
             padding: 15px;
-            margin-left: 80px;
+            /*margin-left: 80px;*/
             width: 70%;
             /*min-width: 200px;*/
             margin-bottom: 10px;

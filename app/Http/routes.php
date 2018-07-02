@@ -100,7 +100,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/admin/add_event', 'AdminController@add_event_page');
     Route::get('/course/add_event/{course_id}', 'EventController@add_event_page');
     Route::post('/admin/add_event', 'AdminController@add_event');
-
+    Route::get('/delete_event/{id}', 'EventController@deleteEvent');
     Route::get('/admin/event_requests', 'AdminController@eventRequests'); //viewing event request
     Route::get('/admin/request/{id}', 'AdminController@viewRequest'); //viewing event information
     Route::get('/admin/accept/{id}', 'AdminController@acceptRequest'); //accepting an event
