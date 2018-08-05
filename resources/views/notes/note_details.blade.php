@@ -1,6 +1,8 @@
  @extends('layouts.app');
 @section('content')
 
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+
     <div class="container">
 
          @if (Session::has('success'))
@@ -68,9 +70,11 @@
             </div>
 
         <div>
-          @if(Auth::user())
-              <a class="upvote_note vote" value="{{$note->id}}" title="upvote" style="color:green; font-size:50px"><span class="glyphicon glyphicon-thumbs-up"></span></a>
-          @endif
+        @if(Auth::user() && count(Auth::user()->upvotesOnNote($note->id)))
+            <i class="fa fa-thumbs-up upvote_note" value="{{$note->id}}" title="upvote" style="color:green; font-size: 28px"></i>
+        @elseif(Auth::user())
+            <i class="far fa-thumbs-up upvote_note" value="{{$note->id}}" title="upvote" style="color:green; font-size: 28px"></i>
+        @endif
           &nbsp;&nbsp;&nbsp;&nbsp;
           @if($note->votes > 0)
               <span class="note_votes" style="color:green; font-size:30px">{{$note->votes}} </span>
@@ -80,9 +84,11 @@
               <span class="note_votes" style="color:red; font-size:30px">{{$note->votes}} </span>
           @endif
           &nbsp;&nbsp;&nbsp;&nbsp;
-          @if(Auth::user())
-              <a class="downvote_note vote" value="{{$note->id}}"  title="downvote"  style="color:red; font-size:50px"><span class="glyphicon glyphicon-thumbs-down"></span></a>
-          @endif
+        @if(Auth::user() && count(Auth::user()->downvotesOnNote($note->id)))
+            <i class="fa fa-thumbs-down downvote_note" value="{{$note->id}}" title="downvote" style="color:red; font-size: 28px"></i>
+        @elseif(Auth::user())
+            <i class="far fa-thumbs-down downvote_note" value="{{$note->id}}" title="downvote" style="color:red; font-size: 28px"></i>
+        @endif
 
           <h4><a href="{{url('browse/notes/view_note/'.$note->id)}}">Click to download</a></h4>
 
@@ -339,7 +345,7 @@ span.verified{
         $.ajax({
             'url': "{{url('')}}/vote/note/" + note_id + "/" + type,
             success: function (data) {
-                note.parent().find('.note_votes').html(data);
+                location.reload();
             }
         });
     });
@@ -351,7 +357,7 @@ span.verified{
         $.ajax({
             'url': "{{url('')}}/vote/note/" + note_id + "/" + type,
             success: function (data) {
-                note.parent().find('.note_votes').html(data);
+                location.reload();
             }
         });
     });

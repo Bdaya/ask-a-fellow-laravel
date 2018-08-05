@@ -28,6 +28,7 @@ use Mail;
 use Session;
 use Auth;
 use Cloudinary\Uploader;
+use App\Notification;
 use Illuminate\Support\Facades\Redirect;
 
 class AdminController extends Controller
@@ -256,6 +257,34 @@ class AdminController extends Controller
 
         $announcement->save();
 
+        //notify users with the new announcement
+        $event_id = $announcement->event_id;
+        $event = Event::find($event_id);
+        $users = $event->course->subscribed_users;
+        $mail_subject = 'New Event: '.$event->title;
+        $link = url('/events/'.$event->id);
+        $course_name = Course::find($event->course_id)->course_name;
+        $details = 'You have 1 new announcement titled: '.$announcement->title.' related to event: '.$event->title.' in your subscribed course: '.$course_name;
+        $usersIDs = [];
+        $usersEmails = [];
+        $event_announcement = 'announcement';
+        $url = 'http://localhost:8000/events/'.$event_id;
+
+        foreach ($users as $user) {
+            Notification::send_notification($user->id,$details,$link);
+            $usersIDs[] = $user->id;
+            $usersEmails[] = $user->email;
+        }
+
+        $sendMail = Mail::send('admin.emails.event_notification', ['event_announcement' => $event_announcement, 'details' => $details, 'url' => $url], function ($message) use ($usersEmails, $mail_subject) {
+            $message->to([])->bcc($usersEmails)
+                ->subject($mail_subject);
+        });
+
+        if (!$sendMail) {
+            Session::flash('error', 'Error while notifying users subscribed to event course!');
+        }
+
         return Redirect::back();
     }
 
@@ -289,9 +318,35 @@ class AdminController extends Controller
         if(Auth::user()->role == 1)
             $event['verified'] = 1;
 
-        Session::flash('Added', 'Done, Event is added successfully!');
-
         $event->save();
+
+        $event_id = $event->id;
+        $users = $event->course->subscribed_users;
+        $mail_subject = 'New Event: '.$event->title;
+        $link = url('/events/'.$event->id);
+        $course_name = Course::find($event->course_id)->course_name;
+        $details = 'You have 1 new event titled: '.$event->title.' related to your subscribed course: '.$course_name;
+        $usersIDs = [];
+        $usersEmails = [];
+        $event_announcement = 'event';
+        $url = 'http://localhost:8000/events/'.$event_id;
+
+        foreach ($users as $user) {
+            Notification::send_notification($user->id,$details,$link);
+            $usersIDs[] = $user->id;
+            $usersEmails[] = $user->email;
+        }
+
+        $sendMail = Mail::send('admin.emails.event_notification', ['event_announcement' => $event_announcement, 'details' => $details, 'url' => $url], function ($message) use ($usersEmails, $mail_subject) {
+            $message->to([])->bcc($usersEmails)
+                ->subject($mail_subject);
+        });
+
+        if (!$sendMail) {
+            Session::flash('error', 'Error while notifying users subscribed to event course!');
+        }
+
+        Session::flash('Added', 'Done, Event is added successfully!');
 
         return Redirect::back();
     }
@@ -368,7 +423,6 @@ class AdminController extends Controller
         foreach ($users as $user) {
             $usersEmails[] = User::find($user)->email;
         }
-
 
         $sendMail = Mail::send('admin.emails.general', ['mail_content' => $mail_content, 'name' => 'awesome AskaFellow member'], function ($message) use ($usersEmails, $mail_subject, $mail_content) {
             $message->to([])->bcc($usersEmails)
@@ -469,6 +523,34 @@ class AdminController extends Controller
         $event =  Event::Find($id);
         $event->verified= 1;
         $event->save();
+
+        //notify users with the new event
+        $event_id = $event->id;
+        $users = $event->course->subscribed_users;
+        $mail_subject = 'New Event: '.$event->title;
+        $link = url('/events/'.$event->id);
+        $course_name = Course::find($event->course_id)->course_name;
+        $details = 'You have 1 new event titled: '.$event->title.' related to your subscribed course: '.$course_name;
+        $usersIDs = [];
+        $usersEmails = [];
+        $event_announcement = 'event';
+        $url = 'http://localhost:8000/events/'.$event_id;
+
+        foreach ($users as $user) {
+            Notification::send_notification($user->id,$details,$link);
+            $usersIDs[] = $user->id;
+            $usersEmails[] = $user->email;
+        }
+
+        $sendMail = Mail::send('admin.emails.event_notification', ['event_announcement' => $event_announcement, 'details' => $details, 'url' => $url], function ($message) use ($usersEmails, $mail_subject) {
+            $message->to([])->bcc($usersEmails)
+                ->subject($mail_subject);
+        });
+
+        if (!$sendMail) {
+            Session::flash('error', 'Error while notifying users subscribed to event course!');
+        }
+
         return redirect('admin/event_requests');
     }
 

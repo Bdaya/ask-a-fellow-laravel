@@ -122,39 +122,42 @@ class QuestionAPIController extends Controller
     public function vote_answer($answer_id, $type)
     {
         $user = Auth::user();
+        $flag = 0;
+        $voted_answer = AnswerVote::where('user_id', $user->id)->where('answer_id', $answer_id)->first();
 
-        if($type == 0 && count($user->upvotesOnAnswer($answer_id))){
-            $returnData['status'] = false;
-            $returnData['message'] = 'Cannot upvote twice';
-            return response()->json($returnData);
+        if (($type == 0 && count($user->upvotesOnAnswer($answer_id))) || ($type == 1 && count($user->downvotesOnAnswer($answer_id))))
+        {
+            $voted_answer->delete();
+            $returnData['message'] = 'Vote removed';
         }
-        if($type == 1 && count($user->downvotesOnAnswer($answer_id))){
-            $returnData['status'] = false;
-            $returnData['message'] = 'Cannot downvote twice';
-            return response()->json($returnData);
-        }
-        if($type == 0 && count($user->downvotesOnAnswer($answer_id))) {
-            $vote = AnswerVote::where('user_id','=', Auth::user()->id)->where('answer_id','=',$answer_id)->first();
-            $vote->delete();
-        }
-        else if($type == 1 && count($user->upvotesOnAnswer($answer_id))) {
-            $vote = AnswerVote::where('user_id','=', Auth::user()->id)->where('answer_id','=',$answer_id)->first();
-            $vote->delete();
+        elseif (($type == 0 && count($user->downvotesOnAnswer($answer_id))) || ($type == 1 && count($user->upvotesOnAnswer($answer_id))))
+        {
+            $voted_answer->delete(); 
+            $user->vote_on_answer($answer_id, $type); 
+            $flag = 1;
+            $returnData['message'] = 'Vote reversed';
         }
         else
+        {
             $user->vote_on_answer($answer_id, $type);
+            $flag = 1;
+            $returnData['message'] = 'Vote added';
+        }
 
         $answer = Answer::find($answer_id);
-        if(Auth::user()->id != $answer->responder_id)
-        {
-            //send notification
-            $responder_id = $answer->responder_id;
-            $action = ($type == 0)?' upvoted':' downvoted';
-            $description = Auth::user()->first_name.' '.Auth::user()->last_name.$action.' your answer.';
-            $link = url('/answers/'.$answer->question_id);
-            Notification::send_notification($responder_id,$description,$link);
 
-        }
+        if($flag == 1){
+            if($user->id != $answer->responder_id)
+            {
+                //send notification
+                $responder_id = $answer->responder_id;
+                $action = ($type == 0)?' upvoted':' downvoted';
+                $description = Auth::user()->first_name.' '.Auth::user()->last_name.$action.' your answer.';
+                $link = url('/answers/'.$answer->question_id);
+                Notification::send_notification($responder_id,$description,$link);
+
+            }
+        }        
 
         $votes = $answer->votes;
         $color = 'black';
@@ -175,39 +178,43 @@ class QuestionAPIController extends Controller
     public function vote_question($question_id, $type)
     {
         $user = Auth::user();
+        $flag = 0;
+        $voted_question = QuestionVote::where('user_id', $user->id)->where('question_id', $question_id)->first();
 
-        if($type == 0 && count($user->upvotesOnQuestion($question_id))){
-            $returnData['status'] = false;
-            $returnData['message'] = 'Cannot upvote twice';
-            return response()->json($returnData);
+        if (($type == 0 && count($user->upvotesOnQuestion($question_id))) || ($type == 1 && count($user->downvotesOnQuestion($question_id))))
+        {
+            $voted_question->delete();
+            $returnData['message'] = 'Vote removed';
         }
-        if($type == 1 && count($user->downvotesOnQuestion($question_id))){
-            $returnData['status'] = false;
-            $returnData['message'] = 'Cannot downvote twice';
-            return response()->json($returnData);
-        }
-        if($type == 0 && count($user->downvotesOnQuestion($question_id))) {
-            $vote = QuestionVote::where('user_id','=', Auth::user()->id)->where('question_id','=',$question_id)->first();
-            $vote->delete();
-        }
-        else if($type == 1 && count($user->upvotesOnQuestion($question_id))) {
-            $vote = QuestionVote::where('user_id','=', Auth::user()->id)->where('question_id','=',$question_id)->first();
-            $vote->delete();
+        elseif (($type == 0 && count($user->downvotesOnQuestion($question_id))) || ($type == 1 && count($user->upvotesOnQuestion($question_id))))
+        {
+            $voted_question->delete(); 
+            $user->vote_on_question($question_id, $type); 
+            $flag = 1;
+            $returnData['message'] = 'Vote reversed';
         }
         else
+        {
             $user->vote_on_question($question_id, $type);
+            $flag = 1;
+            $returnData['message'] = 'Vote added';
+        }
 
         $question = Question::find($question_id);
-        if(Auth::user()->id != $question->asker_id)
-        {
-            //send notification
-            $asker_id = $question->asker_id;
-            $action = ($type == 0)?' upvoted':' downvoted';
-            $description = Auth::user()->first_name.' '.Auth::user()->last_name.$action.' your question.';
-            $link = url('/answers/'.$question_id);
-            Notification::send_notification($asker_id,$description,$link);
 
-        }
+        if($flag == 1){
+            
+            if($user->id != $question->asker_id)
+            {
+                //send notification
+                $asker_id = $question->asker_id;
+                $action = ($type == 0)?' upvoted':' downvoted';
+                $description = Auth::user()->first_name.' '.Auth::user()->last_name.$action.' your question.';
+                $link = url('/answers/'.$question_id);
+                Notification::send_notification($asker_id,$description,$link);
+
+            }
+        }        
 
         $votes = Question::find($question_id)->votes;
         $color = 'black';

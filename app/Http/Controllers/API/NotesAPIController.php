@@ -77,39 +77,41 @@ class NotesAPIController extends Controller
     public function vote_note($note_id, $type)
     {
         $user = Auth::user();
+        $flag = 0;
+        $voted_note = NoteVote::where('user_id', $user->id)->where('note_id', $note_id)->first();
 
-        if($type == 0 && count($user->upvotesOnNote($note_id))){
-            $returnData['status'] = false;
-            $returnData['message'] = 'Cannot upvote twice';
-            return response()->json($returnData);
+        if (($type == 0 && count($user->upvotesOnNote($note_id))) || ($type == 1 && count($user->downvotesOnNote($note_id))))
+        {
+            $voted_note->delete();
+            $returnData['message'] = 'Vote removed';
         }
-        if($type == 1 && count($user->downvotesOnNote($note_id))){
-            $returnData['status'] = false;
-            $returnData['message'] = 'Cannot downvote twice';
-            return response()->json($returnData);
-        }
-        if($type == 0 && count($user->downvotesOnNote($note_id))) {
-            $vote = NoteVote::where('user_id','=',Auth::user()->id)->where('note_id','=',$note_id)->first();
-            $vote->delete();
-        }
-        else if($type == 1 && count($user->upvotesOnNote($note_id))) {
-            $vote = NoteVote::where('user_id','=',Auth::user()->id)->where('note_id','=',$note_id)->first();
-            $vote->delete();
+        elseif (($type == 0 && count($user->downvotesOnNote($note_id))) || ($type == 1 && count($user->upvotesOnNote($note_id))))
+        {
+            $voted_note->delete(); 
+            $user->vote_on_note($note_id, $type); 
+            $flag = 1;
+            $returnData['message'] = 'Vote reversed';
         }
         else
-            $user->vote_on_note($note_id, $type);
-
-        
-        $note = Note::find($note_id);
-        if($user->id != $note->user_id)
         {
-            //send notification
-            $user_id = $note->user_id;
-            $action = ($type == 0)?' upvoted':' downvoted';
-            $description = Auth::user()->first_name.' '.Auth::user()->last_name.$action.' your note.';
-            $link = url('/note_details/'.$note_id);
-            Notification::send_notification($user_id,$description,$link);
+            $user->vote_on_note($note_id, $type);
+            $flag = 1;
+            $returnData['message'] = 'Vote added';
+        }
 
+        $note = Note::find($note_id);
+
+        if($flag == 1){
+            if($user->id != $note->user_id)
+            {
+                //send notification
+                $user_id = $note->user_id;
+                $action = ($type == 0)?' upvoted':' downvoted';
+                $description = Auth::user()->first_name.' '.Auth::user()->last_name.$action.' your note.';
+                $link = url('/note_details/'.$note_id);
+                Notification::send_notification($user_id,$description,$link);
+
+            }
         }
 
         $votes = $note->votes;

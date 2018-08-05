@@ -67,7 +67,7 @@
                             <h3>{{$announcement->title}}</h3>
                             <h5>{{$announcement->description}}</h5>
                         </div>
-                        <p style="font-weight: bold; font-style: italic; ">{{ date("F j, Y, g:i a",strtotime($announcement->create_at)) }} </p>
+                        <p style="font-weight: bold; font-style: italic; ">{{ date("F j, Y, g:i a",strtotime($announcement->created_at)) }} </p>
                     </div>
 
 
@@ -104,6 +104,9 @@
 
     </div>
 
+    @if (Session::has('error'))
+        <div class="alert alert-danger">{{ Session::get('error') }}</div>
+    @endif
 
     <style>
         #filtration_form {
