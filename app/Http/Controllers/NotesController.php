@@ -90,46 +90,41 @@ class NotesController extends Controller
     public function vote_note($note_id, $type)
     {
         $user = Auth::user();
+        $flag = 0;
+        $voted_note = NoteVote::where('user_id', $user->id)->where('note_id', $note_id)->first();
 
-        if ($type == 0 && count($user->upvotesOnNote($note_id)))
-            return '<span style="color:black">Cannot upvote twice</span>';
-
-        if ($type == 1 && count($user->downvotesOnNote($note_id)))
-            return '<span style="color:black">Cannot downvote twice</span>';
-
-        if ($type == 0 && count($user->downvotesOnNote($note_id))) {
-            $vote = NoteVote::where('user_id', '=', Auth::user()->id)->where('note_id', '=', $note_id)->first();
-            $vote->delete();
-        } else if ($type == 1 && count($user->upvotesOnNote($note_id))) {
-            $vote = NoteVote::where('user_id', '=', Auth::user()->id)->where('note_id', '=', $note_id)->first();
-            $vote->delete();
-        } else{ 
-            $user->vote_on_note($note_id, $type); 
-        }
-
-        $note = Note::find($note_id);
-        if(Auth::user()->id != $note->user_id)
+        if (($type == 0 && count($user->upvotesOnNote($note_id))) || ($type == 1 && count($user->downvotesOnNote($note_id))))
         {
-            //send notification
-            $user_id = $note->user_id;
-            $action = ($type == 0)?' upvoted':' downvoted';
-            $description = Auth::user()->first_name.' '.Auth::user()->last_name.$action.' your note.';
-            $link = url('/notes/view_note_details/'.$note_id);
-            Notification::send_notification($user_id,$description,$link);
-
+            $voted_note->delete();
+        }
+        elseif (($type == 0 && count($user->downvotesOnNote($note_id))) || ($type == 1 && count($user->upvotesOnNote($note_id))))
+        {
+            $voted_note->delete(); 
+            $user->vote_on_note($note_id, $type); 
+            $flag = 1;
+        }
+        else
+        {
+            $user->vote_on_note($note_id, $type);
+            $flag = 1;
         }
 
+        if($flag == 1){
+            $note = Note::find($note_id);
+            if($user->id != $note->user_id)
+            {
+                //send notification
+                $user_id = $note->user_id;
+                $action = ($type == 0)?' upvoted':' downvoted';
+                $description = Auth::user()->first_name.' '.Auth::user()->last_name.$action.' your note.';
+                $link = url('/notes/view_note_details/'.$note_id);
+                Notification::send_notification($user_id,$description,$link);
 
-        $votes = $note->votes;
-        $color = 'black';
-        if($votes>0)
-            $color = 'green';
-        elseif($votes <0)
-            $color = 'red';
-        return '<span style="color:'.$color.'"">'.$votes.'</span>';     
+            }
+        }
+        
+        return redirect(url('/notes/view_note_details/'.$note_id));  
     }
-
-
 
     public function upload_notes_form(Request $request,$courseID)
     {

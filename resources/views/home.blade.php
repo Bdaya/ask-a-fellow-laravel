@@ -15,7 +15,7 @@ $pages = ceil($count_questions/$take);
 @section('content')
 
 <link rel="stylesheet" type="text/css" href="{{ url('/css/main.css') }}" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
 
 <div class="home-page">
   <div class="container">
@@ -89,8 +89,10 @@ $pages = ceil($count_questions/$take);
                   @endif
                 </p>
                 <p style=" font-style: italic; font-size: 12px;">{{ date("F j, Y, g:i a",strtotime($question->created_at)) }} </p>
-                @if(Auth::user())
+                @if(Auth::user() && count(Auth::user()->upvotesOnQuestion($question->id)))
                     <i class="fa fa-thumbs-up upvote_question" value="{{$question->id}}" title="upvote" style="color:green; font-size: 28px;"></i>
+                @elseif(Auth::user())
+                    <i class="far fa-thumbs-up upvote_question" value="{{$question->id}}" title="upvote" style="color:green; font-size: 28px;"></i>
                 @endif
                 @if($question->votes > 0)
                     <span class="question_votes" style="color:green; font-size: 18px; padding-left: 10px; padding-right: 10px;">{{$question->votes}} </span>
@@ -99,8 +101,10 @@ $pages = ceil($count_questions/$take);
                 @else
                     <span class="question_votes" style="color:red; font-size: 18px; padding-left: 10px; padding-right: 10px;">{{$question->votes}} </span>
                 @endif
-                @if(Auth::user())
+                @if(Auth::user() && count(Auth::user()->downvotesOnQuestion($question->id)))
                     <i class="fa fa-thumbs-down downvote_question" value="{{$question->id}}" title="downvote" style="color:red; font-size: 28px"></i>
+                @elseif(Auth::user())
+                    <i class="far fa-thumbs-down downvote_question" value="{{$question->id}}" title="downvote" style="color:red; font-size: 28px"></i>
                 @endif
               </div>
             </div>
@@ -271,7 +275,7 @@ $pages = ceil($count_questions/$take);
         $.ajax({
             'url' : "{{url('')}}/vote/question/"+question_id+"/"+type,
             success: function(data){
-                question.parent().find('.question_votes').html(data);
+                location.reload();
             }
         });
     });
@@ -283,7 +287,7 @@ $pages = ceil($count_questions/$take);
         $.ajax({
             'url' : "{{url('')}}/vote/question/"+question_id+"/"+type,
             success: function(data){
-                question.parent().find('.question_votes').html(data);
+                location.reload();
             }
         });
     });

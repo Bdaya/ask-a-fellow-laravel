@@ -20,6 +20,8 @@ if (isset($_GET['sort']))
 @extends('layouts.app')
 @section('content')
 
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+
     <div class="container" style="width:100%;">
         <div class="questions">
             <h3 style="margin-left: 50px">Showing {{count($questions_ordered)}} out of {{$count_questions}}
@@ -121,9 +123,10 @@ if (isset($_GET['sort']))
                         <p style="font-weight: bold; font-style: italic; ">{{ date("F j, Y, g:i a",strtotime($question->created_at)) }} </p>
                     </div>
                      <div>
-                         @if(Auth::user())
-                            <a class="upvote_question vote" value="{{$question->id}}" title="upvote"
-                               style="color:green;"><span class="glyphicon glyphicon-thumbs-up"></span></a>
+                        @if(Auth::user() && count(Auth::user()->upvotesOnQuestion($question->id)))
+                            <i class="fa fa-thumbs-up upvote_question" value="{{$question->id}}" title="upvote" style="color:green; font-size: 20px;"></i>
+                        @elseif(Auth::user())
+                            <i class="far fa-thumbs-up upvote_question" value="{{$question->id}}" title="upvote" style="color:green; font-size: 20px;"></i>
                         @endif
                         @if($question->votes > 0)
                             <span class="question_votes" style="color:green;">{{$question->votes}} </span>
@@ -132,9 +135,10 @@ if (isset($_GET['sort']))
                         @else
                             <span class="question_votes" style="color:red;">{{$question->votes}} </span>
                         @endif
-                        @if(Auth::user())
-                            <a class="downvote_question vote" value="{{$question->id}}" title="downvote"
-                               style="color:red"><span class="glyphicon glyphicon-thumbs-down"></span></a>
+                        @if(Auth::user() && count(Auth::user()->downvotesOnQuestion($question->id)))
+                            <i class="fa fa-thumbs-down downvote_question" value="{{$question->id}}" title="downvote" style="color:red; font-size: 20px"></i>
+                        @elseif(Auth::user())
+                            <i class="far fa-thumbs-down downvote_question" value="{{$question->id}}" title="downvote" style="color:red; font-size: 20px"></i>
                         @endif
                     </div>
                 </div>
@@ -396,7 +400,7 @@ if (isset($_GET['sort']))
             $.ajax({
                 'url': "{{url('')}}/vote/question/" + question_id + "/" + type,
                 success: function (data) {
-                    question.parent().find('.question_votes').html(data);
+                    location.reload();
                 }
             });
         });
@@ -408,7 +412,7 @@ if (isset($_GET['sort']))
             $.ajax({
                 'url': "{{url('')}}/vote/question/" + question_id + "/" + type,
                 success: function (data) {
-                    question.parent().find('.question_votes').html(data);
+                    location.reload();
                 }
             });
         });

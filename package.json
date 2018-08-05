@@ -4,7 +4,8 @@
     "gulp": "^3.8.8"
   },
   "dependencies": {
-    "laravel-elixir": "^4.0.0",
-    "bootstrap-sass": "^3.0.0"
+    "@fortawesome/fontawesome-free": "^5.2.0",
+    "bootstrap-sass": "^3.0.0",
+    "laravel-elixir": "^4.0.0"
   }
 }
