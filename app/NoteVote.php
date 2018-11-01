@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class NoteVote extends Model
 {
 	protected $table = 'notes_votes';
+	
 	 public function note()
     {
         return $this->belongsTo('App\Note');

@@ -9,11 +9,10 @@ use App\Question;
 use App\QuestionReport;
 use App\Note;
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Filesystem\Filesystem;
-use Response;
+use Illuminate\Support\Facades\Storage;;
 use File;
 use App\Http\Requests;
 use App\Major;
@@ -22,11 +21,14 @@ use App\Component;
 use App\ComponentCategory;
 use App\User;
 use App\Event;
+use App\Announcement;
 use App\AdminMail;
 use App\Store;
 use Mail;
 use Session;
 use Auth;
+use Cloudinary\Uploader;
+use App\Notification;
 use Illuminate\Support\Facades\Redirect;
 
 class AdminController extends Controller
@@ -49,7 +51,6 @@ class AdminController extends Controller
         return view('admin.add_course', compact(['courses', 'majors']));
     }
 
-
     public function add_course(Request $request)
     {
         $this->validate($request, [
@@ -65,6 +66,7 @@ class AdminController extends Controller
         $course->semester = $request->semester;
         $course->save();
         $course->majors()->attach($request->majors);
+        Session::flash('Added', 'New course is added successfully!');
         return redirect('admin/add_course');
     }
 
@@ -77,16 +79,15 @@ class AdminController extends Controller
 
     public function update_course_page($id)
     {
-
         $course = Course::find($id);
         $majors = Major::all();
 
         $course_majors = array();
-        foreach ($course->majors()->get() as $major)
+        foreach ($course->majors()->get() as $major) {
             $course_majors[] = $major->id;
+        }
 
         return view('admin.update_course', compact(['course', 'majors', 'course_majors']));
-
     }
 
     public function update_course($id, Request $request)
@@ -105,6 +106,7 @@ class AdminController extends Controller
         $course->save();
         $course->majors()->detach();
         $course->majors()->attach($request->majors);
+        Session::flash('Updated', 'Course is updated!');
         return redirect('admin/add_course');
     }
 
@@ -125,6 +127,7 @@ class AdminController extends Controller
         $major->faculty = $request->faculty;
         $major->major = $request->major;
         $major->save();
+        Session::flash('Added', 'New major is added!');
         return redirect('/admin/add_major');
     }
 
@@ -152,6 +155,7 @@ class AdminController extends Controller
         $major->faculty = $request->faculty;
         $major->major = $request->major;
         $major->save();
+        Session::flash('Updated', 'Major is updated!');
         return redirect('admin/add_major');
     }
 
@@ -169,6 +173,7 @@ class AdminController extends Controller
         $category = new ComponentCategory();
         $category->name = $request->category_name;
         $category->save();
+        Session::flash('Added', 'New component category is added!');
         return redirect('/admin/add_component_category');
     }
 
@@ -188,19 +193,20 @@ class AdminController extends Controller
     public function update_component_category($id, Request $request)
     {
         $this->validate($request, [
-            'category_name' => 'required|unique:components_categories,name'
+            'category_name' => 'required|unique:component_categories,name'
         ]);
 
         $category = ComponentCategory::find($id);
         $category->name = $request->category_name;
         $category->save();
+        Session::flash('Updated', 'Component category is updated!');
         return redirect('admin/add_component_category');
     }
 
     public function delete_accept_component_page()
     {
         $components = Component::all();
-        return view('admin.delete_accept_component',  compact(['components']));
+        return view('admin.delete_accept_component', compact(['components']));
     }
 
     public function delete_component($id)
@@ -224,6 +230,125 @@ class AdminController extends Controller
         $component->delete();
         $creator_id = $component->creator_id;
         return redirect('/admin/mail/one/'.$creator_id);
+    }
+
+    // Announcements Controller
+
+    public function add_announcement_page()
+    {
+        $events = Event::where('verified', 1)->paginate(6);
+        return view('admin.add_announcement', compact('events'));
+    }
+
+    public function add_announcement(Request $request)
+    {
+        $this->validate($request, [
+          'title' => 'required',
+          'event' => 'required',
+          'description' => 'required'
+      ]);
+
+        $announcement = new Announcement();
+
+        $announcement['user_id'] = Auth::user()->id;
+        $announcement['title'] = $request['title'];
+        $announcement['event_id'] = $request['event'];
+        $announcement['description'] = $request['description'];
+
+        $announcement->save();
+
+        //notify users with the new announcement
+        $event_id = $announcement->event_id;
+        $event = Event::find($event_id);
+        $users = $event->course->subscribed_users;
+        $mail_subject = 'New Event: '.$event->title;
+        $link = url('/events/'.$event->id);
+        $course_name = Course::find($event->course_id)->course_name;
+        $details = 'You have 1 new announcement titled: '.$announcement->title.' related to event: '.$event->title.' in your subscribed course: '.$course_name;
+        $usersIDs = [];
+        $usersEmails = [];
+        $event_announcement = 'announcement';
+        $url = 'http://localhost:8000/events/'.$event_id;
+
+        foreach ($users as $user) {
+            Notification::send_notification($user->id,$details,$link);
+            $usersIDs[] = $user->id;
+            $usersEmails[] = $user->email;
+        }
+
+        $sendMail = Mail::send('admin.emails.event_notification', ['event_announcement' => $event_announcement, 'details' => $details, 'url' => $url], function ($message) use ($usersEmails, $mail_subject) {
+            $message->to([])->bcc($usersEmails)
+                ->subject($mail_subject);
+        });
+
+        if (!$sendMail) {
+            Session::flash('error', 'Error while notifying users subscribed to event course!');
+        }
+
+        return Redirect::back();
+    }
+
+    // Events Controller
+    public function add_event_page()
+    {
+        $courses = Course::all();
+
+        return view('admin.add_event', compact(['courses']));
+    }
+
+    public function add_event(Request $request)
+    {
+        $this->validate($request, [
+          'title' => 'required',
+          'course' => 'required',
+          'date' => 'required',
+          'place' => 'required',
+          'description' => 'required'
+      ]);
+
+        $event = new Event();
+
+        $event['creator_id'] = Auth::user()->id;
+        $event['title'] = $request['title'];
+        $event['course_id'] = $request['course'];
+        $event['date'] = $request['date'];
+        $event['place'] = $request['place'];
+        $event['description'] = $request['description'];
+
+        if(Auth::user()->role == 1)
+            $event['verified'] = 1;
+
+        $event->save();
+
+        $event_id = $event->id;
+        $users = $event->course->subscribed_users;
+        $mail_subject = 'New Event: '.$event->title;
+        $link = url('/events/'.$event->id);
+        $course_name = Course::find($event->course_id)->course_name;
+        $details = 'You have 1 new event titled: '.$event->title.' related to your subscribed course: '.$course_name;
+        $usersIDs = [];
+        $usersEmails = [];
+        $event_announcement = 'event';
+        $url = 'http://localhost:8000/events/'.$event_id;
+
+        foreach ($users as $user) {
+            Notification::send_notification($user->id,$details,$link);
+            $usersIDs[] = $user->id;
+            $usersEmails[] = $user->email;
+        }
+
+        $sendMail = Mail::send('admin.emails.event_notification', ['event_announcement' => $event_announcement, 'details' => $details, 'url' => $url], function ($message) use ($usersEmails, $mail_subject) {
+            $message->to([])->bcc($usersEmails)
+                ->subject($mail_subject);
+        });
+
+        if (!$sendMail) {
+            Session::flash('error', 'Error while notifying users subscribed to event course!');
+        }
+
+        Session::flash('Added', 'Done, Event is added successfully!');
+
+        return Redirect::back();
     }
 
     public function view_feedbacks()
@@ -254,8 +379,6 @@ class AdminController extends Controller
 
     public function processMailToUsers(Request $request, $type)
     {
-
-
         if ($type == 0) {
             $sendMail = $this->sendMailToOneUser($request->user_id, $request->mail_subject, $request->mail_content);
             if ($sendMail) {
@@ -275,8 +398,6 @@ class AdminController extends Controller
                 return redirect(url('admin/mail/many/'));
             }
         }
-
-
     }
 
 
@@ -293,18 +414,15 @@ class AdminController extends Controller
         }
 
         return $sendMail;
-
     }
 
 
     public function sendMailToManyUsers($users, $mail_subject, $mail_content)
     {
-
         $usersEmails = [];
         foreach ($users as $user) {
             $usersEmails[] = User::find($user)->email;
         }
-
 
         $sendMail = Mail::send('admin.emails.general', ['mail_content' => $mail_content, 'name' => 'awesome AskaFellow member'], function ($message) use ($usersEmails, $mail_subject, $mail_content) {
             $message->to([])->bcc($usersEmails)
@@ -316,8 +434,6 @@ class AdminController extends Controller
         }
 
         return $sendMail;
-
-
     }
 
 
@@ -347,7 +463,6 @@ class AdminController extends Controller
 
     public function add_badge()
     {
-
         $users = User::orderBy('first_name', 'asc');
         return view('admin.badge', compact(['users']));
     }
@@ -381,8 +496,8 @@ class AdminController extends Controller
     //function to view all event requests
     public function eventRequests()
     {
-        $requests = Event::all()->where('verified',0);
-        return view('admin.event_requests')->with('requests',$requests);
+        $requests = Event::all()->where('verified', 0);
+        return view('admin.event_requests')->with('requests', $requests);
     }
 
     //to view information about the clicked event and its creator with the option to accept or delete it
@@ -408,6 +523,34 @@ class AdminController extends Controller
         $event =  Event::Find($id);
         $event->verified= 1;
         $event->save();
+
+        //notify users with the new event
+        $event_id = $event->id;
+        $users = $event->course->subscribed_users;
+        $mail_subject = 'New Event: '.$event->title;
+        $link = url('/events/'.$event->id);
+        $course_name = Course::find($event->course_id)->course_name;
+        $details = 'You have 1 new event titled: '.$event->title.' related to your subscribed course: '.$course_name;
+        $usersIDs = [];
+        $usersEmails = [];
+        $event_announcement = 'event';
+        $url = 'http://localhost:8000/events/'.$event_id;
+
+        foreach ($users as $user) {
+            Notification::send_notification($user->id,$details,$link);
+            $usersIDs[] = $user->id;
+            $usersEmails[] = $user->email;
+        }
+
+        $sendMail = Mail::send('admin.emails.event_notification', ['event_announcement' => $event_announcement, 'details' => $details, 'url' => $url], function ($message) use ($usersEmails, $mail_subject) {
+            $message->to([])->bcc($usersEmails)
+                ->subject($mail_subject);
+        });
+
+        if (!$sendMail) {
+            Session::flash('error', 'Error while notifying users subscribed to event course!');
+        }
+
         return redirect('admin/event_requests');
     }
 
@@ -423,8 +566,7 @@ class AdminController extends Controller
             'store_name' => 'required',
             'store_address' => 'required',
             'store_rate' => 'required',
-            'store_review' => 'required',
-            'logoPath' => 'required',
+            'logoPath' => 'image|max:1000',
             'store_description' => 'required',
             'store_phone_number' => 'required',
         ]);
@@ -432,11 +574,21 @@ class AdminController extends Controller
         $store->name = $request->store_name;
         $store->location = $request->store_address;
         $store->rate_count = $request->store_rate;
-        $store->review = $request->store_review;
-        $store->logo = $request->logoPath;
+        if ($request->file('logoPath')) {
+            \Cloudinary::config(array(
+                "cloud_name" => env("CLOUDINARY_NAME"),
+                "api_key" => env("CLOUDINARY_KEY"),
+                "api_secret" => env("CLOUDINARY_SECRET")
+            ));
+            // upload and set new picture
+            $file = $request->file('logoPath');
+            $image = Uploader::upload($file->getRealPath(), ["width" => 300, "height" => 300, "crop" => "limit"]);
+            $store->logo = $image["url"];
+        }
         $store->description = $request->store_description;
         $store->phone = $request->store_phone_number;
         $store->save();
+        Session::flash('Added', 'Store is added successfully!');
         return redirect('admin/add_store');
     }
 
@@ -459,8 +611,7 @@ class AdminController extends Controller
             'store_name' => 'required',
             'store_address' => 'required',
             'store_rate' => 'required',
-            'store_review' => 'required',
-            'logoPath' => 'required',
+            'logoPath' => 'image|max:1000',
             'store_description' => 'required',
             'store_phone_number' => 'required',
         ]);
@@ -468,69 +619,102 @@ class AdminController extends Controller
         $store->name = $request->store_name;
         $store->location = $request->store_address;
         $store->rate_count = $request->store_rate;
-        $store->review = $request->store_review;
-        $store->logo = $request->logoPath;
+        if ($request->file('logoPath')) {
+            \Cloudinary::config(array(
+                "cloud_name" => env("CLOUDINARY_NAME"),
+                "api_key" => env("CLOUDINARY_KEY"),
+                "api_secret" => env("CLOUDINARY_SECRET")
+            ));
+            // upload and set new picture
+            $file = $request->file('logoPath');
+            $image = Uploader::upload($file->getRealPath(), ["width" => 300, "height" => 300, "crop" => "limit"]);
+            $store->logo = $image["url"];
+        }
         $store->description = $request->store_description;
         $store->phone = $request->store_phone_number;
         $store->save();
+        Session::flash('Updated', 'Store is updated successfully!');
         return redirect('admin/add_store');
     }
 
     //function to get all node upload requests
-    public function noteRequests() {
-          $notes_upload = DB::table('notes')->where('notes.request_upload', '=', 1)
+    public function noteRequests()
+    {
+        $notes_upload = DB::table('notes')->where('notes.request_upload', '=', 1)
                   ->join('users', 'notes.user_id', '=', 'users.id')
                   ->join('courses', 'notes.course_id', '=', 'courses.id')
                   ->select('notes.*', 'users.first_name', 'users.last_name', 'courses.course_name', 'courses.course_code')
                   ->get();
-         $notes_delete = DB::table('notes')->where('notes.request_delete', '=', 1)
+        $notes_delete = DB::table('notes')->where('notes.request_delete', '=', 1)
                   ->join('users', 'notes.user_id', '=', 'users.id')
                   ->join('courses', 'notes.course_id', '=', 'courses.id')
                   ->select('notes.*', 'users.first_name', 'users.last_name', 'courses.course_name', 'courses.course_code')
                   ->get();
 
-          return view('admin.upload_delete_requests', compact(['notes_upload', 'notes_delete']));
+        return view('admin.upload_delete_requests', compact(['notes_upload', 'notes_delete']));
     }
 
     //approved the uplaod of a note by changing its request_upload status to 0
-    public function approveNoteUpload($id) {
+    public function approveNoteUpload($id)
+    {
         $note = Note::find($id);
-        $note->request_upload = 0;
+        $note->request_upload = false;
         $note->save();
         return redirect('admin/note_requests');
     }
 
     //deletes note using its ID
     public function deleteNote($id) {
-          $note = Note::find($id);
-          File::delete($note->path);
-          Note::destroy($id);
+        $note = Note::find($id);
+        $disk = Storage::disk('google');
+        $file = collect($disk->listContents())->where('type', 'file')
+                ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
+                ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
+        $disk->delete($file['path']);
+        $note->delete();
 
         return redirect('admin/note_requests');
     }
 
-    //opens the note file inline in the browser
-    public function viewNote($id) {
-       $note =  Note::find($id);
-
-        return Response::make(file_get_contents($note->path), 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$note->title.'"'
-        ]);
+    public function reject_note_delete($id)
+    {
+        $note = Note::find($id);
+        $note->request_delete = false;
+        $note->comment_on_delete = "";
+        $note->save();
+        return redirect('admin/note_requests');
     }
 
     //Function to Delete the note as an admin
-    public function deleteNoteAdmin($id) {
-        if(Auth::user()){
+    public function deleteNoteAdmin($id)
+    {
+        if (Auth::user()) {
             $role  = Auth::user()->role;
+
             if($role==1){
-              $note = Note::find($id);
-              $course_id = $note->course_id;
-              $note->delete();
-              return Redirect::back();
-          } else {
+                $note = Note::find($id);
+                $disk = Storage::disk('google');
+                $file = collect($disk->listContents())->where('type', 'file')
+                ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
+                ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
+                $disk->delete($file['path']);
+                $course = $note->course->id;
+                $note->delete();
+                return redirect('/browse/notes/'.$course);
+
+            } else {
                 return Redirect::back();
-          }
+            }
         }
+    }
+
+    public function viewNote($id){
+        $note = Note::find($id);
+        $disk = Storage::disk('google');
+        $file = collect($disk->listContents())->where('type', 'file')
+        ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
+        ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
+
+        return response()->redirectTo('https://drive.google.com/file/d/'.$file['path'].'/view');
     }
 }

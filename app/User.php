@@ -370,21 +370,23 @@ class User extends Authenticatable
         return $this->hasMany('App\NoteVote');
     }
 
-    public function upvotesOnNote($id){
-        return $this->hasMany('App\NoteVote')->where('type','=',0)->where('note_id','=',$id)->get();
+    public function upvotesOnNote($id)
+    {
+        return $this->hasMany('App\NoteVote')->where('type', '=', 0)->where('note_id', '=', $id)->get();
     }
 
-    public function downvotesOnNote($id){
-        return $this->hasMany('App\NoteVote')->where('type','=',1)->where('note_id','=',$id)->get();
+    public function downvotesOnNote($id)
+    {
+        return $this->hasMany('App\NoteVote')->where('type', '=', 1)->where('note_id', '=', $id)->get();
     }
 
-     /**
+    /**
      * Upvote or downvote a note.
      * @param $note_id
      * @param $type
      */
 
-    public function vote_on_note($note_id,$type)
+    public function vote_on_note($note_id, $type)
     {
         $noteVote = new NoteVote();
         $noteVote->user_id = $this->id;
@@ -393,5 +395,19 @@ class User extends Authenticatable
         $noteVote->save();
     }
 
+    public function storeReviews()
+    {
+        return $this->hasMany('App\Review');
+    }
+
+    public function bookmarked_questions()
+    {
+        return $this->hasMany('App\BookmarkQuestion', 'user_id');
+    }
+
+    public function bookmarked_components_questions()
+    {
+        return $this->hasMany('App\BookmarkComponentQuestion', 'user_id');
+    }
 
 }

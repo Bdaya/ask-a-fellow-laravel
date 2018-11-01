@@ -7,28 +7,30 @@
             <div class="panel panel-default">
 
               <div class="panel-heading">
-              <h1>Event: {{ $event->title }}</h1>
+              <h2>Event: {{ $event->title }}</h2>
               <br>
-              <h3><i>Description: {{ $event->description }}</h3></i>
+              <h4><i>Description: {{ $event->description }}</h4></i>
               <br>
-              <h3><i>Place: {{ $event->place }}</h3></i>
+              <h4><i>Course: {{ $event->course->course_name }} ({{ $event->course->course_code }})</h4></i>
               <br>
-              <h3><i>Date: {{ $event->date }}</h3></i>
+              <h4><i>Place: {{ $event->place }}</h4></i>
+              <br>
+              <h4><i>Date: {{ $event->date }}</h4></i>
               <br>
               <h2>Created by: {{ $creator->first_name }} {{ $creator->last_name }}</h2>
               <br>
-              <h3><i>Email: {{ $creator->email }}</h3></i>
+              <h4><i>Email: {{ $creator->email }}</h4></i>
               <br>
-              <h3><i>Major: {{ $creator->major }}</h3></i>
+              <h4><i>Major: {{ $creator->major }}</h4></i>
               <br>
-              <h3><i>Semester: {{ $creator->semester }}</h3></i>
+              <h4><i>Semester: {{ $creator->semester }}</h4></i>
               </div>
 
               <div class="panel-body">
                
-                <a href="/admin/accept/{{ $event->id }}">Accept Request</a>
-				        <br></br>
-                <a onclick="return confirm('Are you sure want to reject this request?');" href="/admin/reject/{{ $event->id }}">Reject Request</a>
+                <h3><a href="/admin/accept/{{ $event->id }}">Accept Request</a></h3>
+				        <br>
+                <h3><a onclick="return confirm('Are you sure want to reject this request?');" href="/admin/reject/{{ $event->id }}">Reject Request</a></h3>
                
               </div>
                 

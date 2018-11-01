@@ -25,14 +25,13 @@ class Authenticate
     {
         $authenticated = true;
         $token = $request->header('x-access-token');
-        if($token)
+        if($token != null)
         {
             try
             {
                $var= JWTAuth::decode(new Token($token));
                 $user= User::findOrFail($var['id']);
                 Auth::setUser($user);
-
             }
             catch(TokenInvalidException $e)
             {
@@ -41,7 +40,6 @@ class Authenticate
         }
         else if(Auth::guard($guard)->guest())
             $authenticated = false;
-
         if($authenticated)
             return $next($request);
         if($request->ajax() || $request->wantsJson())

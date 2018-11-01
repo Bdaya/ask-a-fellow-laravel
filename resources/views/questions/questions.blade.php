@@ -20,6 +20,8 @@ if (isset($_GET['sort']))
 @extends('layouts.app')
 @section('content')
 
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+
     <div class="container" style="width:100%;">
         <div class="questions">
             <h3 style="margin-left: 50px">Showing {{count($questions_ordered)}} out of {{$count_questions}}
@@ -67,6 +69,9 @@ if (isset($_GET['sort']))
                     @endif
                 </ul>
             </nav>
+            @if (Session::has('bookmark'))
+              <div class="alert alert-info" style="width: 75%">{{ Session::get('bookmark') }}</div>
+            @endif
             @foreach($questions_ordered as $question)
                 <div href="{{url('answers/'.$question->id)}}" class="media question">
                     <div style="text-align: center" class="media-left">
@@ -80,35 +85,22 @@ if (isset($_GET['sort']))
                                 <img class="media-object" src="{{asset('art/default_pp.png')}}" alt="...">
                             @endif
                         </a>
-                        @if(Auth::user())
-                            <a class="upvote_question vote" value="{{$question->id}}" title="upvote"
-                               style="color:green;"><span class="glyphicon glyphicon-thumbs-up"></span></a>
-                        @endif
-                        @if($question->votes > 0)
-                            <span class="question_votes" style="color:green;">{{$question->votes}} </span>
-                        @elseif($question->votes == 0)
-                            <span class="question_votes" style="">{{$question->votes}} </span>
-                        @else
-                            <span class="question_votes" style="color:red;">{{$question->votes}} </span>
-                        @endif
-                        @if(Auth::user())
-                            <a class="downvote_question vote" value="{{$question->id}}" title="downvote"
-                               style="color:red"><span class="glyphicon glyphicon-thumbs-down"></span></a>
-                        @endif
                     </div>
                     <div class="media-body" style="cursor: pointer;">
                         @if(Auth::user())
                             <div class="delete_question pull-right">
+                                <a title="Bookmark Question" href="{{url('user/bookmark/'.$question->id)}}"><span style="color:#FFAF6C" class="glyphicon glyphicon-bookmark"></span></a>
+                                @if(Auth::user()->id == $question->asker_id)
+                                    <a value="{{$question}}" data-toggle="modal" data-target="#edit_modal" class="edit_question" title="Edit Question"><span class="glyphicon glyphicon-edit" style="color:#D24848;cursor:pointer;"></span></a>
+                                @endif
                                 @if(Auth::user()->id == $question->asker_id || Auth::user()->role >= 1)
 
                                     <a onclick="return confirm('Are you sure?');" title="Delete question"
-                                       href="{{url('delete_question/'.$question->id)}}"><span style="color:#FFAF6C"
-                                                                                              class="glyphicon glyphicon-remove"></span></a>
+                                       href="{{url('delete_question/'.$question->id)}}"><span style="color:#FFAF6C" class="glyphicon glyphicon-remove"></span></a>
 
                                 @endif
                                 <a value="{{$question->id}}" data-toggle="modal" data-target="#report_modal"
-                                   class="report_question" title="Report question"><span style="color:#D24848;"
-                                                                                         class="glyphicon glyphicon-ban-circle"></span></a>
+                                   class="report_question" title="Report question"><span style="color:#D24848;" class="glyphicon glyphicon-ban-circle"></span></a>
                             </div>
                         @endif
                             @if($question->asker->verified_badge >=1)
@@ -121,14 +113,60 @@ if (isset($_GET['sort']))
                         @endif
                         <div class="question_text">
                             {{$question->question}}
+                             @if($question->attachement_path)
+                            <div>
+                              <span class="glyphicon glyphicon-paperclip"></span>
+                              <a href="{{url('/user/question/download_attachement/'.$question->id)}}">{{ $question->attachement_path }}</a>
+                            </div>
+                          @endif
                         </div>
                         <p style="font-weight: bold; font-style: italic; ">{{ date("F j, Y, g:i a",strtotime($question->created_at)) }} </p>
                     </div>
-
-
+                     <div>
+                        @if(Auth::user() && count(Auth::user()->upvotesOnQuestion($question->id)))
+                            <i class="fa fa-thumbs-up upvote_question" value="{{$question->id}}" title="upvote" style="color:green; font-size: 20px;"></i>
+                        @elseif(Auth::user())
+                            <i class="far fa-thumbs-up upvote_question" value="{{$question->id}}" title="upvote" style="color:green; font-size: 20px;"></i>
+                        @endif
+                        @if($question->votes > 0)
+                            <span class="question_votes" style="color:green;">{{$question->votes}} </span>
+                        @elseif($question->votes == 0)
+                            <span class="question_votes" style="">{{$question->votes}} </span>
+                        @else
+                            <span class="question_votes" style="color:red;">{{$question->votes}} </span>
+                        @endif
+                        @if(Auth::user() && count(Auth::user()->downvotesOnQuestion($question->id)))
+                            <i class="fa fa-thumbs-down downvote_question" value="{{$question->id}}" title="downvote" style="color:red; font-size: 20px"></i>
+                        @elseif(Auth::user())
+                            <i class="far fa-thumbs-down downvote_question" value="{{$question->id}}" title="downvote" style="color:red; font-size: 20px"></i>
+                        @endif
+                    </div>
                 </div>
 
             @endforeach
+
+            <div id="edit_modal" class="modal fade" tabindex="-1" role="dialog">
+                <div class="modal-dialog">
+                    <div class=""  style="background-color:rgba(255,255,255,0.9)">
+
+                        <button style="margin-right:15px;margin:top:10px;"type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                        <br>
+                        <div class="modal-body" style="padding: 0 50px 40px 50px;">
+                            <h3>Edit Question</h3>
+                            <div class="form-group" style="width: 100%;">
+                                <textarea class="form-control modified_question"></textarea>
+                            </div>
+
+                            <button disabled="disabled" onclick="editQuestion()" class="btn btn-default">Edit</button>
+                            @include('errors')
+                        </div>
+                        <!-- <div class="modal-footer"> -->
+
+                        <!-- </div> -->
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div>
 
             <div id="report_modal" class="modal fade" tabindex="-1" role="dialog">
                 <div class="modal-dialog">
@@ -167,14 +205,25 @@ if (isset($_GET['sort']))
                 </div><!-- /.modal-dialog -->
             </div>
 
-            <form id="post_question_form" action="" method="POST">
+            <form id="post_question_form" action="" enctype="multipart/form-data" method="POST">
                 {{csrf_field()}}
                 <div class="form-group">
                     <label for="post_question_text">Ask a question:</label>
                     <textarea required class="form-control" id="post_question_text" name="question"
                               placeholder="Type your question here"></textarea>
-                    <input type="submit" value="Post Question" class="btn btn-default pull-right"
-                           id="post_question_submit">
+                    <br>
+                      <div class="form-group">
+                        <div class="col-sm-6 pull-right">
+                            <input name="file" id="file" type="file">
+                        </div>
+                        <label for="file" class="col-sm-1.5 control-label pull-right">Attach file</label>
+                      </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="col-sm-offset-3">
+                            <button type="submit" class="btn btn-default pull-right" id="post_question_submit">Post Question</button>
+                        </div>
+                    </div>
                     @if(isset($all))
                         <div class="form-group" style="width:50%;">
                             <label for="course" style="">Post question to: </label>
@@ -351,7 +400,7 @@ if (isset($_GET['sort']))
             $.ajax({
                 'url': "{{url('')}}/vote/question/" + question_id + "/" + type,
                 success: function (data) {
-                    question.parent().find('.question_votes').html(data);
+                    location.reload();
                 }
             });
         });
@@ -363,10 +412,41 @@ if (isset($_GET['sort']))
             $.ajax({
                 'url': "{{url('')}}/vote/question/" + question_id + "/" + type,
                 success: function (data) {
-                    question.parent().find('.question_votes').html(data);
+                    location.reload();
                 }
             });
         });
+
+        $(function() {
+            $('.modified_question').on('input', function() {
+                if( $('.modified_question').filter(function() { return !!this.value; }).length > 0 ) {
+                     $('button').prop('disabled', false);
+                } else {
+                     $('button').prop('disabled', true);
+                }
+            });
+          });
+
+      var question_id;
+      $('.edit_question').click(function () {
+          var question = $(this).attr('value');
+          question_id = JSON.parse(question)["id"];
+          var body = JSON.parse(question)["question"];
+          $('.modified_question').val(body);
+      });
+
+      function editQuestion(){
+        var body = $('.modified_question').val();
+        $.ajax({
+            type: "GET",
+            url : "{{url('edit_question/')}}",
+            data : {question:body,question_id:question_id},
+            success : function(data){
+                location.reload();
+            }
+        });
+      }
+
     </script>
 
 @endsection

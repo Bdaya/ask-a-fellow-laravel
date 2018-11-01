@@ -29,6 +29,18 @@
 
             <tr>
                 <td>
+                    <a href="{{url('admin/add_event')}}">Add Event</a>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <a href="{{url('admin/add_announcement')}}">Add Announcement</a>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
                     <a href="{{url('admin/add_component_category')}}">Add Component Category</a>
                 </td>
             </tr>
@@ -81,7 +93,7 @@
                     <a href="{{url('admin/delete_accept_component')}}">Delete/Accept Component</a>
                 </td>
             </tr>
-            
+
            <tr>
                 <td>
                     <a href="{{url('admin/note_requests')}}">Note Upload/Delete Requests</a>

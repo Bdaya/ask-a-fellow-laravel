@@ -31,13 +31,19 @@
             {{csrf_field()}}
             <div class="form-group">
                 <label for="category_name">Category Name</label>
-                <input type="text" class="form-control" id="category_name" name="category_name" placeholder="Category Name">
+                <input type="text" class="form-control" id="category_name" name="category_name" placeholder="Category Name" value="{{ old('category_name') }}">
             </div>
             <button type="submit" class="btn btn-default">Add Category</button>
-            
+            <br></br>
             <div class="error" style="color:red">
                 @include('errors')
             </div>
+            @if (Session::has('Added'))
+                <div class="alert alert-info">{{ Session::get('Added') }}</div>
+            @endif
+            @if (Session::has('Updated'))
+                <div class="alert alert-info">{{ Session::get('Updated') }}</div>
+            @endif
         </form>
     </div>
     <script type="text/javascript" src="https://cdn.datatables.net/t/zf/dt-1.10.11/datatables.min.js"></script>

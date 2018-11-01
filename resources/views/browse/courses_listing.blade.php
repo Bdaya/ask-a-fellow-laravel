@@ -6,6 +6,7 @@
         <th>Course name</th>
         <th>Questions</th>
         <th>Notes</th>
+        <th>Events</th>
     </tr>
     @foreach($courses as $course)
         <tr class="course_row" href="{{url('browse/'.$course->id)}}">
@@ -13,12 +14,23 @@
                 <td>{{$course->course_code}}</td>
                 <td>{{$course->course_name}}</td>
                 <td>{{count($course->questions()->get())}}</td>
-                <td><a href="{{url('browse/notes/'.$course->id)}}">View Notes</a></td>
+                <td>
+                    <a href="{{url('browse/notes/'.$course->id)}}">View Notes</a>
+                    <br>
+                    <a href="{{url('/course/'.$course->id.'/uploadNote')}}">Upload Note</a>
+                </td>
+                <td>
+                    <a href="events">View Events</a>
+                    <br>
+                    @if(Auth::user()->role >= 1)
+                        <a href="{{url('/course/add_event/'.$course->id)}}">Add Event</a>
+                    @endif
+                </td>
         </tr>
     @endforeach
     <tr>
         <td>
-            <a href="{{url('/browse/'.$major->id.'/'.$semester)}}">View questions from all courses</a>
+            <a href="{{url('/browse/questions/'.$major->id.'/'.$semester)}}">View questions from all courses</a>
         </td>
     </tr>
 </table>

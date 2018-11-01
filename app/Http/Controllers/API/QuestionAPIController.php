@@ -7,8 +7,12 @@ use Illuminate\Http\Request;
 use App\Http\Controllers;
 use App\Http\Requests;
 use App\Question;
+use App\Answer;
+use App\BookmarkQuestion;
+use App\QuestionVote;
+use App\AnswerVote;
 use Auth;
-
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Class QuestionAPIController
@@ -21,7 +25,8 @@ class QuestionAPIController extends Controller
     {
         $this->middleware('auth', ['only' => [
             'vote_answer',
-            'vote_question'
+            'vote_question',
+            'bookmark_question'
         ]]);
 
     }
@@ -47,7 +52,16 @@ class QuestionAPIController extends Controller
             ], 404);
         }
 
-        $asker = $Question->asker();
+        $asker = $Question->asker()->first();
+        $attachement_url = null;
+
+        if($Question->attachement_path){
+            $disk = Storage::disk('google');
+            $file = collect($disk->listContents())->where('type', 'file')
+                    ->where('extension', pathinfo($Question->attachement_path, PATHINFO_EXTENSION))
+                    ->where('filename', pathinfo($Question->attachement_path, PATHINFO_FILENAME))->first();
+            $attachement_url = $disk->url($file['path']);
+       }
 
         return response()->json([
             'data' => [
@@ -55,6 +69,7 @@ class QuestionAPIController extends Controller
                 'creation' => $Question['created_at'],
                 'update' => $Question['updated_at'],
                 'votes' => $Question['votes'],
+                'attachement_url' => $attachement_url,
                 'asker_fname' => $asker['first_name'],
                 'asker_lname' => $asker['last_name']
             ]
@@ -88,6 +103,14 @@ class QuestionAPIController extends Controller
             $returnData['status'] = true;
             foreach ($answers as $answer) {
                $answer['responder'] = $answer->responder;
+               $answer['attachement_url'] = null;
+               if($answer->attachement_path){
+                    $disk = Storage::disk('google');
+                    $file = collect($disk->listContents())->where('type', 'file')
+                            ->where('extension', pathinfo($answer->attachement_path, PATHINFO_EXTENSION))
+                            ->where('filename', pathinfo($answer->attachement_path, PATHINFO_FILENAME))->first();
+                    $answer['attachement_url'] = $disk->url($file['path']);
+               }
             }
             $returnData['data'] = $answers;
         }
@@ -99,40 +122,42 @@ class QuestionAPIController extends Controller
     public function vote_answer($answer_id, $type)
     {
         $user = Auth::user();
+        $flag = 0;
+        $voted_answer = AnswerVote::where('user_id', $user->id)->where('answer_id', $answer_id)->first();
 
-        if($type == 0 && count($user->upvotesOnAnswer($answer_id))){
-            $returnData['status'] = false;
-            $returnData['message'] = 'Cannot upvote twice';
-            return response()->json($returnData);
+        if (($type == 0 && count($user->upvotesOnAnswer($answer_id))) || ($type == 1 && count($user->downvotesOnAnswer($answer_id))))
+        {
+            $voted_answer->delete();
+            $returnData['message'] = 'Vote removed';
         }
-        if($type == 1 && count($user->downvotesOnAnswer($answer_id))){
-            $returnData['status'] = false;
-            $returnData['message'] = 'Cannot downvote twice';
-            return response()->json($returnData);
-        }
-        if($type == 0 && count($user->downvotesOnAnswer($answer_id))) {
-            $vote = AnswerVote::where('user_id','=',Auth::user()->id)->where('answer_id','=',$answer_id)->first();
-            $vote->delete();
-        }
-        else if($type == 1 && count($user->upvotesOnAnswer($answer_id))) {
-            $vote = AnswerVote::where('user_id','=',Auth::user()->id)->where('answer_id','=',$answer_id)->first();
-            $vote->delete();
+        elseif (($type == 0 && count($user->downvotesOnAnswer($answer_id))) || ($type == 1 && count($user->upvotesOnAnswer($answer_id))))
+        {
+            $voted_answer->delete(); 
+            $user->vote_on_answer($answer_id, $type); 
+            $flag = 1;
+            $returnData['message'] = 'Vote reversed';
         }
         else
-            $user->vote_on_answer($answer_id, $type);
-
-        $answer = Answer::find($answer_id);
-        if(Auth::user()->id != $answer->responder_id)
         {
-            //send notification
-            $responder_id = $answer->responder_id;
-            $action = ($type == 0)?' upvoted':' downvoted';
-            $description = Auth::user()->first_name.' '.Auth::user()->last_name.$action.' your answer.';
-            $link = url('/answers/'.$answer->question_id);
-            Notification::send_notification($responder_id,$description,$link);
-
+            $user->vote_on_answer($answer_id, $type);
+            $flag = 1;
+            $returnData['message'] = 'Vote added';
         }
 
+        $answer = Answer::find($answer_id);
+
+        if($flag == 1){
+            if($user->id != $answer->responder_id)
+            {
+                //send notification
+                $responder_id = $answer->responder_id;
+                $action = ($type == 0)?' upvoted':' downvoted';
+                $description = Auth::user()->first_name.' '.Auth::user()->last_name.$action.' your answer.';
+                $link = url('/answers/'.$answer->question_id);
+                Notification::send_notification($responder_id,$description,$link);
+
+            }
+        }        
 
         $votes = $answer->votes;
         $color = 'black';
@@ -153,39 +178,43 @@ class QuestionAPIController extends Controller
     public function vote_question($question_id, $type)
     {
         $user = Auth::user();
+        $flag = 0;
+        $voted_question = QuestionVote::where('user_id', $user->id)->where('question_id', $question_id)->first();
 
-        if($type == 0 && count($user->upvotesOnQuestion($question_id))){}
-            $returnData['status'] = false;
-            $returnData['message'] = 'Cannot upvote twice';
-            return response()->json($returnData);
+        if (($type == 0 && count($user->upvotesOnQuestion($question_id))) || ($type == 1 && count($user->downvotesOnQuestion($question_id))))
+        {
+            $voted_question->delete();
+            $returnData['message'] = 'Vote removed';
         }
-        if($type == 1 && count($user->downvotesOnQuestion($question_id))){
-            $returnData['status'] = false;
-            $returnData['message'] = 'Cannot downvote twice';
-            return response()->json($returnData);
-        }
-        if($type == 0 && count($user->downvotesOnQuestion($question_id))) {
-            $vote = QuestionVote::where('user_id','=',Auth::user()->id)->where('question_id','=',$question_id)->first();
-            $vote->delete();
-        }
-        else if($type == 1 && count($user->upvotesOnQuestion($question_id))) {
-            $vote = QuestionVote::where('user_id','=',Auth::user()->id)->where('question_id','=',$question_id)->first();
-            $vote->delete();
+        elseif (($type == 0 && count($user->downvotesOnQuestion($question_id))) || ($type == 1 && count($user->upvotesOnQuestion($question_id))))
+        {
+            $voted_question->delete(); 
+            $user->vote_on_question($question_id, $type); 
+            $flag = 1;
+            $returnData['message'] = 'Vote reversed';
         }
         else
+        {
             $user->vote_on_question($question_id, $type);
+            $flag = 1;
+            $returnData['message'] = 'Vote added';
+        }
 
         $question = Question::find($question_id);
-        if(Auth::user()->id != $question->asker_id)
-        {
-            //send notification
-            $asker_id = $question->asker_id;
-            $action = ($type == 0)?' upvoted':' downvoted';
-            $description = Auth::user()->first_name.' '.Auth::user()->last_name.$action.' your question.';
-            $link = url('/answers/'.$question_id);
-            Notification::send_notification($asker_id,$description,$link);
 
-        }
+        if($flag == 1){
+            
+            if($user->id != $question->asker_id)
+            {
+                //send notification
+                $asker_id = $question->asker_id;
+                $action = ($type == 0)?' upvoted':' downvoted';
+                $description = Auth::user()->first_name.' '.Auth::user()->last_name.$action.' your question.';
+                $link = url('/answers/'.$question_id);
+                Notification::send_notification($asker_id,$description,$link);
+
+            }
+        }        
 
         $votes = Question::find($question_id)->votes;
         $color = 'black';
@@ -201,6 +230,55 @@ class QuestionAPIController extends Controller
 
         return response()->json($returnData);
 
+    }
 
+    public function edit_question(Request $request, $question_id)
+    {
+        $this->validate($request, [
+          'question' => 'required'
+        ]);
+
+        $question = Question::find($question_id);
+        if($question){
+            $question->question = $request->question;
+            $question->save();
+            return response()->json($question, 200);
+        }
+        else{
+            return response()->json(['status' => '404 not found', 'message' => 'Question not found'], 404);
+        }
+    }
+
+    public function edit_answer(Request $request, $answer_id)
+    {
+        $this->validate($request, [
+          'answer' => 'required'
+        ]);
+
+        $answer = Answer::find($answer_id);
+        if($answer){
+            $answer->answer = $request->answer;
+            $answer->save();
+            return response()->json($answer, 200);
+        }
+        else{
+            return response()->json(['status' => '404 not found', 'message' => 'Answer not found'], 404);
+        }
+    }
+
+    public function bookmark_question($id)
+    {
+        $bookmarked_question = BookmarkQuestion::where('user_id', Auth::user()->id)->where('question_id', $id)->first();
+
+        if($bookmarked_question){
+            $bookmarked_question->delete();
+            return response()->json('Question unmarked', 200);
+        } else{
+            $bookmark = new BookmarkQuestion;
+            $bookmark->user_id = Auth::user()->id;
+            $bookmark->question_id = $id;
+            $bookmark->save();
+            return response()->json('Question bookmarked', 200);
+        }
     }
 }

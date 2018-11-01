@@ -18,11 +18,11 @@ class Component extends Model
 
     public function category()
     {
-        return $this->belongsTo('App\ComponentCategory')->first();
+        return $this->belongsTo('App\ComponentCategory', 'category_id')->first();
     }
 
     public function questions()
     {
-        return $this->hasMany('App\ComponentQuestion');
+        return $this->hasMany('App\ComponentQuestion', 'component_id');
     }
 }

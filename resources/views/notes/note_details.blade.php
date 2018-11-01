@@ -1,62 +1,97 @@
  @extends('layouts.app');
 @section('content')
 
-<link href="{{asset('/css/formInput.css')}}" rel="stylesheet">
-<script src="{{asset('/js/classie.js')}}" type="text/javascript"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
 
-    <div class="container" style="padding-left: 80px;">
+    <div class="container">
+
+         @if (Session::has('success'))
+            <div class="alert alert-info" style="width: 87.5%">{{ Session::get('success') }}</div>
+        @endif
         <div class="media question">
+
             <div style="text-align: center" class="media-left">
 
                 <a href="{{url('user/'.$note->user_id)}}">
-
-                    @if($note->user->profile_picture)
-                        <img class="media-object" src="{{asset($question->useer->profile_picture)}}" alt="...">
-
-                    @else
-                        <img class="media-object" src="{{asset('art/default_pp.png')}}" alt="...">
-
-                    @endif
+                  @if($note->user->profile_picture)
+                    <img class="media-object" src="{{asset($note->user->profile_picture)}}" alt="Profile Photo not Found!" width="75" height="75">
+                  @else
+                    <img class="media-object" src="{{asset('art/default_pp.png')}}" alt="..." width="75" height="75">
+                  @endif
                 </a>
 
+                <br>
                 @if(Auth::user())
-                    <a class="upvote_note vote" value="{{$note->id}}" title="upvote" style="color:green;"><span class="glyphicon glyphicon-thumbs-up"></span></a>
-                @endif
-                @if($note->votes > 0)
-                    <span class="note_votes" style="color:green;">{{$note->votes}} </span>
-                @elseif($note->votes == 0)
-                    <span class="note_votes" style="">{{$note->votes}} </span>
-                @else
-                    <span class="note_votes" style="color:red;">{{$note->votes}} </span>
-                @endif
-                @if(Auth::user())
-                    <a class="downvote_note vote" value="{{$note->id}}"  title="downvote"  style="color:red"><span class="glyphicon glyphicon-thumbs-down"></span></a>
+                    @if(Auth::user()->role >= 1)
+                      <form onclick="return confirm('Are you sure want to delete this note?');" action='/admin/delete_note/{{$note->id}}' Method="GET">
+                        <button class ="icon-button"><span class="glyphicon glyphicon-trash" style="font-size:30px"></span></button>
+                      </form>
+                    @elseif(Auth::user()->id == $note->user_id)
+                        <a value="{{$note->id}}" data-toggle="modal" data-target="#delete_modal" class="deletion_comment" title="Note Delete Request"><span class="glyphicon glyphicon-trash" style="font-size:30px;cursor:pointer;"></span></a>
+                    @endif
                 @endif
             </div>
 
             <div class="media-body">
-                @if(Auth::user() && (Auth::user()->role >= 1))
-                   <form action='/admin/delete_note/{{$note->id}}' Method="GET">
-                    <button style="float:right" class ="icon-button"><span class="glyphicon glyphicon-trash" style ="float:right"></span></button>
-                </form>
+               @if($note->user->verified_badge >=1)
+                  <h3>Uploaded by <a href="{{url('user/'.$note->user_id)}}">{{$note->user->first_name.' '.$note->user->last_name}} <span class="verified"></span></a></h3>
+                @else
+                  <h3>Uploaded by <a href="{{url('user/'.$note->user_id)}}">{{$note->user->first_name.' '.$note->user->last_name}} </a></h3>
                 @endif
-                    @if($note->user->verified_badge >=1)
-                        <a href="{{url('user/'.$note->user_id)}}"><h3>{{$note->user->first_name.' '.$note->user->last_name}} <span class="verified"></span></h3></a>
-                    @else
-                        <a href="{{url('user/'.$note->user_id)}}"><h3>{{$note->user->first_name.' '.$note->user->last_name}} </h3></a>
-                    @endif
 
-                <h3>{{$note->title}}</h3>
+                <h2>{{$note->title}}</h2>
                 <div class="note_description">
-                    {{$note->description}}
+                    <h4>{{$note->description}}</h4>
                 </div>
-
-                <form action='/browse/notes/view_note/{{$note->id}}' Method="GET">
-                    <button style="float:right" class ="icon-button2">View Note</button>
-                </form>
 
                 <p style="font-weight: bold; font-style: italic; ">{{ date("F j, Y, g:i a",strtotime($note->created_at)) }} </p>
             </div>
+        </div>
+
+        <div id="delete_modal" class="modal fade" tabindex="-1" role="dialog">
+                <div class="modal-dialog">
+                    <div class=""  style="background-color:rgba(255,255,255,0.9)">
+
+                        <button style="margin-right:15px;margin:top:10px;"type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+
+                        <br>
+                        <div class="modal-body" style="padding: 0 50px 40px 50px;">
+                            <h3>Write your delete comment</h3>
+                            <div class="form-group" style="width: 100%;">
+                                <textarea class="form-control delete_note_comment"></textarea>
+                            </div>
+
+                            <button onclick="deleteNoteRequest()" class="btn btn-default">Submit</button>
+                            @include('errors')
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <div>
+        @if(Auth::user() && count(Auth::user()->upvotesOnNote($note->id)))
+            <i class="fa fa-thumbs-up upvote_note" value="{{$note->id}}" title="upvote" style="color:green; font-size: 28px"></i>
+        @elseif(Auth::user())
+            <i class="far fa-thumbs-up upvote_note" value="{{$note->id}}" title="upvote" style="color:green; font-size: 28px"></i>
+        @endif
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          @if($note->votes > 0)
+              <span class="note_votes" style="color:green; font-size:30px">{{$note->votes}} </span>
+          @elseif($note->votes == 0)
+              <span class="note_votes" style="font-size:30px">{{$note->votes}} </span>
+          @else
+              <span class="note_votes" style="color:red; font-size:30px">{{$note->votes}} </span>
+          @endif
+          &nbsp;&nbsp;&nbsp;&nbsp;
+        @if(Auth::user() && count(Auth::user()->downvotesOnNote($note->id)))
+            <i class="fa fa-thumbs-down downvote_note" value="{{$note->id}}" title="downvote" style="color:red; font-size: 28px"></i>
+        @elseif(Auth::user())
+            <i class="far fa-thumbs-down downvote_note" value="{{$note->id}}" title="downvote" style="color:red; font-size: 28px"></i>
+        @endif
+
+          <h4><a href="{{url('browse/notes/view_note/'.$note->id)}}">Click to download</a></h4>
+
         </div>
 
         <h2 style="">{{count($note->comments()->get())}} Comment(s)</h2>
@@ -67,12 +102,24 @@
                 <div class="media answer">
                     <div style="text-align: center" class="media-left">
 
+                        @if(Auth::user())
+                          <div>
+                            @if(Auth::user()->id == $comment->user_id)
+                                <a value="{{$comment}}" data-toggle="modal" data-target="#edit_modal" class="edit_comment" title="Edit Note Comment"><span class="glyphicon glyphicon-edit" style="color:#D24848;cursor:pointer;"></span></a>
+                            @endif
+                            @if(Auth::user()->id == $comment->user_id || Auth::user()->role >= 1)
+                                <a onclick="return confirm('Are you sure want to delete this comment?');" title="Delete Note Comment" href="{{url('delete_note_comment/'.$note->id.'/'.$comment->id)}}"><span style="color:#FFAF6C" class="glyphicon glyphicon-remove"></span></a>
+                                <br>
+                            @endif
+                          </div>
+                      @endif
+
                         <a href="{{url('user/'.$comment->user_id)}}">
 
                             @if($comment->commenter->profile_picture)
-                                <img class="media-object" src="{{asset($comment->commenter->profile_picture)}}" alt="...">
+                                <img class="media-object" src="{{asset($comment->commenter->profile_picture)}}" alt="..."  width="75" height="75">
                             @else
-                                <img class="media-object" src="{{asset('art/default_pp.png')}}" alt="...">
+                                <img class="media-object" src="{{asset('art/default_pp.png')}}" alt="..."  width="75" height="75">
                             @endif
                         </a>
                     </div>
@@ -92,8 +139,36 @@
             @endforeach
         </div>
 
+        <div style="text-align: center;">
+           {{$comments->links()}}
+        </div>
+
+         <div id="edit_modal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class=""  style="background-color:rgba(255,255,255,0.9)">
+
+                    <button style="margin-right:15px;margin:top:10px;"type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+
+                    <br>
+                    <div class="modal-body" style="padding: 0 50px 40px 50px;">
+                        <h3>Edit Comment</h3>
+                        <div class="form-group" style="width: 100%;">
+                            <textarea class="form-control modified_comment"></textarea>
+                        </div>
+
+                        <button disabled="disabled" onclick="editComment()" class="btn btn-default">Edit</button>
+                        @include('errors')
+                    </div>
+                    <!-- <div class="modal-footer"> -->
+
+                    <!-- </div> -->
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+
         @if(Auth::user())
-        <form id="post_comment_form" action="/note_comment/{{note_id}}" method="POST">
+        <form id="post_comment_form" action="/note_comment/{{$note->id}}" method="POST">
             {{csrf_field()}}
             <div class="form-group">
                 <label for="post_comment_body">Post a comment:</label>
@@ -102,11 +177,10 @@
             </div>
         </form>
         @else
-            <div class="">You must be logged in to be able to answer. <a href="{{url('/login')}}">Login here.</a></div>
+            <div class="">You must be logged in to be able to comment. <a href="{{url('/login')}}">Login here.</a></div>
         @endif
+
     </div>
-
-
 
 
 
@@ -119,18 +193,7 @@
     border: 0;
     background: transparent;
 }
-.icon-button2{
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    outline: none;
-    border: 0;
-    background: transparent;
-}
-.icon-button2:hover{
-  background-color: #40a0ff; /* Green */
-color: white;
-}
+
 #Header h1{
   position:absolute;
   left:40%;
@@ -138,125 +201,6 @@ color: white;
   margin:auto;
 
    text-decoration: underline;
-}
-#Note * {
-    margin: 0;
-    padding: 0;
-}
-
-#Note body {
-    font-family: arial, sans-serif;
-    font-size: 100%;
-    margin: 3em;
-    background: #666;
-    color: #fff;
-}
-
-#Note h2, p {
-    font-size: 100%;
-    font-weight: normal;
-    margin-left:-20px;
-}
-#Note a p{
-  margin-left:-20px;
-}
-
-#Note ul, li {
-    list-style: none;
-}
-
-#Note ul {
-    overflow: hidden;
-    padding: 3em;
-}
-
-#NoteA {
-    text-decoration: none;
-    color: #000;
-    background: #ffc;
-    display: block;
-    height: 20em;
-    width: 20em;
-    padding: 2em;
-    word-wrap:break-word;
-}
-
-#Note ul li {
-    margin: 1em;
-    float: left;
-
-}
-
-#Note ul li h2{
-  font-size:140%;
-  font-weight:bold;
-  padding-bottom:10px;
-}
-
-#NoteA {
-  text-decoration:none;
-  color:#000;
-  background:#ffc;
-  display:block;
-  height:20em;
-  width:20em;
-  padding:2em;
-
-  -moz-box-shadow:5px 5px 7px rgba(33,33,33,1);
-
-  -webkit-box-shadow: 5px 5px 7px rgba(33,33,33,.7);
-
-  box-shadow: 5px 5px 7px rgba(33,33,33,.7); }
-#NoteA {
-  -webkit-transform:rotate(-6deg);
-  -o-transform:rotate(-6deg);
-  -moz-transform:rotate(-6deg);
-}
-#Note ul li:nth-child(even) a{
-  -o-transform:rotate(4deg);
-  -webkit-transform:rotate(4deg);
-  -moz-transform:rotate(4deg);
-  position:relative;
-  top:5px;
-}
-#Note ul li:nth-child(3n) a{
-  -o-transform:rotate(-3deg);
-  -webkit-transform:rotate(-3deg);
-  -moz-transform:rotate(-3deg);
-  position:relative;
-  top:-5px;
-}
-#Note ul li:nth-child(5n) a{
-  -o-transform:rotate(5deg);
-  -webkit-transform:rotate(5deg);
-  -moz-transform:rotate(5deg);
-  position:relative;
-  top:-10px;
-}
-#Note ul li a:hover,ul li a:focus{
-  -moz-box-shadow:10px 10px 7px rgba(0,0,0,.7);
-  -webkit-box-shadow: 10px 10px 7px rgba(0,0,0,.7);
-  box-shadow:10px 10px 7px rgba(0,0,0,.7);
-  -webkit-transform: scale(1.25);
-  -moz-transform: scale(1.25);
-  -o-transform: scale(1.25);
-  position:relative;
-  z-index:5;
-}
-#NoteA {
-  text-decoration:none;
-  color:#000;
-  background:#ffc;
-  display:block;
-  height:20em;
-  width:20em;
-  padding:2em;
-  -moz-box-shadow:5px 5px 7px rgba(33,33,33,1);
-  -webkit-box-shadow: 5px 5px 7px rgba(33,33,33,.7);
-  box-shadow: 5px 5px 7px rgba(33,33,33,.7);
-  -moz-transition:-moz-transform .15s linear;
-  -o-transition:-o-transform .15s linear;
-  -webkit-transition:-webkit-transform .15s linear;
 }
 
 .note
@@ -370,8 +314,6 @@ color: white;
     }
 
 
-
-
 }
 span.verified{
     display: inline-block;
@@ -384,8 +326,6 @@ span.verified{
 
 }
 
-
-
 </style>
 
 <script>
@@ -394,7 +334,6 @@ span.verified{
             $('#post_comment').attr('disabled',true);
         else
             $('#post_comment_body').attr('disabled',false);
-        $('#report_other_text').hide();
     });
 
 
@@ -406,7 +345,7 @@ span.verified{
         $.ajax({
             'url': "{{url('')}}/vote/note/" + note_id + "/" + type,
             success: function (data) {
-                note.parent().find('.note_votes').html(data);
+                location.reload();
             }
         });
     });
@@ -418,8 +357,7 @@ span.verified{
         $.ajax({
             'url': "{{url('')}}/vote/note/" + note_id + "/" + type,
             success: function (data) {
-                console.log(data);
-                note.parent().find('.note_votes').html(data);
+                location.reload();
             }
         });
     });
@@ -432,8 +370,53 @@ span.verified{
             $('#post_comment_submit').attr('disabled',false);
 
     });
+
+    var comment_id;
+        $('.edit_comment').click(function () {
+            var comment = $(this).attr('value');
+            comment_id = JSON.parse(comment)["id"];
+            var body = JSON.parse(comment)["body"];
+            $('.modified_comment').val(body);
+        });
+
+    $(function() {
+        $('.modified_comment').on('input', function() {
+            if( $('.modified_comment').filter(function() { return !!this.value; }).length > 0 ) {
+                 $('button').prop('disabled', false);
+            } else {
+                 $('button').prop('disabled', true);
+            }
+        });
+    });
+    
+    function editComment(){
+            var body = $('.modified_comment').val();
+            $.ajax({
+                type: "GET",
+                url : "{{url('edit_comment/')}}",
+                data : {comment:body,comment_id:comment_id},
+                success : function(data){
+                    location.reload();
+                }
+            });
+    }
+
+    var note_id;
+        $('.deletion_comment').click(function () {
+            note_id = $(this).attr('value');
+        });
+    
+    function deleteNoteRequest(){
+            var body = $('.delete_note_comment').val();
+            $.ajax({
+                type: "GET",
+                url : "{{url('note/request_delete/')}}",
+                data : {comment:body,note_id:note_id},
+                success: function (data) {
+                    location.reload();
+                }
+            });
+    }
 </script>
-
-
 
 @endsection

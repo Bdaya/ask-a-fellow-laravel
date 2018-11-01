@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-
-
 use App\AnswerReport;
 use App\QuestionReport;
 use Illuminate\Http\Request;
-
 use App\Http\Requests;
 use App\Major;
 use App\Course;
@@ -16,10 +13,16 @@ use App\Answer;
 use App\Notification;
 use App\Feedback;
 use App\Component;
+use App\ComponentAnswer;
 use App\ComponentCategory;
+use App\ComponentQuestion;
+use App\BookmarkComponentQuestion;
+use App\BookmarkQuestion;
 use App\Note;
 use Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redirect;
 use Cloudinary\Uploader;
 use Response;
@@ -38,7 +41,16 @@ class AppController extends Controller
             'subscription_page',
             'post_question_all',
             'add_component',
-            'post_component'
+            'view_components',
+            'component_details',
+            'post_component',
+            'post_component_question',
+            'post_component_answer',
+            'view_component_answers',
+            'delete_component_question',
+            'bookmark_component_question',
+            'bookmark_question',
+            'delete_component_answer'
         ]]);
 
     }
@@ -46,7 +58,7 @@ class AppController extends Controller
     public function browse()
     {
         $majors = Major::all();
-        $semesters = [1,2,3,4,5,6,7,8,9];
+        $semesters = [1,2,3,4,5,6,7,8,9,10];
         return view('browse.index',compact(['majors','semesters']));
     }
 
@@ -134,8 +146,6 @@ class AppController extends Controller
         if(!in_array($order,$allowed))
             $order = 'latest';
 
-
-
         $questions_ordered = array();
         if($order == 'votes')
             $questions_ordered = $questions->orderBy('votes','desc')->orderBy('created_at','desc')->get();
@@ -168,6 +178,13 @@ class AppController extends Controller
         $question->asker_id = Auth::user()->id;
         $question->question = $request->question;
         $question->course_id = $course_id;
+        $file = $request->file('file');
+        if($file){
+            $fileName = 'question_'.time().'_'.$file->getClientOriginalName();
+            $mainDisk = Storage::disk('google');
+            $mainDisk->put($fileName, fopen($file, 'r+'));
+            $question->attachement_path = $fileName;
+        }
         $question->save();
         return redirect('/browse/'.$course_id);
     }
@@ -175,12 +192,18 @@ class AppController extends Controller
     public function delete_question($question_id)
     {
         $question = Question::find($question_id);
-        if(Auth::user() && (Auth::user()->role > 0 ||  Auth::user()->id == $question->asker_id))
+        if(Auth::user() && (Auth::user()->role > 0 ||  Auth::user()->id == $question->asker_id)){
+            if($question->attachement_path){
+                $disk = Storage::disk('google');
+                $file = collect($disk->listContents())->where('type', 'file')
+                        ->where('extension', pathinfo($question->attachement_path, PATHINFO_EXTENSION))
+                        ->where('filename', pathinfo($question->attachement_path, PATHINFO_FILENAME))->first();
+                $disk->delete($file['path']);
+            }
             $question->delete();
+        }
         return redirect(url('browse/'.$question->course_id));
     }
-
-
 
     public function inside_question($question_id)
     {
@@ -192,8 +215,6 @@ class AppController extends Controller
         $answers = $question->answers()->get();
 
         return view('questions.answers',compact(['question','answers']));
-
-
     }
 
     public function post_answer(Request $request,$question_id)
@@ -205,6 +226,13 @@ class AppController extends Controller
         $answer->answer = $request->answer;
         $answer->responder_id = Auth::user()->id;
         $answer->question_id = $question_id;
+        $file = $request->file('file');
+        if($file){
+            $fileName = 'ans_'.time().'_'.$file->getClientOriginalName();
+            $mainDisk = Storage::disk('google');
+            $mainDisk->put($fileName, fopen($file, 'r+'));
+            $answer->attachement_path = $fileName;
+        }
         $answer->save();
 
         $asker_id = Question::find($question_id)->asker_id;
@@ -218,8 +246,16 @@ class AppController extends Controller
     public function delete_answer($answer_id)
     {
         $answer = Answer::find($answer_id)->find($answer_id);
-        if(Auth::user() && (Auth::user()->role > 0 || Auth::user()->id == $answer->responder_id))
+        if(Auth::user() && (Auth::user()->role > 0 || Auth::user()->id == $answer->responder_id)){
+            if($answer->attachement_path){
+                $disk = Storage::disk('google');
+                $file = collect($disk->listContents())->where('type', 'file')
+                        ->where('extension', pathinfo($answer->attachement_path, PATHINFO_EXTENSION))
+                        ->where('filename', pathinfo($answer->attachement_path, PATHINFO_FILENAME))->first();
+                $disk->delete($file['path']);
+            }
             $answer->delete();
+        }
         return redirect(url('answers/'.$answer->question_id));
     }
 
@@ -256,7 +292,6 @@ class AppController extends Controller
         return redirect('/home');
     }
 
-
     public function send_feedback(Request $request)
     {
         $this->validate($request,[
@@ -271,26 +306,157 @@ class AppController extends Controller
         Session::flash('feedback','Feedback submitted successfully');
         return Redirect::back();
     }
-    public function  list_notes($course_id)
-    { //TODO : Pagination , Front end View , Offsets ,
+
+    public function list_notes($course_id)
+    { 
         if(Auth::user())
         $role = Auth::user()->role;
         $course = Course::find($course_id);
         if(!$course)
            return 'Ooops! course not found';
-        $notes = $course->notes;
+        $notes = $course->notes()->where('request_upload', '=', false)->paginate(6);
         return view('notes.notes',compact('notes','role'));
     }
 
-    public function view_note($note_id){
-      $note = Note::find($note_id);
+    public function view_components($category_id)
+    {
+        $category = ComponentCategory::find($category_id);
+        if($category){
+            $components = $category->components()->where('accepted',1)->get();
+            return view('user.components')->with('components',$components);
+        } else
+            return "Ooops, category not found";
+        
+    }
 
-      $path = $note->path;
+    public function post_component_question(Request $request, $component_id)
+    {
+        
+        $this->validate($request, [
+            'question' => 'required'
+        ]);
+        $question = new ComponentQuestion;
+        $question->asker_id = Auth::user()->id;
+        $question->question = $request->question;
+        $question->component_id = $component_id;
+        $file = $request->file('filepath');
+        if($file){
+            $fileName = 'cq_'.time().'_'.$file->getClientOriginalName();
+            $mainDisk = Storage::disk('google');
+            $mainDisk->put($fileName, fopen($file, 'r+'));
+            $question->attachement_path = $fileName;
+        }
+        $question->save();
+        
+        return redirect(url('user/components/'.$component_id));
+    }
 
-      return Response::make(file_get_contents($path), 200, [
-      'Content-Type' => 'application/pdf',
-      'Content-Disposition' => 'inline; filename="'.$note->title.'"'
-      ]);
+    public function delete_component_question($component_id, $question_id)
+    {
+        $question = ComponentQuestion::find($question_id);
+        if(Auth::user() && (Auth::user()->role > 0 ||  Auth::user()->id == $question->asker_id)){
+            if($question->attachement_path){
+                $disk = Storage::disk('google');
+                $file = collect($disk->listContents())->where('type', 'file')
+                        ->where('extension', pathinfo($question->attachement_path, PATHINFO_EXTENSION))
+                        ->where('filename', pathinfo($question->attachement_path, PATHINFO_FILENAME))->first();
+                $disk->delete($file['path']);
+            }
+            $question->delete();
+        }
+        return redirect(url('user/components/'.$component_id));
+    }
+
+    public function delete_component_answer($question_id, $answer_id)
+    {
+        $answer = ComponentAnswer::find($answer_id);
+        if(Auth::user() && (Auth::user()->role > 0 ||  Auth::user()->id == $answer->responder_id)){
+            if($answer->attachement_path){
+                $disk = Storage::disk('google');
+                $file = collect($disk->listContents())->where('type', 'file')
+                        ->where('extension', pathinfo($answer->attachement_path, PATHINFO_EXTENSION))
+                        ->where('filename', pathinfo($answer->attachement_path, PATHINFO_FILENAME))->first();
+                $disk->delete($file['path']);
+            }
+            $answer->delete();
+        }
+        return redirect(url('/user/view_component_answers/'.$question_id));
+    }
+
+    public function bookmark_component_question($component_id, $question_id)
+    {
+        $bookmarked_question = BookmarkComponentQuestion::where('user_id', Auth::user()->id)->where('question_id', $question_id)->first();
+        if(Auth::user()){
+
+            if($bookmarked_question){
+                $bookmarked_question->delete();
+                Session::flash('bookmark', 'Question unmarked');
+            } else{
+                $bookmark = new BookmarkComponentQuestion;
+                $bookmark->user_id = Auth::user()->id;
+                $bookmark->question_id = $question_id;
+                $bookmark->save();
+                Session::flash('bookmark', 'Question bookmarked');
+            }
+
+        }
+        return redirect(url('user/components/'.$component_id));
+    }
+
+    public function bookmark_question($id)
+    {
+        $bookmarked_question = BookmarkQuestion::where('user_id', Auth::user()->id)->where('question_id', $id)->first();
+        if(Auth::user()){
+
+            if($bookmarked_question){
+                $bookmarked_question->delete();
+                Session::flash('bookmark', 'Question unmarked');
+            } else{
+                $bookmark = new BookmarkQuestion;
+                $bookmark->user_id = Auth::user()->id;
+                $bookmark->question_id = $id;
+                $bookmark->save();
+                Session::flash('bookmark', 'Question bookmarked');
+            }
+
+        }
+        return back();
+    }
+
+    public function post_component_answer(Request $request, $question_id)
+    {
+        
+        $this->validate($request, [
+            'answer' => 'required'
+        ]);
+        $answer = new ComponentAnswer;
+        $answer->responder_id = Auth::user()->id;
+        $answer->answer = $request->answer;
+        $answer->component_question_id = $question_id;
+        $file = $request->file('file');
+        if($file){
+            $fileName = 'ca_'.time().'_'.$file->getClientOriginalName();
+            $mainDisk = Storage::disk('google');
+            $mainDisk->put($fileName, fopen($file, 'r+'));
+            $answer->attachement_path = $fileName;
+        }
+        $answer->save();
+        
+        return redirect(url('user/view_component_answers/'.$question_id));
+    }
+
+    public function view_component_answers($id)
+    {
+        $question = ComponentQuestion::find($id);
+        $answers = ComponentAnswer::where('component_question_id', $id)->paginate(5);
+        return view('user.component_question_answers', compact(['question', 'answers']));
+    }
+
+    public function component_details($id)
+    {
+        $component = Component::find($id);
+        $questions = ComponentQuestion::where('component_id', $id)->paginate(5);
+        return view('user.component_details', compact(['component', 'questions']));
     }
 
     public function add_component(Request $request)
@@ -309,8 +475,6 @@ class AppController extends Controller
             'price' => 'numeric|min:0|max:1000000',
             'category'=>'required'
         ]);
-        // seed the database first for testing
-        $categories = ComponentCategory::all();
         $component = new Component;
         $component->title = $request->title;
         $component->description = $request->description;
@@ -329,8 +493,61 @@ class AppController extends Controller
             $image = Uploader::upload($file->getRealPath(), ["width" => 300, "height" => 300, "crop" => "limit"]);
             $component->image_path = $image["url"];
         }
+        if(Auth::user()->role == 1){
+            $component->accepted = 1;
+            Session::flash('Added', 'Done, Component is added successfully!');
+        }
+        else
+            Session::flash('Added', 'Done, admins will review your component soon!');
         $component->save();
-        Session::flash('Added', 'Done, admins will review your component soon!');
         return redirect()->back();
+    }
+
+    public function download_component_question_attachement($question_id){
+
+        $question =  ComponentQuestion::find($question_id);
+        $disk = Storage::disk('google');
+        $file = collect($disk->listContents())->where('type', 'file')
+                ->where('extension', pathinfo($question->attachement_path, PATHINFO_EXTENSION))
+                ->where('filename', pathinfo($question->attachement_path, PATHINFO_FILENAME))->first();
+
+        return response()->redirectTo($disk->url($file['path']));
+
+    }
+
+    public function download_question_attachement($question_id){
+
+        $question =  Question::find($question_id);
+        $disk = Storage::disk('google');
+        $file = collect($disk->listContents())->where('type', 'file')
+                ->where('extension', pathinfo($question->attachement_path, PATHINFO_EXTENSION))
+                ->where('filename', pathinfo($question->attachement_path, PATHINFO_FILENAME))->first();
+
+        return response()->redirectTo($disk->url($file['path']));
+
+    }
+
+    public function download_component_answer_attachement($answer_id){
+
+        $answer =  ComponentAnswer::find($answer_id);
+        $disk = Storage::disk('google');
+        $file = collect($disk->listContents())->where('type', 'file')
+                ->where('extension', pathinfo($answer->attachement_path, PATHINFO_EXTENSION))
+                ->where('filename', pathinfo($answer->attachement_path, PATHINFO_FILENAME))->first();
+
+        return response()->redirectTo($disk->url($file['path']));
+
+    }
+
+    public function download_answer_attachement($answer_id){
+
+        $answer =  Answer::find($answer_id);
+        $disk = Storage::disk('google');
+        $file = collect($disk->listContents())->where('type', 'file')
+                ->where('extension', pathinfo($answer->attachement_path, PATHINFO_EXTENSION))
+                ->where('filename', pathinfo($answer->attachement_path, PATHINFO_FILENAME))->first();
+
+        return response()->redirectTo($disk->url($file['path']));
+
     }
 }

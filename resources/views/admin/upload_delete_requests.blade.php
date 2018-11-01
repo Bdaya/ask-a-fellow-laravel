@@ -21,7 +21,7 @@
           <div style="margin-top: 50px" class="col-md-3 button-group">
             <a href="/admin/approve_note/{{$note->id}}" class="upload btn btn-success" id="{{$note->id}}">Upload</a>
             <a href="/admin/delete_note/{{$note->id}}" class="delete btn btn-danger" id="{{$note->id}}">Delete</a>
-            <a href="/admin/view_note/{{$note->id}}" class="delete btn btn-primary" id="{{$note->id}}">View</a>
+            <a href="/admin/view_note/{{$note->id}}" class="delete btn btn-primary" id="{{$note->id}}" target="_blank">View</a>
           </div>
         </div>
 
@@ -46,8 +46,9 @@
           </div>
 
           <div style="margin-top: 50px" class="col-md-3 button-group">
-            <a href="/admin/delete_note/{{$note->id}}" class="delete btn btn-danger" id="{{$note->id}}">Delete</a>
-            <a href="/admin/view_note/{{$note->id}}" class="delete btn btn-primary" id="{{$note->id}}">View</a>
+            <a href="/admin/delete_note/{{$note->id}}" class="delete btn btn-success" id="{{$note->id}}">Delete</a>
+            <a href="/admin/reject_note_delete/{{$note->id}}" class="delete btn btn-danger" id="{{$note->id}}">Reject</a>
+            <a href="/admin/view_note/{{$note->id}}" class="delete btn btn-primary" id="{{$note->id}}" target="_blank">View</a>
           </div>
         </div>
 

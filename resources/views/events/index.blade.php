@@ -24,7 +24,7 @@
                     <div class="delete_question pull-right">
                         @if(Auth::user()->id == $event->creator_id || Auth::user()->role >= 1)
 
-                            <a onclick="return confirm('Are you sure?');" title="Delete event"
+                            <a onclick="return confirm('Are you sure want to delete this event?');" title="Delete event"
                                href="{{url('delete_event/'.$event->id)}}"><span style="color:#FFAF6C"
                                                                                       class="glyphicon glyphicon-remove"></span></a>
 

@@ -190,14 +190,14 @@
 
     #main_content {
 
-        padding-top: 100px;
-        padding-bottom: 50px;
-
-        min-height: 500px;
-        width: 80%;
-        background-color: #FFFAF4;
-        margin-top: 60px;
-        margin-bottom: 10px;
+        padding-top: 75px;
+        min-height: 80vh;
+        width: 100%;
+        background-color: #f8f8f8;
+        margin-top: -70px;
+        /*background-color: #FFFAF4;*/
+        /*margin-top: 60px;*/
+        /*margin-bottom: 10px;*/
         /*box-shadow: 0px 5px 10px -1px #888888;*/
         z-index: 1;
     }

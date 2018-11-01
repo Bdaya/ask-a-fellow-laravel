@@ -9,10 +9,11 @@ class ComponentQuestion extends Model
     protected $fillable = [
         'question'
     ];
+    protected $table = "components_questions";
 
     public function asker()
     {
-        return $this->belongsTo('App\User')->first();
+        return $this->belongsTo('App\User','asker_id');
     }
 
     public function component()

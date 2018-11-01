@@ -8,7 +8,7 @@ class Event extends Model
 {
     protected $fillable = [
 
-        'title', 'description', 'date', 'place'
+        'title', 'description', 'date', 'place', 'course_id'
     ];
 
     public function calenders()
