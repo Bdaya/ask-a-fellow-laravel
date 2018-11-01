@@ -68,7 +68,6 @@ class EventController extends Controller
         $announcement->save();
 
         //notify users with the new announcement
-         //notify users with the new announcement
         $event_id = $announcement->event_id;
         $event = Event::find($event_id);
         $users = $event->course->subscribed_users;
