@@ -5,6 +5,6 @@
 /public/art/pp
 Homestead.yaml
 Homestead.json
-.env
+#.env
 #/storage
 /private
