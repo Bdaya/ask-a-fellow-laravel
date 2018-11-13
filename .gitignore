@@ -1,7 +1,7 @@
 /.idea
 /vendor
 /node_modules
-/public/storage
+#/public/storage
 /public/art/pp
 Homestead.yaml
 Homestead.json
