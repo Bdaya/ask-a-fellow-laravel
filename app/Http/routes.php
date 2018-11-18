@@ -261,7 +261,7 @@ Route::group(['middleware' => 'web'], function () {
 | The routes inside this prefix Matches The "/api/v1/your_route" URL
 */
 
-Route::group(['prefix' => 'api/v1', 'middleware' => ['web']], function () {
+Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
 
     /*
         |--------------------------
