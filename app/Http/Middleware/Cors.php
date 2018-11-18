@@ -21,11 +21,12 @@ class Cors
             ->header('Access-Control-Allow-Origin', 'http://localhost:8100')
             // Depending of your application you can't use '*'
             // Some security CORS concerns
-            ->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'POST, OPTIONS, GET')
-            ->header('Access-Control-Allow-Headers','X-Requested-With,content-type')
+            //->header('Access-Control-Allow-Origin', '*')
+            ->header('Access-Control-Allow-Methods: GET, POST, OPTIONS')
+            ->header('Access-Control-Allow-Headers: Origin, Content-Type, Accept, Authorization, X-Request-With')
+            //->header('Access-Control-Allow-Headers','X-Requested-With,content-type')
             ->header('Access-Control-Allow-Credentials', 'true')
-            ->header('Access-Control-Max-Age', '10000');
+            //->header('Access-Control-Max-Age', '10000');
 
     }
 }
