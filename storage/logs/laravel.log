@@ -314,3 +314,98 @@ Stack trace:
 #65 D:\Tech-Hub\ask-a-fellow-laravel\public\index.php(53): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
 #66 D:\Tech-Hub\ask-a-fellow-laravel\server.php(21): require_once('D:\\Tech-Hub\\ask...')
 #67 {main}  
+[2018-11-18 19:46:14] local.ERROR: Symfony\Component\Debug\Exception\FatalThrowableError: Class 'Barryvdh\Cors\ServiceProvider' not found in D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\ProviderRepository.php:146
+Stack trace:
+#0 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\ProviderRepository.php(114): Illuminate\Foundation\ProviderRepository->createProvider('Barryvdh\\Cors\\S...')
+#1 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\ProviderRepository.php(60): Illuminate\Foundation\ProviderRepository->compileManifest(Array)
+#2 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Application.php(530): Illuminate\Foundation\ProviderRepository->load(Array)
+#3 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Bootstrap\RegisterProviders.php(17): Illuminate\Foundation\Application->registerConfiguredProviders()
+#4 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Application.php(203): Illuminate\Foundation\Bootstrap\RegisterProviders->bootstrap(Object(Illuminate\Foundation\Application))
+#5 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php(219): Illuminate\Foundation\Application->bootstrapWith(Array)
+#6 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php(105): Illuminate\Foundation\Console\Kernel->bootstrap()
+#7 D:\Tech-Hub\ask-a-fellow-laravel\artisan(35): Illuminate\Foundation\Console\Kernel->handle(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 {main}  
+[2018-11-18 20:01:55] local.ERROR: ReflectionException: Class Barryvdh\Cors\HandleCors does not exist in D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Container\Container.php:734
+Stack trace:
+#0 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Container\Container.php(734): ReflectionClass->__construct('Barryvdh\\Cors\\H...')
+#1 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Container\Container.php(629): Illuminate\Container\Container->build('Barryvdh\\Cors\\H...', Array)
+#2 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Application.php(697): Illuminate\Container\Container->make('Barryvdh\\Cors\\H...', Array)
+#3 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(126): Illuminate\Foundation\Application->make('Barryvdh\\Cors\\H...')
+#4 [internal function]: Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#5 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Routing\Pipeline.php(32): call_user_func(Object(Closure), Object(Illuminate\Http\Request))
+#6 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode.php(44): Illuminate\Routing\Pipeline->Illuminate\Routing\{closure}(Object(Illuminate\Http\Request))
+#7 [internal function]: Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode->handle(Object(Illuminate\Http\Request), Object(Closure))
+#8 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(136): call_user_func_array(Array, Array)
+#9 [internal function]: Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#10 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Routing\Pipeline.php(32): call_user_func(Object(Closure), Object(Illuminate\Http\Request))
+#11 [internal function]: Illuminate\Routing\Pipeline->Illuminate\Routing\{closure}(Object(Illuminate\Http\Request))
+#12 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(102): call_user_func(Object(Closure), Object(Illuminate\Http\Request))
+#13 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php(132): Illuminate\Pipeline\Pipeline->then(Object(Closure))
+#14 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php(99): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#15 D:\Tech-Hub\ask-a-fellow-laravel\public\index.php(53): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#16 D:\Tech-Hub\ask-a-fellow-laravel\server.php(21): require_once('D:\\Tech-Hub\\ask...')
+#17 {main}  
+[2018-11-18 20:01:55] local.ERROR: ReflectionException: Class Barryvdh\Cors\HandleCors does not exist in D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Container\Container.php:734
+Stack trace:
+#0 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Container\Container.php(734): ReflectionClass->__construct('Barryvdh\\Cors\\H...')
+#1 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Container\Container.php(629): Illuminate\Container\Container->build('Barryvdh\\Cors\\H...', Array)
+#2 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Application.php(697): Illuminate\Container\Container->make('Barryvdh\\Cors\\H...', Array)
+#3 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php(152): Illuminate\Foundation\Application->make('Barryvdh\\Cors\\H...')
+#4 D:\Tech-Hub\ask-a-fellow-laravel\public\index.php(58): Illuminate\Foundation\Http\Kernel->terminate(Object(Illuminate\Http\Request), Object(Illuminate\Http\Response))
+#5 D:\Tech-Hub\ask-a-fellow-laravel\server.php(21): require_once('D:\\Tech-Hub\\ask...')
+#6 {main}  
+[2018-11-18 20:08:32] local.ERROR: Symfony\Component\Debug\Exception\FatalThrowableError: Class 'Barryvdh\Cors\ServiceProvider' not found in D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\ProviderRepository.php:146
+Stack trace:
+#0 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\ProviderRepository.php(114): Illuminate\Foundation\ProviderRepository->createProvider('Barryvdh\\Cors\\S...')
+#1 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\ProviderRepository.php(60): Illuminate\Foundation\ProviderRepository->compileManifest(Array)
+#2 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Application.php(530): Illuminate\Foundation\ProviderRepository->load(Array)
+#3 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Bootstrap\RegisterProviders.php(17): Illuminate\Foundation\Application->registerConfiguredProviders()
+#4 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Application.php(203): Illuminate\Foundation\Bootstrap\RegisterProviders->bootstrap(Object(Illuminate\Foundation\Application))
+#5 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php(219): Illuminate\Foundation\Application->bootstrapWith(Array)
+#6 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php(105): Illuminate\Foundation\Console\Kernel->bootstrap()
+#7 D:\Tech-Hub\ask-a-fellow-laravel\artisan(35): Illuminate\Foundation\Console\Kernel->handle(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 {main}  
+[2018-11-18 20:16:09] local.ERROR: Symfony\Component\Debug\Exception\FatalThrowableError: Class 'Barryvdh\Cors\ServiceProvider' not found in D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\ProviderRepository.php:146
+Stack trace:
+#0 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\ProviderRepository.php(114): Illuminate\Foundation\ProviderRepository->createProvider('Barryvdh\\Cors\\S...')
+#1 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\ProviderRepository.php(60): Illuminate\Foundation\ProviderRepository->compileManifest(Array)
+#2 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Application.php(530): Illuminate\Foundation\ProviderRepository->load(Array)
+#3 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Bootstrap\RegisterProviders.php(17): Illuminate\Foundation\Application->registerConfiguredProviders()
+#4 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Application.php(203): Illuminate\Foundation\Bootstrap\RegisterProviders->bootstrap(Object(Illuminate\Foundation\Application))
+#5 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php(219): Illuminate\Foundation\Application->bootstrapWith(Array)
+#6 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php(105): Illuminate\Foundation\Console\Kernel->bootstrap()
+#7 D:\Tech-Hub\ask-a-fellow-laravel\artisan(35): Illuminate\Foundation\Console\Kernel->handle(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 {main}  
+[2018-11-18 20:17:45] local.ERROR: Symfony\Component\Debug\Exception\FatalThrowableError: Class 'Barryvdh\Cors\ServiceProvider' not found in D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\ProviderRepository.php:146
+Stack trace:
+#0 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\ProviderRepository.php(114): Illuminate\Foundation\ProviderRepository->createProvider('Barryvdh\\Cors\\S...')
+#1 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\ProviderRepository.php(60): Illuminate\Foundation\ProviderRepository->compileManifest(Array)
+#2 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Application.php(530): Illuminate\Foundation\ProviderRepository->load(Array)
+#3 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Bootstrap\RegisterProviders.php(17): Illuminate\Foundation\Application->registerConfiguredProviders()
+#4 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Application.php(203): Illuminate\Foundation\Bootstrap\RegisterProviders->bootstrap(Object(Illuminate\Foundation\Application))
+#5 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php(219): Illuminate\Foundation\Application->bootstrapWith(Array)
+#6 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php(105): Illuminate\Foundation\Console\Kernel->bootstrap()
+#7 D:\Tech-Hub\ask-a-fellow-laravel\artisan(35): Illuminate\Foundation\Console\Kernel->handle(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 {main}  
+[2018-11-18 20:18:44] local.ERROR: Symfony\Component\Debug\Exception\FatalThrowableError: Class 'Barryvdh\Cors\ServiceProvider' not found in D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\ProviderRepository.php:146
+Stack trace:
+#0 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\ProviderRepository.php(114): Illuminate\Foundation\ProviderRepository->createProvider('Barryvdh\\Cors\\S...')
+#1 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\ProviderRepository.php(60): Illuminate\Foundation\ProviderRepository->compileManifest(Array)
+#2 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Application.php(530): Illuminate\Foundation\ProviderRepository->load(Array)
+#3 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Bootstrap\RegisterProviders.php(17): Illuminate\Foundation\Application->registerConfiguredProviders()
+#4 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Application.php(203): Illuminate\Foundation\Bootstrap\RegisterProviders->bootstrap(Object(Illuminate\Foundation\Application))
+#5 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php(219): Illuminate\Foundation\Application->bootstrapWith(Array)
+#6 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php(105): Illuminate\Foundation\Console\Kernel->bootstrap()
+#7 D:\Tech-Hub\ask-a-fellow-laravel\artisan(35): Illuminate\Foundation\Console\Kernel->handle(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 {main}  
+[2018-11-18 20:56:36] local.ERROR: Symfony\Component\Debug\Exception\FatalThrowableError: Class 'Barryvdh\Cors\HandleCors' not found in D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\ProviderRepository.php:146
+Stack trace:
+#0 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\ProviderRepository.php(114): Illuminate\Foundation\ProviderRepository->createProvider('Barryvdh\\Cors\\H...')
+#1 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\ProviderRepository.php(60): Illuminate\Foundation\ProviderRepository->compileManifest(Array)
+#2 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Application.php(530): Illuminate\Foundation\ProviderRepository->load(Array)
+#3 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Bootstrap\RegisterProviders.php(17): Illuminate\Foundation\Application->registerConfiguredProviders()
+#4 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Application.php(203): Illuminate\Foundation\Bootstrap\RegisterProviders->bootstrap(Object(Illuminate\Foundation\Application))
+#5 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php(219): Illuminate\Foundation\Application->bootstrapWith(Array)
+#6 D:\Tech-Hub\ask-a-fellow-laravel\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php(105): Illuminate\Foundation\Console\Kernel->bootstrap()
+#7 D:\Tech-Hub\ask-a-fellow-laravel\artisan(35): Illuminate\Foundation\Console\Kernel->handle(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 {main}  
