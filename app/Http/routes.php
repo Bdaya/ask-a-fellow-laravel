@@ -242,6 +242,8 @@ Route::group(['middleware' => ['web']], function () {
      * Upload a note
      */
     Route::post('/course/{courseID}/uploadNote', 'NotesController@upload_notes');
+    Route::get('browse', 'ApiController@browse');
+
 });
 
 Route::group(['middleware' => 'web'], function () {
