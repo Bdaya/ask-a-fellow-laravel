@@ -242,7 +242,6 @@ Route::group(['middleware' => ['web']], function () {
      * Upload a note
      */
     Route::post('/course/{courseID}/uploadNote', 'NotesController@upload_notes');
-    Route::get('browse', 'ApiController@browse');
 
 });
 
@@ -261,7 +260,7 @@ Route::group(['middleware' => 'web'], function () {
 | The routes inside this prefix Matches The "/api/v1/your_route" URL
 */
 
-Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
+Route::group(['prefix' => 'api/v1', 'middleware' => 'cors'], function () {
 
     /*
         |--------------------------
