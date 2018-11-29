@@ -301,13 +301,13 @@ Route::group(['prefix' => 'api/v1', 'middleware' => 'cors'], function () {
      */
     Route::get('browse', 'ApiController@browse');
     /*
-     * browse courses API
+     * browse courses with optional param of ordering API
      */
     Route::get('/list_courses/{major}/{semester}', 'ApiController@getCourses');
     /*
      * Browse Questions of a course API
      */
-    Route::get('/browse/{course_id}', 'ApiController@list_questions');
+    Route::get('/browse/{course_id}/{order?}', 'ApiController@list_questions');
     /*
      *  Vote a question
      */

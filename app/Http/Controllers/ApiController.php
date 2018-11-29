@@ -50,7 +50,7 @@ class ApiController extends Controller
      * Return majors and and semesters 
      */
     public function browse()
-    {
+    {   
         $majors = Major::all();
         $semesters = [1, 2, 3, 4, 5, 6, 7, 8, 9];
         return ['majors' => $majors, 'semesters' => $semesters];
@@ -63,7 +63,7 @@ class ApiController extends Controller
         return ['courses' => $courses];
     }
 
-    public function list_questions($course_id)
+    public function list_questions($course_id, $order = null)
     {
 
         $course = Course::find($course_id);
@@ -71,8 +71,12 @@ class ApiController extends Controller
         if (!$course)
             return ['error' => 'course not found'];
         $new_questions = array();
-
-        $questions = $course->questions()->latest()->paginate(10);
+        if ($order == 'votes') 
+            $questions = $course->questions()->orderBy('votes', 'desc')->paginate(10);
+        elseif ($order == 'oldest')
+            $questions = $course->questions()->oldest()->paginate(10);
+        else
+            $questions = $course->questions()->latest()->paginate(10);
         foreach ($questions as $question) {
             $question['file_url'] = null;
             $question['asker'] = $question->asker()->get();
