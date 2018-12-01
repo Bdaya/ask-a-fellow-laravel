@@ -63,9 +63,16 @@ class ApiController extends Controller
         return ['courses' => $courses];
     }
 
+    public function getSubscribedCourses()
+    {
+        $user = Auth::user();
+        error_log($user);
+        $courses = $user->subscribed_courses();
+        return ['courses' => $courses];
+    }
+
     public function list_questions($course_id, $order = null)
     {
-
         $course = Course::find($course_id);
         //sort questions
         if (!$course)
@@ -75,6 +82,9 @@ class ApiController extends Controller
             $questions = $course->questions()->orderBy('votes', 'desc')->paginate(10);
         elseif ($order == 'oldest')
             $questions = $course->questions()->oldest()->paginate(10);
+        elseif ($order = 'answers'){
+            $questions = $course->questions()->withCount('answers')->orderBy('answers_count', 'desc')->paginate(10); 
+        }
         else
             $questions = $course->questions()->latest()->paginate(10);
         foreach ($questions as $question) {

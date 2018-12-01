@@ -305,6 +305,10 @@ Route::group(['prefix' => 'api/v1', 'middleware' => 'cors'], function () {
      */
     Route::get('/list_courses/{major}/{semester}', 'ApiController@getCourses');
     /*
+     * browse courses with optional param of ordering API
+     */
+    Route::get('/subscribed_courses', 'ApiController@getSubscribedCourses');
+    /*
      * Browse Questions of a course API
      */
     Route::get('/browse/{course_id}/{order?}', 'ApiController@list_questions');
