@@ -20,7 +20,11 @@ class ApiController extends Controller
     public function __construct()
     {
         $this->middleware('auth', ['only' => [
-            'vote_question', 'post_question','home','post_answer'
+            'vote_question', 
+            'post_question',
+            'home',
+            'post_answer', 
+            'getSubscribedCourses'
         ]]);
     }
 
@@ -66,7 +70,6 @@ class ApiController extends Controller
     public function getSubscribedCourses()
     {
         $user = Auth::user();
-        error_log($user);
         $courses = $user->subscribed_courses();
         return ['courses' => $courses];
     }
