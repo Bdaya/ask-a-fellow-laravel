@@ -81,15 +81,13 @@ class ApiController extends Controller
         if (!$course)
             return ['error' => 'course not found'];
         $new_questions = array();
-        if ($order == 'votes') 
+        $questions = $course->questions()->latest()->paginate(10);
+        if ($order == 'votes')
             $questions = $course->questions()->orderBy('votes', 'desc')->paginate(10);
-        elseif ($order == 'oldest')
+        if ($order == 'oldest')
             $questions = $course->questions()->oldest()->paginate(10);
-        elseif ($order = 'answers'){
+        if ($order == 'answers')
             $questions = $course->questions()->withCount('answers')->orderBy('answers_count', 'desc')->paginate(10); 
-        }
-        else
-            $questions = $course->questions()->orderBy('created_at', 'desc')->paginate(10);
         foreach ($questions as $question) {
             $question['file_url'] = null;
             $question['asker'] = $question->asker()->get();
