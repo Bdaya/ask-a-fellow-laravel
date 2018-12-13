@@ -89,7 +89,7 @@ class ApiController extends Controller
             $questions = $course->questions()->withCount('answers')->orderBy('answers_count', 'desc')->paginate(10); 
         }
         else
-            $questions = $course->questions()->latest()->paginate(10);
+            $questions = $course->questions()->orderBy('created_at', 'desc')->paginate(10);
         foreach ($questions as $question) {
             $question['file_url'] = null;
             $question['asker'] = $question->asker()->get();
