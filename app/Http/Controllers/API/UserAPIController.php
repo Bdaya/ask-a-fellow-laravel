@@ -12,6 +12,7 @@ class UserAPIController extends Controller
     public function __construct()
     {
         $this->middleware('auth', ['only' => [
+            'updateInfo'
         ]]);
 
     }
@@ -69,5 +70,45 @@ class UserAPIController extends Controller
              ,200);
 
     }
+
+    public function updateInfo(Request $request)
+    {
+        $this->validate($request, [
+            'first_name' => 'alpha|required',
+            'last_name' => 'alpha|required',
+            'major' => 'sometimes|numeric|exists:majors,id',
+            'semester' => 'numeric|min:0|max:10',
+            'profile_picture' => 'image|max:1000'
+        ]);
+        $user = Auth::user();
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->semester = $request->semester;
+        if ($request->major) {
+            $user->major_id = $request->major;
+        } else {
+            $user->major_id = null;
+        }
+        $user->bio = $request->bio;
+        if ($request->file('profile_picture')) {
+            \Cloudinary::config(array(
+                "cloud_name" => env("CLOUDINARY_NAME"),
+                "api_key" => env("CLOUDINARY_KEY"),
+                "api_secret" => env("CLOUDINARY_SECRET")
+            ));
+            if ($user->profile_picture) {
+                // delete previous profile picture
+                $this->delete_image($user->profile_picture);
+            }
+            // upload and set new picture
+            $file = $request->file('profile_picture');
+            $image = Uploader::upload($file->getRealPath(), ["width" => 300, "height" => 300, "crop" => "limit"]);
+            $user->profile_picture = $image["url"];
+        }
+        $user->save();
+        Session::flash('updated', 'Info updated successfully!');
+        return ['state' => '200 ok', 'error' => false];
+    }
+
 
 }
