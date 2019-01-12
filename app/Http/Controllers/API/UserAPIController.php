@@ -64,7 +64,8 @@ class UserAPIController extends Controller
                 'bio'             => $user->bio,
                 'profile_picture' => $user->profile_picture,
                 'questions'       => $questions,
-                'answers'         => $answers
+                'answers'         => $answers,
+                'verified_badge'  => $user->verified_badge
             ]
           ]
              ,200);

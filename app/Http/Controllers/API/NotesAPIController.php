@@ -10,6 +10,7 @@ use App\Note;
 use App\Course;
 use App\NoteComment;
 use App\NoteVote;
+use App\Notification;
 
 class NotesAPIController extends Controller
 {
