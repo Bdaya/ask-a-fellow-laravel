@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests;
 use Response;
+use App\Notification;
 
 class NotesController extends Controller
 {

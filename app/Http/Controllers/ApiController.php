@@ -74,6 +74,14 @@ class ApiController extends Controller
         return ['courses' => $courses];
     }
 
+    public function subscribe_to_courses(Request $request)
+    {
+        Auth::user()->subscribed_courses()->detach();
+        if($request->course)
+            Auth::user()->subscribe_to_courses(array_unique($request->course));
+        return ['state' => '200 ok', 'error' => false];
+    }
+
     public function list_questions($course_id, $order = null)
     {
         $course = Course::find($course_id);

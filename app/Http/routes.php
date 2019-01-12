@@ -294,8 +294,12 @@ Route::group(['prefix' => 'api/v1', 'middleware' => 'cors'], function () {
     /**
      *  Users Profile
      */
-
     Route::get('user/{id}', 'API\UserAPIController@getUser');
+
+    /**
+     *  Update user profile info
+     */
+    Route::get('updateInfo', 'API\UserAPIController@updateInfo');
     /*
      * browse majors and semesters API
      */
@@ -305,9 +309,14 @@ Route::group(['prefix' => 'api/v1', 'middleware' => 'cors'], function () {
      */
     Route::get('/list_courses/{major}/{semester}', 'ApiController@getCourses');
     /*
-     * browse courses with optional param of ordering API
+     * browse subscribed courses
      */
     Route::get('/subscribed_courses', 'ApiController@getSubscribedCourses');
+    /*
+     * subcribe or unsubscribe to a course
+     * @param $course : array of course id
+     */
+    Route::post('/subscriptions', 'ApiController@subscribe_to_courses');
     /*
      * Browse Questions of a course API
      */
@@ -417,7 +426,7 @@ Route::group(['prefix' => 'api/v1', 'middleware' => 'cors'], function () {
      */
     Route::post('/note/vote/{note_id}/{type}', 'API\NotesAPIController@vote_note');
     /*
-     *  Vote a note
+     *  Delete a note
      */
     Route::post('/note/request_delete/{note_id}', 'API\NotesAPIController@request_delete');
     /*
