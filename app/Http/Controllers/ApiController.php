@@ -24,7 +24,8 @@ class ApiController extends Controller
             'post_question',
             'home',
             'post_answer', 
-            'getSubscribedCourses'
+            'getSubscribedCourses',
+            'subscribe_to_courses'
         ]]);
     }
 
