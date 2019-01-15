@@ -176,13 +176,42 @@ class NotesAPIController extends Controller
         }
     }
 
+    public function upload_notes(Request $request, $courseID)
+    {
+        $user = Auth::user();
+        $this->validate($request, [
+            'title' => 'required',
+            'description' => 'required',
+            'file' => 'required'
+        ]);
+        $file = $request->file('file');
+        $fileName = $request->title.'_'.time().'_'.$file->getClientOriginalName();
+        $mainDisk = Storage::disk('google');
+        $mainDisk->put($fileName, fopen($file, 'r+'));
+        $note = new Note;
+        $note->user_id = Auth::user()->id;
+        $note->course_id = $courseID;
+        $note->title = $request->title;
+        $note->path = $fileName;
+        $note->description = $request->description;
+
+        if($user->role >= 1)
+            $note->request_upload = false;
+
+        Session::flash('success', 'Your request to upload this note is successful');
+        $note->save();
+
+        return response()->json(['status' => '200 ok', 'message' => 'Your request to upload this note is successful']);
+
+    }
+
     public function downloadNote($id){
         $note =  Note::find($id);
         $disk = Storage::disk('google');
         $file = collect($disk->listContents())->where('type', 'file')
                 ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
                 ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
-        return response()->json(['message' => $disk->url($file['path'])]);
+        return response()->json(['url' => $disk->url($file['path'])]);
 
     }
 

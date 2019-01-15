@@ -437,5 +437,9 @@ Route::group(['prefix' => 'api/v1', 'middleware' => 'cors'], function () {
      *  Get note download link
      */
     Route::get('/browse/notes/view_note/{note_id}', 'API\NotesAPIController@downloadNote');
+    /**
+     * Upload a note
+     */
+    Route::post('/course/{courseID}/uploadNote', 'API\NotesAPIController@upload_notes');
 
 });
