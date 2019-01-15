@@ -441,5 +441,9 @@ Route::group(['prefix' => 'api/v1', 'middleware' => 'cors'], function () {
      * Upload a note
      */
     Route::post('/course/{courseID}/uploadNote', 'API\NotesAPIController@upload_notes');
+    /**
+     *  Delete comment on a note
+     */
+    Route::post('/delete_note_comment/{note_id}/{comment_id}', 'API\NotesAPIController@delete_note_comment');
 
 });
