@@ -398,6 +398,10 @@ Route::group(['prefix' => 'api/v1', 'middleware' => 'cors'], function () {
      */
     Route::post('/events/{course_id}', 'API\EventsAPIController@create');
     /*
+     * Delete an event
+     */
+    Route::post('/delete_event/{id}', 'API\EventsAPIController@deleteEvent');
+    /*
      * Get a list of all of stores
      */
     Route::get('/stores', 'API\StoresAPIController@index');

@@ -198,7 +198,7 @@ class NotesAPIController extends Controller
         Session::flash('success', 'Your request to upload this note is successful');
         $note->save();
 
-        return response()->json(['status' => '200 ok', 'message' => 'Your request to upload this note is successful']);
+        return response()->json(['status' => '200 ok', 'message' => 'Your request to upload this note is successful'], 200);
 
     }
 
@@ -221,7 +221,7 @@ class NotesAPIController extends Controller
             $comment->delete();
         }
 
-        return response()->json(['status' => '200 ok', 'message' => 'Your request to delete this note is successful']);
+        return response()->json(['status' => '200 ok', 'message' => 'Your request to delete this note is successful'], 200);
     }
 
 }
