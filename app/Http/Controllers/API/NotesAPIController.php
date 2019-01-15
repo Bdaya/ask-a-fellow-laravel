@@ -12,6 +12,7 @@ use App\NoteComment;
 use App\NoteVote;
 use App\Notification;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Session;
 
 
 class NotesAPIController extends Controller
