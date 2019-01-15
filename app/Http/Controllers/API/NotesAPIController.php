@@ -22,7 +22,8 @@ class NotesAPIController extends Controller
         $this->middleware('auth', ['only' => [
             'post_comment',
             'vote_note',
-            'request_delete'
+            'request_delete',
+            'upload_notes'
         ]]);
     }
 
