@@ -174,4 +174,14 @@ class NotesAPIController extends Controller
         }
     }
 
+    public function downloadNote($id){
+        $note =  Note::find($id);
+        $disk = Storage::disk('google');
+        $file = collect($disk->listContents())->where('type', 'file')
+                ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
+                ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
+        return response()->json(['message' => $disk->url($file['path'])]);
+
+    }
+
 }

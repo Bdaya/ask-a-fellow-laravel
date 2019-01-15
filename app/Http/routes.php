@@ -433,4 +433,9 @@ Route::group(['prefix' => 'api/v1', 'middleware' => 'cors'], function () {
      *  Edit a note comment
      */
     Route::post('/note/edit_comment/{comment_id}', 'API\NotesAPIController@edit_note_comment');
+    /*
+     *  Get note download link
+     */
+    Route::get('/browse/notes/view_note/{note_id}', 'API\NotesAPIController@downloadNote');
+
 });
