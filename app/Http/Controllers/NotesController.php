@@ -7,6 +7,7 @@ use App\Note;
 use App\NoteVote;
 use App\Course;
 use App\NoteComment;
+use App\VerifiedUsersCourses;
 use Auth;
 use Log;
 use Illuminate\Support\Facades\Storage;
@@ -138,6 +139,8 @@ class NotesController extends Controller
     public function upload_notes(Request $request, $courseID)
     {
         $user = Auth::user();
+        $verified_users_courses = VerifiedUsersCourses::where('course_id', $courseID)->where('user_id', $user->id)->first();
+        dd(json_encode($verified_users_courses));
         $this->validate($request, [
             'title' => 'required',
             'description' => 'required',
@@ -154,7 +157,7 @@ class NotesController extends Controller
         $note->path = $fileName;
         $note->description = $request->description;
 
-        if($user->role >= 1)
+        if($user->role >= 1 || $verified_users_courses !== null)
             $note->request_upload = false;
 
         Session::flash('success', 'Your request to upload this note is successfull');
