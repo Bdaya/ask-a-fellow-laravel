@@ -140,7 +140,6 @@ class NotesController extends Controller
     {
         $user = Auth::user();
         $verified_users_courses = VerifiedUsersCourses::where('course_id', $courseID)->where('user_id', $user->id)->first();
-        dd(json_encode($verified_users_courses));
         $this->validate($request, [
             'title' => 'required',
             'description' => 'required',
