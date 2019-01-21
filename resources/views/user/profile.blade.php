@@ -39,6 +39,18 @@
         @if(Auth::user() && Auth::user()->role >= 1 && Auth::user()->id != $user->id)
                 <a class="btn btn-info " href="{{url('admin/mail/one/'.$user->id)}}">Email user</a>
         @endif
+        @if($user->verified_badge ==1)
+            <h3 style="text-align: left">Associated User Courses:</h3>
+                <table>  
+                    <tr style="border: 1px solid #dddddd;">
+                    @foreach($verified_users_courses as $course)
+                        @if($user->id == $course['user_id'])
+                        <th style="border: 1px solid #dddddd; padding: 4%">{{$courses[$course['course_id']-1]['course_code']}}</th>
+                        @endif
+                    @endforeach
+                    </tr>
+                </table>
+        @endif
 
     </div>
     <div class="questions_answers">

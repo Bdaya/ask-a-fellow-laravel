@@ -53,7 +53,7 @@ $users = $users->skip($page * $take)->take($take)->get();
                 </div>
                 <br>
                 @if($user->verified_badge ==1)
-                <h3> Verified User Courses:
+                <h3>Verified User Courses:</h3>
                 <ul style="list-style-type: square;">
                     @foreach($verified_users_courses as $course)
                         @if($user->id == $course['user_id'])
@@ -62,7 +62,7 @@ $users = $users->skip($page * $take)->take($take)->get();
                     @endforeach
                 </ul>
                
-                  <form method="post" action="{{url('admin/verified_add_course/'.$user->id)}}">
+                  <form method="post" action="{{url('admin/verified_add_remove_course/'.$user->id)}}">
                     <select class="form-control" name="item_id" id="item_id">
                         @foreach($courses as $course)
                             <option value="{{$course['id']}}">{{$course['course_code']}}</option>
@@ -71,18 +71,13 @@ $users = $users->skip($page * $take)->take($take)->get();
                     <br>          
                   <div class="form-group">
                     <div class="col-md-4">
-                        <button id="add_badge" name="add_badge" class="btn btn-primary">Add Course</button>
+                        <button id="add_course" name="add_course" class="btn btn-primary">Add Course</button>
                     </div>
                     <div class="col-md-8">  
-                        <button id="add_badge" name="add_badge" class="btn btn-danger">Remove Course</button>
+                        <button id="remove_course" name="remove_course" class="btn btn-danger">Remove Course</button>
                     </div>
                 </div>
             </form>
-                {{--  <div class="form-group">
-                    <div class="col-md-7">
-                        <button id="add_badge" name="add_badge" class="btn btn-danger">Remove Course</button>
-                    </div>
-                </div>  --}}
                 <br><br>
                 @endif
                 
