@@ -124,8 +124,8 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('/browse/{major}/{semester}', 'AppController@post_question_all');
     Route::get('/answers/{question_id}', 'AppController@inside_question');
     Route::post('/answers/{question_id}', 'AppController@post_answer');
-    Route::get('/delete_answer/{id}', 'AppController@delete_answer');
-    Route::get('/delete_question/{id}', 'AppController@delete_question');
+    Route::get('/delete_answer/{answer_id}/{verified_user_courses}', 'AppController@delete_answer');
+    Route::get('/delete_question/{question_id}/{verified_user_courses}', 'AppController@delete_question');
 
 
     Route::get('/vote/answer/{answer_id}/{type}', 'AjaxController@vote_answer');
@@ -183,6 +183,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/edit_answer', 'AjaxController@edit_answer');
 
     Route::get('/admin/delete_note/{id}', 'AdminController@deleteNoteAdmin');
+    Route::get('/delete_note/{id}', 'NotesController@delete_note');
     Route::get('/browse/notes/{course_id}', 'AppController@list_notes');
     Route::get('/browse/notes/view_note/{note_id}', 'NotesController@downloadNote');
 

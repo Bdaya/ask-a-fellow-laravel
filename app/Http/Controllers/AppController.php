@@ -19,6 +19,7 @@ use App\ComponentQuestion;
 use App\BookmarkComponentQuestion;
 use App\BookmarkQuestion;
 use App\Note;
+use App\VerifiedUsersCourses;
 use Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\File;
@@ -65,7 +66,9 @@ class AppController extends Controller
 
     public function list_questions($course_id)
     {
-
+        $verified_users_courses = null;
+        if (Auth::check())
+            $verified_users_courses = VerifiedUsersCourses::where('course_id', $course_id)->where('user_id', Auth::user()->id)->get();
         $course = Course::find($course_id);
         //sort questions
         if(!$course)
@@ -109,7 +112,7 @@ class AppController extends Controller
             $questions_ordered = $questions->orderBy('created_at','desc')->get();
         else if($order == 'answers')
             $questions_ordered =$questions->orderByRaw("(SELECT COUNT(*) FROM answers WHERE question_id = questions.id) DESC")->orderBy('created_at','desc')->get();
-        return view('questions.questions',compact(['questions_ordered','count_questions']));
+        return view('questions.questions',compact(['questions_ordered','count_questions', 'verified_users_courses']));
 
     }
 
@@ -189,10 +192,10 @@ class AppController extends Controller
         return redirect('/browse/'.$course_id);
     }
 
-    public function delete_question($question_id)
+    public function delete_question($question_id, $verified_users_courses)
     {
         $question = Question::find($question_id);
-        if(Auth::user() && (Auth::user()->role > 0 ||  Auth::user()->id == $question->asker_id)){
+        if(Auth::user() && (Auth::user()->role > 0 ||  Auth::user()->id == $question->asker_id || $verified_users_courses !== null)){
             if($question->attachement_path){
                 $disk = Storage::disk('google');
                 $file = collect($disk->listContents())->where('type', 'file')
@@ -243,10 +246,10 @@ class AppController extends Controller
     }
 
 
-    public function delete_answer($answer_id)
+    public function delete_answer($answer_id, $verified_users_courses)
     {
         $answer = Answer::find($answer_id)->find($answer_id);
-        if(Auth::user() && (Auth::user()->role > 0 || Auth::user()->id == $answer->responder_id)){
+        if(Auth::user() && (Auth::user()->role > 0 || Auth::user()->id == $answer->responder_id || $verified_users_courses !== null)){
             if($answer->attachement_path){
                 $disk = Storage::disk('google');
                 $file = collect($disk->listContents())->where('type', 'file')
@@ -309,13 +312,16 @@ class AppController extends Controller
 
     public function list_notes($course_id)
     { 
-        if(Auth::user())
-        $role = Auth::user()->role;
+        $verified_users_courses = null;
+        if (Auth::check()){
+            $verified_users_courses = VerifiedUsersCourses::where('course_id', $course_id)->where('user_id', Auth::user()->id)->get();
+            $role = Auth::user()->role;
+        }
         $course = Course::find($course_id);
         if(!$course)
            return 'Ooops! course not found';
         $notes = $course->notes()->where('request_upload', '=', false)->paginate(6);
-        return view('notes.notes',compact('notes','role'));
+        return view('notes.notes',compact('notes','role', 'verified_users_courses'));
     }
 
     public function view_components($category_id)

@@ -9,8 +9,10 @@
     <li>
       <h3><a href="/notes/view_note_details/<?php echo e($note->id); ?>"><?php echo e($note->title); ?></a></h3>
       <p><?php echo nl2br(e($note->description)); ?></p>
-      <?php if((!empty($role))&&$role==1): ?>
-          <a onclick="return confirm('Are you sure want to delete this note?');" href="/admin/delete_note/<?php echo e($note->id); ?>">Delete</a>
+      <?php if($verified_users_courses !== null): ?>
+          <a onclick="return confirm('Are you sure want to delete this note?');" href="/delete_note/<?php echo e($note->id); ?>">Delete</a>
+      <?php elseif((!empty($role))&&$role==1): ?>
+        <a onclick="return confirm('Are you sure want to delete this note?');" href="/admin/delete_note/<?php echo e($note->id); ?>">Delete</a>
       <?php endif; ?>
       <!-- /browse/notes/view_note/<?php echo e($note->id); ?> -->
     </li>

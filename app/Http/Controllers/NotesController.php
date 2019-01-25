@@ -55,12 +55,14 @@ class NotesController extends Controller
     {
         
         $note = Note::find($note_id);
+        if (Auth::check())
+            $verified_users_courses = VerifiedUsersCourses::where('course_id', $note->course_id)->where('user_id', Auth::user()->id)->get();
         if(!$note)
             return 'Ooops! note not found';
         //sort answers
         $comments = $note->comments()->paginate(5);
 
-        return view('notes.note_details',compact(['note','comments']));
+        return view('notes.note_details',compact(['note','comments', 'verified_users_courses']));
     }
 
 
@@ -81,11 +83,34 @@ class NotesController extends Controller
     // delete a previously posted comment about a note
     public function delete_note_comment($note_id, $comment_id)
     {
+        $note = Note::find($note_id);
+        $verified_users_courses = null;
+        if (Auth::check())
+            $verified_users_courses = VerifiedUsersCourses::where('course_id', $note->course_id)->where('user_id', Auth::user()->id)->get();
         $comment = NoteComment::find($comment_id);
-        if(Auth::user() && (Auth::user()->role > 0 ||  Auth::user()->id == $comment->user_id))
+        if(Auth::user() && (Auth::user()->role > 0 ||  Auth::user()->id == $comment->user_id || $verified_users_courses !== null))
             $comment->delete();
         
         return redirect(url('/notes/view_note_details/'.$note_id));
+    }
+
+    // delete note
+    public function delete_note($note_id)
+    {
+        $note = Note::find($note_id);
+        $verified_users_courses = null;
+        if (Auth::check())
+            $verified_users_courses = VerifiedUsersCourses::where('course_id', $note->course_id)->where('user_id', Auth::user()->id)->get();
+        if ($verified_users_courses !== null || (Auth::check() && Auth::user()->id == $note->user_id)){
+            $disk = Storage::disk('google');
+            $file = collect($disk->listContents())->where('type', 'file')
+                ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
+                ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
+            $disk->delete($file['path']);
+            $course = $note->course->id;
+            $note->delete();
+        }
+        return redirect('/browse/notes/' . $course);
     }
 
     // vote note

@@ -192,7 +192,7 @@ $pages = ceil($count_questions/$take);
             </ul>
           </div>
 
-          <div class="buttons-list">
+          <?php /*  <div class="buttons-list">
             <h1 class="buttons-list__title">Products Categories</h1>
             <ul class="buttons-list__list">
               <?php foreach($categories as $category): ?>
@@ -212,7 +212,7 @@ $pages = ceil($count_questions/$take);
                 <a href="<?php echo e(url('/user/stores')); ?>" class="buttons-list__btn btn text">View Stores<span class="buttons-list__info"><?php echo e($count_stores); ?></span></a></a>
               </li>
             </ul>
-          </div>
+          </div>  */ ?>
         </div>
   
     </div>

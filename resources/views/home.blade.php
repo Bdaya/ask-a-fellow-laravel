@@ -189,7 +189,7 @@ $pages = ceil($count_questions/$take);
             </ul>
           </div>
 
-          <div class="buttons-list">
+          {{--  <div class="buttons-list">
             <h1 class="buttons-list__title">Products Categories</h1>
             <ul class="buttons-list__list">
               @foreach($categories as $category)
@@ -209,7 +209,7 @@ $pages = ceil($count_questions/$take);
                 <a href="{{url('/user/stores')}}" class="buttons-list__btn btn text">View Stores<span class="buttons-list__info">{{$count_stores}}</span></a></a>
               </li>
             </ul>
-          </div>
+          </div>  --}}
         </div>
   
     </div>

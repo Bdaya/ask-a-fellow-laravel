@@ -193,10 +193,10 @@ class DatabaseSeeder extends Seeder
         //     'description' => 'this is one of the best stores',
         //     'phone' => '01122265156',
         // ]);
-        DB::table('course_major')->insert([
-            'id' => 1,
-            'major_id' => 1,
-            'course_id' => 1,
-        ]);
+        // DB::table('course_major')->insert([
+        //     'id' => 1,
+        //     'major_id' => 1,
+        //     'course_id' => 1,
+        // ]);
     }
 }

@@ -1,10 +1,16 @@
 /.idea
 /vendor
 /node_modules
-#/public/storage
+
+# exists on deploy-heroku branch
+/public/storage
+
 /public/art/pp
 Homestead.yaml
 Homestead.json
-#.env
-#/storage
+
+# exists on deploy-heroku branch
+.env
+/storage
+
 /private
