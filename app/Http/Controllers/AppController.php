@@ -212,12 +212,14 @@ class AppController extends Controller
     {
 
         $question = Question::find($question_id);
+        if (Auth::check())
+            $verified_users_courses = VerifiedUsersCourses::where('course_id', $question->course_id)->where('user_id', Auth::user()->id)->get();
         if(!$question)
             return 'Ooops! question not found';
         //sort answers
         $answers = $question->answers()->get();
 
-        return view('questions.answers',compact(['question','answers']));
+        return view('questions.answers',compact(['question','answers', 'verified_users_courses']));
     }
 
     public function post_answer(Request $request,$question_id)

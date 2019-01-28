@@ -457,7 +457,7 @@ nav a:focus {
 	-webkit-transition: -webkit-transform 0.3s;
 	-moz-transition: -moz-transform 0.3s;
 	transition: transform 0.3s;
-	-webkit-transform: translateX(-25%);
+	transform: translateX(-25%);
 }
 
 .cl-effect-10 a:hover span,

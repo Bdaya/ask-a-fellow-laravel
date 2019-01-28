@@ -181,10 +181,13 @@ class NotesController extends Controller
         $note->path = $fileName;
         $note->description = $request->description;
 
-        if($user->role >= 1 || $verified_users_courses !== null)
+        if($user->role >= 1 || $verified_users_courses !== null){
             $note->request_upload = false;
+            Session::flash('success', 'Your note has been uploaded successfully!');
+        }else{
+            Session::flash('success', 'Your request to upload this note is successful!');
 
-        Session::flash('success', 'Your request to upload this note is successfull');
+        }
         $note->save();
 
         return back();

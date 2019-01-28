@@ -10,7 +10,7 @@ Homestead.yaml
 Homestead.json
 
 # exists on deploy-heroku branch
-.env
+# .env
 /storage
 
 /private
