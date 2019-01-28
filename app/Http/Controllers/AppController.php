@@ -212,6 +212,7 @@ class AppController extends Controller
     {
 
         $question = Question::find($question_id);
+        $verified_users_courses = null;
         if (Auth::check())
             $verified_users_courses = VerifiedUsersCourses::where('course_id', $question->course_id)->where('user_id', Auth::user()->id)->get();
         if(!$question)
