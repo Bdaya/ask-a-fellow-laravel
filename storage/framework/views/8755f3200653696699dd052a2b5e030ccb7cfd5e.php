@@ -9,19 +9,23 @@
 
     <div class="media question">
 
-      <div onclick="window.location='<?php echo e(url('/notes/view_note_details/'.$note->id)); ?>'" style="text-align: center" class="media-left">
-        <span class="glyphicon glyphicon-file" style="font-size: 150%"></span>
-      </div>
+        <div onclick="window.location='<?php echo e(url('/notes/view_note_details/'.$note->id)); ?>'" style="text-align: center" class="media-left">
+            <span class="glyphicon glyphicon-file" style="font-size: 150%"></span>
+        </div>
       
-      <div onclick="window.location='<?php echo e(url('/notes/view_note_details/'.$note->id)); ?>'" class="media-body">
-        <h3><a href="/notes/view_note_details/<?php echo e($note->id); ?>"><?php echo e($note->title); ?></a></h3>
-        <p><?php echo nl2br(e($note->description)); ?></p>
-        <?php if($verified_users_courses !== null): ?>
-            <a onclick="return confirm('Are you sure want to delete this note?');" href="/delete_note/<?php echo e($note->id); ?>">Delete</a>
-        <?php elseif((!empty($role))&&$role==1): ?>
-          <a onclick="return confirm('Are you sure want to delete this note?');" href="/admin/delete_note/<?php echo e($note->id); ?>">Delete</a>
-        <?php endif; ?>
-      </div>
+        <div onclick="window.location='<?php echo e(url('/notes/view_note_details/'.$note->id)); ?>'" class="media-body">
+            <h3><a href="/notes/view_note_details/<?php echo e($note->id); ?>"><?php echo e($note->title); ?></a></h3>
+            <p><?php echo nl2br(e($note->description)); ?></p>
+        </div>
+
+        <div class="media-right">
+            <?php if($verified_users_courses !== null): ?>
+                <a title="Delete note" onclick="return confirm('Are you sure want to delete this note?');" href="/delete_note/<?php echo e($note->id); ?>"><span style="color:#FFAF6C" class="glyphicon glyphicon-remove"></span></a>
+            <?php elseif((!empty($role))&&$role==1): ?>
+                <a title="Delete note" onclick="return confirm('Are you sure want to delete this note?');" href="/admin/delete_note/<?php echo e($note->id); ?>"><span style="color:#FFAF6C" class="glyphicon glyphicon-remove"></span></a>
+            <?php endif; ?>
+        </div>
+
 
     </div>
 

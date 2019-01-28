@@ -94,10 +94,10 @@ if (isset($_GET['sort']))
                                 <?php if(Auth::user()->id == $question->asker_id): ?>
                                     <a value="<?php echo e($question); ?>" data-toggle="modal" data-target="#edit_modal" class="edit_question" title="Edit Question"><span class="glyphicon glyphicon-edit" style="color:#D24848;cursor:pointer;"></span></a>
                                 <?php endif; ?>
-                                <?php if(Auth::user()->id == $question->asker_id || Auth::user()->role >= 1): ?>
+                                <?php if(Auth::user()->id == $question->asker_id || Auth::user()->role >= 1 || $verified_users_courses !== null): ?>
 
                                     <a onclick="return confirm('Are you sure?');" title="Delete question"
-                                       href="<?php echo e(url('delete_question/'.$question->id)); ?>"><span style="color:#FFAF6C" class="glyphicon glyphicon-remove"></span></a>
+                                       href="<?php echo e(url('delete_question/'.$question->id.'/'.$verified_users_courses)); ?>"><span style="color:#FFAF6C" class="glyphicon glyphicon-remove"></span></a>
 
                                 <?php endif; ?>
                                 <a value="<?php echo e($question->id); ?>" data-toggle="modal" data-target="#report_modal"
@@ -126,9 +126,9 @@ if (isset($_GET['sort']))
                     </div>
                      <div>
                         <?php if(Auth::user() && count(Auth::user()->upvotesOnQuestion($question->id))): ?>
-                            <i class="fa fa-thumbs-up upvote_question" value="<?php echo e($question->id); ?>" title="upvote" style="color:green; font-size: 20px;"></i>
+                            <i class="fa fa-thumbs-up upvote_question" value="<?php echo e($question->id); ?>" title="upvote" style="color:green; font-size: 20px; cursor: pointer;"></i>
                         <?php elseif(Auth::user()): ?>
-                            <i class="far fa-thumbs-up upvote_question" value="<?php echo e($question->id); ?>" title="upvote" style="color:green; font-size: 20px;"></i>
+                            <i class="far fa-thumbs-up upvote_question" value="<?php echo e($question->id); ?>" title="upvote" style="color:green; font-size: 20px; cursor: pointer;"></i>
                         <?php endif; ?>
                         <?php if($question->votes > 0): ?>
                             <span class="question_votes" style="color:green;"><?php echo e($question->votes); ?> </span>
@@ -138,9 +138,9 @@ if (isset($_GET['sort']))
                             <span class="question_votes" style="color:red;"><?php echo e($question->votes); ?> </span>
                         <?php endif; ?>
                         <?php if(Auth::user() && count(Auth::user()->downvotesOnQuestion($question->id))): ?>
-                            <i class="fa fa-thumbs-down downvote_question" value="<?php echo e($question->id); ?>" title="downvote" style="color:red; font-size: 20px"></i>
+                            <i class="fa fa-thumbs-down downvote_question" value="<?php echo e($question->id); ?>" title="downvote" style="color:red; font-size: 20px; cursor: pointer;"></i>
                         <?php elseif(Auth::user()): ?>
-                            <i class="far fa-thumbs-down downvote_question" value="<?php echo e($question->id); ?>" title="downvote" style="color:red; font-size: 20px"></i>
+                            <i class="far fa-thumbs-down downvote_question" value="<?php echo e($question->id); ?>" title="downvote" style="color:red; font-size: 20px; cursor: pointer;"></i>
                         <?php endif; ?>
                     </div>
                 </div>

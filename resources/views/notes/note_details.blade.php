@@ -92,7 +92,7 @@
             <i class="far fa-thumbs-down downvote_note" value="{{$note->id}}" title="downvote" style="color:red; font-size: 28px"></i>
         @endif
 
-          <h4><a href="{{url('browse/notes/view_note/'.$note->id)}}">Click to download</a></h4>
+          <h4><a href="{{url('browse/notes/view_note/'.$note->id)}}"><span class="glyphicon glyphicon-paperclip"></span> {{$filename}}</a></h4>
 
         </div>
 
@@ -183,6 +183,7 @@
         @endif
 
     </div>
+    <br>
 
 
 

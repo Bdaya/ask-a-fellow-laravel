@@ -10,19 +10,23 @@
 
     <div class="media question">
 
-      <div onclick="window.location='{{url('/notes/view_note_details/'.$note->id)}}'" style="text-align: center" class="media-left">
-        <span class="glyphicon glyphicon-file" style="font-size: 150%"></span>
-      </div>
+        <div onclick="window.location='{{url('/notes/view_note_details/'.$note->id)}}'" style="text-align: center" class="media-left">
+            <span class="glyphicon glyphicon-file" style="font-size: 150%"></span>
+        </div>
       
-      <div onclick="window.location='{{url('/notes/view_note_details/'.$note->id)}}'" class="media-body">
-        <h3><a href="/notes/view_note_details/{{$note->id}}">{{$note->title}}</a></h3>
-        <p>{!! nl2br(e($note->description)) !!}</p>
-        @if($verified_users_courses !== null)
-            <a onclick="return confirm('Are you sure want to delete this note?');" href="/delete_note/{{$note->id}}">Delete</a>
-        @elseif((!empty($role))&&$role==1)
-          <a onclick="return confirm('Are you sure want to delete this note?');" href="/admin/delete_note/{{$note->id}}">Delete</a>
-        @endif
-      </div>
+        <div onclick="window.location='{{url('/notes/view_note_details/'.$note->id)}}'" class="media-body">
+            <h3><a href="/notes/view_note_details/{{$note->id}}">{{$note->title}}</a></h3>
+            <p>{!! nl2br(e($note->description)) !!}</p>
+        </div>
+
+        <div class="media-right">
+            @if($verified_users_courses !== null)
+                <a title="Delete note" onclick="return confirm('Are you sure want to delete this note?');" href="/delete_note/{{$note->id}}"><span style="color:#FFAF6C" class="glyphicon glyphicon-remove"></span></a>
+            @elseif((!empty($role))&&$role==1)
+                <a title="Delete note" onclick="return confirm('Are you sure want to delete this note?');" href="/admin/delete_note/{{$note->id}}"><span style="color:#FFAF6C" class="glyphicon glyphicon-remove"></span></a>
+            @endif
+        </div>
+
 
     </div>
 

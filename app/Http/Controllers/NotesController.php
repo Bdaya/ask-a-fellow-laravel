@@ -55,6 +55,11 @@ class NotesController extends Controller
     {
         
         $note = Note::find($note_id);
+        $disk = Storage::disk('google');
+        $file = collect($disk->listContents())->where('type', 'file')
+                ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
+                ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
+        $filename = $file['name'];
         if (Auth::check())
             $verified_users_courses = VerifiedUsersCourses::where('course_id', $note->course_id)->where('user_id', Auth::user()->id)->get();
         if(!$note)
@@ -62,7 +67,7 @@ class NotesController extends Controller
         //sort answers
         $comments = $note->comments()->paginate(5);
 
-        return view('notes.note_details',compact(['note','comments', 'verified_users_courses']));
+        return view('notes.note_details',compact(['note','comments', 'verified_users_courses', 'filename']));
     }
 
 

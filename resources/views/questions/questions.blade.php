@@ -124,9 +124,9 @@ if (isset($_GET['sort']))
                     </div>
                      <div>
                         @if(Auth::user() && count(Auth::user()->upvotesOnQuestion($question->id)))
-                            <i class="fa fa-thumbs-up upvote_question" value="{{$question->id}}" title="upvote" style="color:green; font-size: 20px;"></i>
+                            <i class="fa fa-thumbs-up upvote_question" value="{{$question->id}}" title="upvote" style="color:green; font-size: 20px; cursor: pointer;"></i>
                         @elseif(Auth::user())
-                            <i class="far fa-thumbs-up upvote_question" value="{{$question->id}}" title="upvote" style="color:green; font-size: 20px;"></i>
+                            <i class="far fa-thumbs-up upvote_question" value="{{$question->id}}" title="upvote" style="color:green; font-size: 20px; cursor: pointer;"></i>
                         @endif
                         @if($question->votes > 0)
                             <span class="question_votes" style="color:green;">{{$question->votes}} </span>
@@ -136,9 +136,9 @@ if (isset($_GET['sort']))
                             <span class="question_votes" style="color:red;">{{$question->votes}} </span>
                         @endif
                         @if(Auth::user() && count(Auth::user()->downvotesOnQuestion($question->id)))
-                            <i class="fa fa-thumbs-down downvote_question" value="{{$question->id}}" title="downvote" style="color:red; font-size: 20px"></i>
+                            <i class="fa fa-thumbs-down downvote_question" value="{{$question->id}}" title="downvote" style="color:red; font-size: 20px; cursor: pointer;"></i>
                         @elseif(Auth::user())
-                            <i class="far fa-thumbs-down downvote_question" value="{{$question->id}}" title="downvote" style="color:red; font-size: 20px"></i>
+                            <i class="far fa-thumbs-down downvote_question" value="{{$question->id}}" title="downvote" style="color:red; font-size: 20px; cursor: pointer;"></i>
                         @endif
                     </div>
                 </div>
