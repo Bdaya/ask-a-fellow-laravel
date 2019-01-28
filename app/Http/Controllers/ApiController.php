@@ -171,7 +171,6 @@ class ApiController extends Controller
             $question['asker'] = $question->asker()->get();
             $question['count_answers'] = $question->answers()->get()->count();
         }
-        // $questions->setPath('api/v1/');
-       return $questions;
+        return ['state' => '200 ok', 'error' => false,'data'=>$questions];
     }
 }
