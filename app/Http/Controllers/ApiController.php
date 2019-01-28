@@ -138,7 +138,7 @@ class ApiController extends Controller
     public function post_answer(Request $request,$question_id)
     {
         $this->validate($request, [
-                'answer' => 'required|min:5',
+                'answer' => 'required',
         ]);
         $answer = new Answer();
         $answer->answer = $request->answer;

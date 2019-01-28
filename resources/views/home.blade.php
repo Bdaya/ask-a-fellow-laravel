@@ -90,9 +90,9 @@ $pages = ceil($count_questions/$take);
                 </p>
                 <p style=" font-style: italic; font-size: 12px;">{{ date("F j, Y, g:i a",strtotime($question->created_at)) }} </p>
                 @if(Auth::user() && count(Auth::user()->upvotesOnQuestion($question->id)))
-                    <i class="fa fa-thumbs-up upvote_question" value="{{$question->id}}" title="upvote" style="color:green; font-size: 28px;"></i>
+                    <i class="fa fa-thumbs-up upvote_question" value="{{$question->id}}" title="upvote" style="color:green; font-size: 28px; cursor: pointer;"></i>
                 @elseif(Auth::user())
-                    <i class="far fa-thumbs-up upvote_question" value="{{$question->id}}" title="upvote" style="color:green; font-size: 28px;"></i>
+                    <i class="far fa-thumbs-up upvote_question" value="{{$question->id}}" title="upvote" style="color:green; font-size: 28px; cursor: pointer;"></i>
                 @endif
                 @if($question->votes > 0)
                     <span class="question_votes" style="color:green; font-size: 18px; padding-left: 10px; padding-right: 10px;">{{$question->votes}} </span>
@@ -102,9 +102,9 @@ $pages = ceil($count_questions/$take);
                     <span class="question_votes" style="color:red; font-size: 18px; padding-left: 10px; padding-right: 10px;">{{$question->votes}} </span>
                 @endif
                 @if(Auth::user() && count(Auth::user()->downvotesOnQuestion($question->id)))
-                    <i class="fa fa-thumbs-down downvote_question" value="{{$question->id}}" title="downvote" style="color:red; font-size: 28px"></i>
+                    <i class="fa fa-thumbs-down downvote_question" value="{{$question->id}}" title="downvote" style="color:red; font-size: 28px; cursor: pointer;"></i>
                 @elseif(Auth::user())
-                    <i class="far fa-thumbs-down downvote_question" value="{{$question->id}}" title="downvote" style="color:red; font-size: 28px"></i>
+                    <i class="far fa-thumbs-down downvote_question" value="{{$question->id}}" title="downvote" style="color:red; font-size: 28px; cursor: pointer;"></i>
                 @endif
               </div>
             </div>
