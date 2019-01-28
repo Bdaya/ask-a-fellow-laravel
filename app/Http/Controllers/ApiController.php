@@ -118,7 +118,7 @@ class ApiController extends Controller
     public function post_question(Request $request, $course_id)
     {
         $this->validate($request, [
-            'question' => 'required'
+            'question' => 'required|min:1'
         ]);
         $question = new Question;
         $question->asker_id = Auth::user()->id;
@@ -138,7 +138,7 @@ class ApiController extends Controller
     public function post_answer(Request $request,$question_id)
     {
         $this->validate($request, [
-                'answer' => 'required',
+                'answer' => 'required|min:1',
         ]);
         $answer = new Answer();
         $answer->answer = $request->answer;
