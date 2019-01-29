@@ -451,5 +451,13 @@ Route::group(['prefix' => 'api/v1', 'middleware' => 'cors'], function () {
      *  Delete comment on a note
      */
     Route::post('/delete_note_comment/{note_id}/{comment_id}', 'API\NotesAPIController@delete_note_comment');
+    /**
+     *  View notificaions and number of unseen
+     */
+    Route::get('/notifications', 'AppController@view_notifications');
+    /**
+     *  Mark notificaion as read or unread
+     */
+    Route::get('/mark_notification/{notification_id}/{read}', 'AjaxController@mark_notification');
 
 });

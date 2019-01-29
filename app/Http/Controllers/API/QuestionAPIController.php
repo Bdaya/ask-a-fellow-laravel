@@ -112,6 +112,7 @@ class QuestionAPIController extends Controller
                     $answer['attachement_url'] = $disk->url($file['path']);
                }
             }
+            $answers = $answers->paginate(5);
             $returnData['data'] = $answers;
         }
 

@@ -25,7 +25,10 @@ class ApiController extends Controller
             'home',
             'post_answer', 
             'getSubscribedCourses',
-            'subscribe_to_courses'
+            'subscribe_to_courses',
+            'view_notifications',
+            'mark_notification'
+
         ]]);
     }
 
@@ -173,5 +176,31 @@ class ApiController extends Controller
         }
         $questions->setPath('api/v1/');
         return $questions;
+    }
+
+    public function view_notifications()
+    {
+        $user = Auth::user();
+        $notifications = $user->notifications->paginate(10);
+        $notifications['unseen_count'] = $user->notifications->where('seen', 0);
+        return ['state' => '200 ok', 'error' => false,'data'=>$notifications];
+
+    }
+
+    public function mark_notification($notification_id, $read)
+    {
+        $notification = Notification::find($notification_id);
+        if($read == 0) {
+            $notification->seen = 0;
+            $notification->save();
+            return ['state' => '200 ok', 'error' => false,'seen'=> $notification->seen];
+        }
+        else if($read == 1) {
+            $notification->seen = 1;
+            $notification->save();
+            return ['state' => '200 ok', 'error' => false,'seen'=> $notification->seen];
+
+        }
+
     }
 }
