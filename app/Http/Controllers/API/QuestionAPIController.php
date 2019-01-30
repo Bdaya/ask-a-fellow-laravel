@@ -98,7 +98,7 @@ class QuestionAPIController extends Controller
             elseif ($order == 'latest')
                 $answers = $question->answers()->orderBy('created_at', 'desc')->get();
             else
-                $answers = $question->answers()->orderBy('votes', 'desc')->orderBy('created_at', 'desc')->get();
+                $answers = $question->answers()->orderBy('votes', 'desc')->orderBy('created_at', 'desc')->paginate(5);
 
             $returnData['status'] = true;
             foreach ($answers as $answer) {
@@ -112,7 +112,6 @@ class QuestionAPIController extends Controller
                     $answer['attachement_url'] = $disk->url($file['path']);
                }
             }
-            $answers = $answers->paginate(5);
             $returnData['data'] = $answers;
         }
 
