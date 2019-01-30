@@ -94,9 +94,9 @@ class QuestionAPIController extends Controller
             $returnData['message'] = 'Invalid question id.';
         } else {
             if ($order == 'oldest')
-                $answers = $question->answers()->orderBy('created_at', 'asc')->get();
+                $answers = $question->answers()->orderBy('created_at', 'asc')->paginate(5);
             elseif ($order == 'latest')
-                $answers = $question->answers()->orderBy('created_at', 'desc')->get();
+                $answers = $question->answers()->orderBy('created_at', 'desc')->paginate(5);
             else
                 $answers = $question->answers()->orderBy('votes', 'desc')->orderBy('created_at', 'desc')->paginate(5);
 
