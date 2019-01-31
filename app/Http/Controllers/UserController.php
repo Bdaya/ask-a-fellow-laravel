@@ -7,6 +7,8 @@ use App\User;
 use App\Store;
 use App\Review;
 use App\Component;
+use App\VerifiedUsersCourses;
+use App\Course;
 use App\Http\Requests;
 use Auth;
 use App\Major;
@@ -29,7 +31,9 @@ class UserController extends Controller
         if (!$user) {
             return 'Ooops! User doesn\'t exist';
         }
-        return view('user.questions', compact(['user']));
+        $verified_users_courses = VerifiedUsersCourses::all();
+        $courses = Course::all()->sortBy('course_code');
+        return view('user.questions', compact(['user', 'verified_users_courses', 'courses']));
     }
 
     public function showProfileAnswers($id)
