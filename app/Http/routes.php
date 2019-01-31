@@ -58,6 +58,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/admin/add_badge', 'AdminController@add_badge');
     Route::post('/admin/add_badge/{id}', 'AdminController@save_badge');
     Route::post('/admin/remove_badge/{id}', 'AdminController@remove_badge');
+    Route::post('/admin/verified_add_remove_course/{id}', 'AdminController@verified_add_remove_course');
     Route::get('/admin/add_course', 'AdminController@add_course_page');
     Route::get('/admin/add_major', 'AdminController@add_major_page');
     Route::get('/admin/add_component_category', 'AdminController@add_component_category_page');
@@ -123,8 +124,8 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('/browse/{major}/{semester}', 'AppController@post_question_all');
     Route::get('/answers/{question_id}', 'AppController@inside_question');
     Route::post('/answers/{question_id}', 'AppController@post_answer');
-    Route::get('/delete_answer/{id}', 'AppController@delete_answer');
-    Route::get('/delete_question/{id}', 'AppController@delete_question');
+    Route::get('/delete_answer/{answer_id}/{verified_user_courses}', 'AppController@delete_answer');
+    Route::get('/delete_question/{question_id}/{verified_user_courses}', 'AppController@delete_question');
 
 
     Route::get('/vote/answer/{answer_id}/{type}', 'AjaxController@vote_answer');
@@ -182,6 +183,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/edit_answer', 'AjaxController@edit_answer');
 
     Route::get('/admin/delete_note/{id}', 'AdminController@deleteNoteAdmin');
+    Route::get('/delete_note/{id}', 'NotesController@delete_note');
     Route::get('/browse/notes/{course_id}', 'AppController@list_notes');
     Route::get('/browse/notes/view_note/{note_id}', 'NotesController@downloadNote');
 
@@ -242,6 +244,7 @@ Route::group(['middleware' => ['web']], function () {
      * Upload a note
      */
     Route::post('/course/{courseID}/uploadNote', 'NotesController@upload_notes');
+
 });
 
 Route::group(['middleware' => 'web'], function () {
@@ -259,7 +262,7 @@ Route::group(['middleware' => 'web'], function () {
 | The routes inside this prefix Matches The "/api/v1/your_route" URL
 */
 
-Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
+Route::group(['prefix' => 'api/v1', 'middleware' => 'cors'], function () {
 
     /*
         |--------------------------
@@ -293,20 +296,33 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
     /**
      *  Users Profile
      */
-
     Route::get('user/{id}', 'API\UserAPIController@getUser');
+
+    /**
+     *  Update user profile info
+     */
+    Route::get('updateInfo', 'API\UserAPIController@updateInfo');
     /*
      * browse majors and semesters API
      */
     Route::get('browse', 'ApiController@browse');
     /*
-     * browse courses API
+     * browse courses with optional param of ordering API
      */
     Route::get('/list_courses/{major}/{semester}', 'ApiController@getCourses');
     /*
+     * browse subscribed courses
+     */
+    Route::get('/subscribed_courses', 'ApiController@getSubscribedCourses');
+    /*
+     * subcribe or unsubscribe to a course
+     * @param $course : array of course id
+     */
+    Route::post('/subscriptions', 'ApiController@subscribe_to_courses');
+    /*
      * Browse Questions of a course API
      */
-    Route::get('/browse/{course_id}', 'ApiController@list_questions');
+    Route::get('/browse/{course_id}/{order?}', 'ApiController@list_questions');
     /*
      *  Vote a question
      */
@@ -384,6 +400,10 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      */
     Route::post('/events/{course_id}', 'API\EventsAPIController@create');
     /*
+     * Delete an event
+     */
+    Route::post('/delete_event/{id}', 'API\EventsAPIController@deleteEvent');
+    /*
      * Get a list of all of stores
      */
     Route::get('/stores', 'API\StoresAPIController@index');
@@ -412,11 +432,32 @@ Route::group(['prefix' => 'api/v1', 'middleware' => ['cors']], function () {
      */
     Route::post('/note/vote/{note_id}/{type}', 'API\NotesAPIController@vote_note');
     /*
-     *  Vote a note
+     *  Delete a note
      */
     Route::post('/note/request_delete/{note_id}', 'API\NotesAPIController@request_delete');
     /*
      *  Edit a note comment
      */
     Route::post('/note/edit_comment/{comment_id}', 'API\NotesAPIController@edit_note_comment');
+    /*
+     *  Get note download link
+     */
+    Route::get('/browse/notes/view_note/{note_id}', 'API\NotesAPIController@downloadNote');
+    /**
+     * Upload a note
+     */
+    Route::post('/course/{courseID}/uploadNote', 'API\NotesAPIController@upload_notes');
+    /**
+     *  Delete comment on a note
+     */
+    Route::post('/delete_note_comment/{note_id}/{comment_id}', 'API\NotesAPIController@delete_note_comment');
+    /**
+     *  View notificaions and number of unseen
+     */
+    Route::get('/notifications', 'AppController@view_notifications');
+    /**
+     *  Mark notificaion as read or unread
+     */
+    Route::get('/mark_notification/{notification_id}/{read}', 'AjaxController@mark_notification');
+
 });

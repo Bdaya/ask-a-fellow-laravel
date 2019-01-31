@@ -7,12 +7,14 @@ use App\Note;
 use App\NoteVote;
 use App\Course;
 use App\NoteComment;
+use App\VerifiedUsersCourses;
 use Auth;
 use Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests;
 use Response;
+use App\Notification;
 
 class NotesController extends Controller
 {
@@ -53,12 +55,19 @@ class NotesController extends Controller
     {
         
         $note = Note::find($note_id);
+        $disk = Storage::disk('google');
+        $file = collect($disk->listContents())->where('type', 'file')
+                ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
+                ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
+        $filename = $file['name'];
+        if (Auth::check())
+            $verified_users_courses = VerifiedUsersCourses::where('course_id', $note->course_id)->where('user_id', Auth::user()->id)->get();
         if(!$note)
             return 'Ooops! note not found';
         //sort answers
         $comments = $note->comments()->paginate(5);
 
-        return view('notes.note_details',compact(['note','comments']));
+        return view('notes.note_details',compact(['note','comments', 'verified_users_courses', 'filename']));
     }
 
 
@@ -79,11 +88,34 @@ class NotesController extends Controller
     // delete a previously posted comment about a note
     public function delete_note_comment($note_id, $comment_id)
     {
+        $note = Note::find($note_id);
+        $verified_users_courses = null;
+        if (Auth::check())
+            $verified_users_courses = VerifiedUsersCourses::where('course_id', $note->course_id)->where('user_id', Auth::user()->id)->get();
         $comment = NoteComment::find($comment_id);
-        if(Auth::user() && (Auth::user()->role > 0 ||  Auth::user()->id == $comment->user_id))
+        if(Auth::user() && (Auth::user()->role > 0 ||  Auth::user()->id == $comment->user_id || $verified_users_courses !== null))
             $comment->delete();
         
         return redirect(url('/notes/view_note_details/'.$note_id));
+    }
+
+    // delete note
+    public function delete_note($note_id)
+    {
+        $note = Note::find($note_id);
+        $verified_users_courses = null;
+        if (Auth::check())
+            $verified_users_courses = VerifiedUsersCourses::where('course_id', $note->course_id)->where('user_id', Auth::user()->id)->get();
+        if ($verified_users_courses !== null || (Auth::check() && Auth::user()->id == $note->user_id)){
+            $disk = Storage::disk('google');
+            $file = collect($disk->listContents())->where('type', 'file')
+                ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
+                ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
+            $disk->delete($file['path']);
+            $course = $note->course->id;
+            $note->delete();
+        }
+        return redirect('/browse/notes/' . $course);
     }
 
     // vote note
@@ -137,6 +169,7 @@ class NotesController extends Controller
     public function upload_notes(Request $request, $courseID)
     {
         $user = Auth::user();
+        $verified_users_courses = VerifiedUsersCourses::where('course_id', $courseID)->where('user_id', $user->id)->first();
         $this->validate($request, [
             'title' => 'required',
             'description' => 'required',
@@ -153,10 +186,13 @@ class NotesController extends Controller
         $note->path = $fileName;
         $note->description = $request->description;
 
-        if($user->role >= 1)
+        if($user->role >= 1 || $verified_users_courses !== null){
             $note->request_upload = false;
+            Session::flash('success', 'Your note has been uploaded successfully!');
+        }else{
+            Session::flash('success', 'Your request to upload this note is successful!');
 
-        Session::flash('success', 'Your request to upload this note is successfull');
+        }
         $note->save();
 
         return back();

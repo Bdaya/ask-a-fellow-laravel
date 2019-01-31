@@ -74,7 +74,7 @@
             </tr>
             <tr>
                 <td>
-                    <a href="{{url('admin/add_badge')}}">Add Verification Badge to the users</a>
+                    <a href="{{url('admin/add_badge')}}">Add Verification Badge and Courses to the users</a>
                 </td>
             </tr>
             <tr>

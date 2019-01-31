@@ -2,34 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\AdminMail;
+use App\Announcement;
 use App\Answer;
 use App\AnswerReport;
-use App\Feedback;
-use App\Question;
-use App\QuestionReport;
-use App\Note;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Contracts\Routing\ResponseFactory;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Storage;;
-use File;
-use App\Http\Requests;
-use App\Major;
-use App\Course;
 use App\Component;
 use App\ComponentCategory;
-use App\User;
+use App\Course;
 use App\Event;
-use App\Announcement;
-use App\AdminMail;
+use App\Feedback;
+use App\Major;
+use App\Note;
+use App\Notification;
+use App\Question;
+use App\QuestionReport;
 use App\Store;
-use Mail;
-use Session;
+use App\User;
+use App\VerifiedUsersCourses;
 use Auth;
 use Cloudinary\Uploader;
-use App\Notification;
+use File;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
+use Mail;
+use Session;
 
 class AdminController extends Controller
 {
@@ -57,7 +56,7 @@ class AdminController extends Controller
             'course_code' => 'alpha_num|required',
             'course_name' => 'required',
             'semester' => 'numeric|between:1,10|required',
-            'majors.*' => 'numeric|exists:majors,id'
+            'majors.*' => 'numeric|exists:majors,id',
         ]);
 
         $course = new Course();
@@ -96,7 +95,7 @@ class AdminController extends Controller
             'course_code' => 'alpha_num|required',
             'course_name' => 'required',
             'semester' => 'numeric|between:1,10|required',
-            'majors.*' => 'numeric|exists:majors,id'
+            'majors.*' => 'numeric|exists:majors,id',
         ]);
 
         $course = Course::find($id);
@@ -109,7 +108,6 @@ class AdminController extends Controller
         Session::flash('Updated', 'Course is updated!');
         return redirect('admin/add_course');
     }
-
 
     public function add_major_page()
     {
@@ -168,7 +166,7 @@ class AdminController extends Controller
     public function add_component_category(Request $request)
     {
         $this->validate($request, [
-            'category_name' => 'required|unique:component_categories,name'
+            'category_name' => 'required|unique:component_categories,name',
         ]);
         $category = new ComponentCategory();
         $category->name = $request->category_name;
@@ -193,7 +191,7 @@ class AdminController extends Controller
     public function update_component_category($id, Request $request)
     {
         $this->validate($request, [
-            'category_name' => 'required|unique:component_categories,name'
+            'category_name' => 'required|unique:component_categories,name',
         ]);
 
         $category = ComponentCategory::find($id);
@@ -229,7 +227,7 @@ class AdminController extends Controller
         $component = Component::find($id);
         $component->delete();
         $creator_id = $component->creator_id;
-        return redirect('/admin/mail/one/'.$creator_id);
+        return redirect('/admin/mail/one/' . $creator_id);
     }
 
     // Announcements Controller
@@ -243,10 +241,10 @@ class AdminController extends Controller
     public function add_announcement(Request $request)
     {
         $this->validate($request, [
-          'title' => 'required',
-          'event' => 'required',
-          'description' => 'required'
-      ]);
+            'title' => 'required',
+            'event' => 'required',
+            'description' => 'required',
+        ]);
 
         $announcement = new Announcement();
 
@@ -261,17 +259,17 @@ class AdminController extends Controller
         $event_id = $announcement->event_id;
         $event = Event::find($event_id);
         $users = $event->course->subscribed_users;
-        $mail_subject = 'New Event: '.$event->title;
-        $link = url('/events/'.$event->id);
+        $mail_subject = 'New Event: ' . $event->title;
+        $link = url('/events/' . $event->id);
         $course_name = Course::find($event->course_id)->course_name;
-        $details = 'You have 1 new announcement titled: '.$announcement->title.' related to event: '.$event->title.' in your subscribed course: '.$course_name;
+        $details = 'You have 1 new announcement titled: ' . $announcement->title . ' related to event: ' . $event->title . ' in your subscribed course: ' . $course_name;
         $usersIDs = [];
         $usersEmails = [];
         $event_announcement = 'announcement';
-        $url = 'http://localhost:8000/events/'.$event_id;
+        $url = 'http://localhost:8000/events/' . $event_id;
 
         foreach ($users as $user) {
-            Notification::send_notification($user->id,$details,$link);
+            Notification::send_notification($user->id, $details, $link);
             $usersIDs[] = $user->id;
             $usersEmails[] = $user->email;
         }
@@ -299,12 +297,12 @@ class AdminController extends Controller
     public function add_event(Request $request)
     {
         $this->validate($request, [
-          'title' => 'required',
-          'course' => 'required',
-          'date' => 'required',
-          'place' => 'required',
-          'description' => 'required'
-      ]);
+            'title' => 'required',
+            'course' => 'required',
+            'date' => 'required',
+            'place' => 'required',
+            'description' => 'required',
+        ]);
 
         $event = new Event();
 
@@ -315,24 +313,25 @@ class AdminController extends Controller
         $event['place'] = $request['place'];
         $event['description'] = $request['description'];
 
-        if(Auth::user()->role == 1)
+        if (Auth::user()->role == 1) {
             $event['verified'] = 1;
+        }
 
         $event->save();
 
         $event_id = $event->id;
         $users = $event->course->subscribed_users;
-        $mail_subject = 'New Event: '.$event->title;
-        $link = url('/events/'.$event->id);
+        $mail_subject = 'New Event: ' . $event->title;
+        $link = url('/events/' . $event->id);
         $course_name = Course::find($event->course_id)->course_name;
-        $details = 'You have 1 new event titled: '.$event->title.' related to your subscribed course: '.$course_name;
+        $details = 'You have 1 new event titled: ' . $event->title . ' related to your subscribed course: ' . $course_name;
         $usersIDs = [];
         $usersEmails = [];
         $event_announcement = 'event';
-        $url = 'http://localhost:8000/events/'.$event_id;
+        $url = 'http://localhost:8000/events/' . $event_id;
 
         foreach ($users as $user) {
-            Notification::send_notification($user->id,$details,$link);
+            Notification::send_notification($user->id, $details, $link);
             $usersIDs[] = $user->id;
             $usersEmails[] = $user->email;
         }
@@ -363,7 +362,6 @@ class AdminController extends Controller
         $answer_reports = AnswerReport::all();
         return view('admin.reports', compact(['question_reports', 'answer_reports']));
     }
-
 
     public function manyMailView()
     {
@@ -400,7 +398,6 @@ class AdminController extends Controller
         }
     }
 
-
     public function sendMailToOneUser($user_id, $mail_subject, $mail_content)
     {
         $user = User::find($user_id);
@@ -415,7 +412,6 @@ class AdminController extends Controller
 
         return $sendMail;
     }
-
 
     public function sendMailToManyUsers($users, $mail_subject, $mail_content)
     {
@@ -436,7 +432,6 @@ class AdminController extends Controller
         return $sendMail;
     }
 
-
     public function saveMail($recipients, $mail_subject, $mail_body)
     {
         $mail = new AdminMail();
@@ -447,13 +442,11 @@ class AdminController extends Controller
         $mail->recipients()->attach($recipients);
     }
 
-
     public function showMailLog()
     {
         $mails = AdminMail::orderBy('created_at', 'desc')->get();
         return view('admin.mail_log', compact(['mails']));
     }
-
 
     public function listUsers()
     {
@@ -464,7 +457,9 @@ class AdminController extends Controller
     public function add_badge()
     {
         $users = User::orderBy('first_name', 'asc');
-        return view('admin.badge', compact(['users']));
+        $courses = Course::all()->sortBy('course_code');
+        $verified_users_courses = VerifiedUsersCourses::all();
+        return view('admin.badge', compact(['users', 'courses', 'verified_users_courses']));
     }
 
     public function save_badge($id)
@@ -473,7 +468,8 @@ class AdminController extends Controller
         $user->verified_badge = 1;
         $user->save();
         $users = User::orderBy('first_name', 'asc');
-        return view('admin.badge', compact(['users']));
+        $users = User::orderBy('first_name', 'asc');
+        return Redirect::back()->with('message','Operation Successful !');
     }
 
     public function remove_badge($id)
@@ -481,8 +477,21 @@ class AdminController extends Controller
         $user = User::findOrFail($id);
         $user->verified_badge = 0;
         $user->save();
-        $users = User::orderBy('first_name', 'asc');
-        return view('admin.badge', compact(['users']));
+        return Redirect::back()->with('message','Operation Successful !');
+    }
+
+    public function verified_add_remove_course($id)
+    {
+        if (Input::get('add_course') !== null) {
+            $verified_users_courses = new VerifiedUsersCourses();
+            $verified_users_courses->user_id = $id;
+            $verified_users_courses->course_id = Input::get('item_id');
+            $verified_users_courses->save();
+        }else{
+            VerifiedUsersCourses::where('user_id', $id)->where('course_id', Input::get('item_id'))->delete();
+        }
+        return Redirect::back()->with('message','Operation Successful !');
+
     }
 
     public function statistics()
@@ -513,31 +522,31 @@ class AdminController extends Controller
     public function rejectRequest($id)
     {
         $event = Event::find($id);
-        $event-> delete();
+        $event->delete();
         return redirect('admin/event_requests');
     }
 
     //function to accept event requests by searching and setting its verified flag to true
     public function acceptRequest($id)
     {
-        $event =  Event::Find($id);
-        $event->verified= 1;
+        $event = Event::Find($id);
+        $event->verified = 1;
         $event->save();
 
         //notify users with the new event
         $event_id = $event->id;
         $users = $event->course->subscribed_users;
-        $mail_subject = 'New Event: '.$event->title;
-        $link = url('/events/'.$event->id);
+        $mail_subject = 'New Event: ' . $event->title;
+        $link = url('/events/' . $event->id);
         $course_name = Course::find($event->course_id)->course_name;
-        $details = 'You have 1 new event titled: '.$event->title.' related to your subscribed course: '.$course_name;
+        $details = 'You have 1 new event titled: ' . $event->title . ' related to your subscribed course: ' . $course_name;
         $usersIDs = [];
         $usersEmails = [];
         $event_announcement = 'event';
-        $url = 'http://localhost:8000/events/'.$event_id;
+        $url = 'http://localhost:8000/events/' . $event_id;
 
         foreach ($users as $user) {
-            Notification::send_notification($user->id,$details,$link);
+            Notification::send_notification($user->id, $details, $link);
             $usersIDs[] = $user->id;
             $usersEmails[] = $user->email;
         }
@@ -578,7 +587,7 @@ class AdminController extends Controller
             \Cloudinary::config(array(
                 "cloud_name" => env("CLOUDINARY_NAME"),
                 "api_key" => env("CLOUDINARY_KEY"),
-                "api_secret" => env("CLOUDINARY_SECRET")
+                "api_secret" => env("CLOUDINARY_SECRET"),
             ));
             // upload and set new picture
             $file = $request->file('logoPath');
@@ -623,7 +632,7 @@ class AdminController extends Controller
             \Cloudinary::config(array(
                 "cloud_name" => env("CLOUDINARY_NAME"),
                 "api_key" => env("CLOUDINARY_KEY"),
-                "api_secret" => env("CLOUDINARY_SECRET")
+                "api_secret" => env("CLOUDINARY_SECRET"),
             ));
             // upload and set new picture
             $file = $request->file('logoPath');
@@ -641,15 +650,15 @@ class AdminController extends Controller
     public function noteRequests()
     {
         $notes_upload = DB::table('notes')->where('notes.request_upload', '=', 1)
-                  ->join('users', 'notes.user_id', '=', 'users.id')
-                  ->join('courses', 'notes.course_id', '=', 'courses.id')
-                  ->select('notes.*', 'users.first_name', 'users.last_name', 'courses.course_name', 'courses.course_code')
-                  ->get();
+            ->join('users', 'notes.user_id', '=', 'users.id')
+            ->join('courses', 'notes.course_id', '=', 'courses.id')
+            ->select('notes.*', 'users.first_name', 'users.last_name', 'courses.course_name', 'courses.course_code')
+            ->get();
         $notes_delete = DB::table('notes')->where('notes.request_delete', '=', 1)
-                  ->join('users', 'notes.user_id', '=', 'users.id')
-                  ->join('courses', 'notes.course_id', '=', 'courses.id')
-                  ->select('notes.*', 'users.first_name', 'users.last_name', 'courses.course_name', 'courses.course_code')
-                  ->get();
+            ->join('users', 'notes.user_id', '=', 'users.id')
+            ->join('courses', 'notes.course_id', '=', 'courses.id')
+            ->select('notes.*', 'users.first_name', 'users.last_name', 'courses.course_name', 'courses.course_code')
+            ->get();
 
         return view('admin.upload_delete_requests', compact(['notes_upload', 'notes_delete']));
     }
@@ -664,12 +673,13 @@ class AdminController extends Controller
     }
 
     //deletes note using its ID
-    public function deleteNote($id) {
+    public function deleteNote($id)
+    {
         $note = Note::find($id);
         $disk = Storage::disk('google');
         $file = collect($disk->listContents())->where('type', 'file')
-                ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
-                ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
+            ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
+            ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
         $disk->delete($file['path']);
         $note->delete();
 
@@ -689,18 +699,18 @@ class AdminController extends Controller
     public function deleteNoteAdmin($id)
     {
         if (Auth::user()) {
-            $role  = Auth::user()->role;
+            $role = Auth::user()->role;
 
-            if($role==1){
+            if ($role == 1) {
                 $note = Note::find($id);
                 $disk = Storage::disk('google');
                 $file = collect($disk->listContents())->where('type', 'file')
-                ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
-                ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
+                    ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
+                    ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
                 $disk->delete($file['path']);
                 $course = $note->course->id;
                 $note->delete();
-                return redirect('/browse/notes/'.$course);
+                return redirect('/browse/notes/' . $course);
 
             } else {
                 return Redirect::back();
@@ -708,13 +718,14 @@ class AdminController extends Controller
         }
     }
 
-    public function viewNote($id){
+    public function viewNote($id)
+    {
         $note = Note::find($id);
         $disk = Storage::disk('google');
         $file = collect($disk->listContents())->where('type', 'file')
-        ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
-        ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
+            ->where('extension', pathinfo($note->path, PATHINFO_EXTENSION))
+            ->where('filename', pathinfo($note->path, PATHINFO_FILENAME))->first();
 
-        return response()->redirectTo('https://drive.google.com/file/d/'.$file['path'].'/view');
+        return response()->redirectTo('https://drive.google.com/file/d/' . $file['path'] . '/view');
     }
 }

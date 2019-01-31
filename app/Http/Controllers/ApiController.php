@@ -20,7 +20,15 @@ class ApiController extends Controller
     public function __construct()
     {
         $this->middleware('auth', ['only' => [
-            'vote_question', 'post_question','home','post_answer'
+            'vote_question', 
+            'post_question',
+            'home',
+            'post_answer', 
+            'getSubscribedCourses',
+            'subscribe_to_courses',
+            'view_notifications',
+            'mark_notification'
+
         ]]);
     }
 
@@ -50,7 +58,7 @@ class ApiController extends Controller
      * Return majors and and semesters 
      */
     public function browse()
-    {
+    {   
         $majors = Major::all();
         $semesters = [1, 2, 3, 4, 5, 6, 7, 8, 9];
         return ['majors' => $majors, 'semesters' => $semesters];
@@ -63,16 +71,35 @@ class ApiController extends Controller
         return ['courses' => $courses];
     }
 
-    public function list_questions($course_id)
+    public function getSubscribedCourses()
     {
+        $user = Auth::user();
+        $courses = $user->subscribed_courses();
+        return ['courses' => $courses];
+    }
 
+    public function subscribe_to_courses(Request $request)
+    {
+        Auth::user()->subscribed_courses()->detach();
+        if($request->course)
+            Auth::user()->subscribe_to_courses(array_unique($request->course));
+        return ['state' => '200 ok', 'error' => false];
+    }
+
+    public function list_questions($course_id, $order = null)
+    {
         $course = Course::find($course_id);
         //sort questions
         if (!$course)
             return ['error' => 'course not found'];
         $new_questions = array();
-
         $questions = $course->questions()->latest()->paginate(10);
+        if ($order == 'votes')
+            $questions = $course->questions()->orderBy('votes', 'desc')->paginate(10);
+        if ($order == 'oldest')
+            $questions = $course->questions()->oldest()->paginate(10);
+        if ($order == 'answers')
+            $questions = $course->questions()->withCount('answers')->orderBy('answers_count', 'desc')->paginate(10); 
         foreach ($questions as $question) {
             $question['file_url'] = null;
             $question['asker'] = $question->asker()->get();
@@ -94,7 +121,7 @@ class ApiController extends Controller
     public function post_question(Request $request, $course_id)
     {
         $this->validate($request, [
-            'question' => 'required'
+            'question' => 'required|min:1'
         ]);
         $question = new Question;
         $question->asker_id = Auth::user()->id;
@@ -114,7 +141,7 @@ class ApiController extends Controller
     public function post_answer(Request $request,$question_id)
     {
         $this->validate($request, [
-                'answer' => 'required|min:5',
+                'answer' => 'required|min:1',
         ]);
         $answer = new Answer();
         $answer->answer = $request->answer;
@@ -148,6 +175,32 @@ class ApiController extends Controller
             $question['count_answers'] = $question->answers()->get()->count();
         }
         $questions->setPath('api/v1/');
-       return $questions;
+        return $questions;
+    }
+
+    public function view_notifications()
+    {
+        $user = Auth::user();
+        $notifications = $user->notifications->paginate(10);
+        $notifications['unseen_count'] = $user->notifications->where('seen', 0);
+        return ['state' => '200 ok', 'error' => false,'data'=>$notifications];
+
+    }
+
+    public function mark_notification($notification_id, $read)
+    {
+        $notification = Notification::find($notification_id);
+        if($read == 0) {
+            $notification->seen = 0;
+            $notification->save();
+            return ['state' => '200 ok', 'error' => false,'seen'=> $notification->seen];
+        }
+        else if($read == 1) {
+            $notification->seen = 1;
+            $notification->save();
+            return ['state' => '200 ok', 'error' => false,'seen'=> $notification->seen];
+
+        }
+
     }
 }
