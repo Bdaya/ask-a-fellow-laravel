@@ -7,6 +7,7 @@
     <link href="<?php echo e(asset('css/bootstrap.min.css')); ?>" rel="stylesheet">
     <script type="text/javascript" src="<?php echo e(asset('js/jquery-1.11.2.min.js')); ?>"></script>
     <script type="text/javascript" src="<?php echo e(asset('js/bootstrap.min.js')); ?>"></script>
+    <link rel="shortcut icon" href="<?php echo e(asset('art/logo.png')); ?>">
 </head>
 <body>
 <nav class="navbar navbar-default">
