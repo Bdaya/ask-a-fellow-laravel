@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "8c28e17ec161800a5b982564bab55a98",
+    "content-hash": "3ec7cad051bc1e3f7c4d251d431c6974",
     "packages": [
         {
             "name": "classpreloader/classpreloader",
@@ -394,12 +394,12 @@
             "version": "v2.0.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/google/google-api-php-client.git",
+                "url": "https://github.com/googleapis/google-api-php-client.git",
                 "reference": "37adb8a6f4d4b27b9900d62d67bf1d54995a755c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/google/google-api-php-client/zipball/37adb8a6f4d4b27b9900d62d67bf1d54995a755c",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/37adb8a6f4d4b27b9900d62d67bf1d54995a755c",
                 "reference": "37adb8a6f4d4b27b9900d62d67bf1d54995a755c",
                 "shasum": ""
             },
@@ -453,12 +453,12 @@
             "version": "v0.7",
             "source": {
                 "type": "git",
-                "url": "https://github.com/google/google-api-php-client-services.git",
+                "url": "https://github.com/googleapis/google-api-php-client-services.git",
                 "reference": "c07a8a9d424024f1a9fc5d62da8ed5467ed25909"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/google/google-api-php-client-services/zipball/c07a8a9d424024f1a9fc5d62da8ed5467ed25909",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/c07a8a9d424024f1a9fc5d62da8ed5467ed25909",
                 "reference": "c07a8a9d424024f1a9fc5d62da8ed5467ed25909",
                 "shasum": ""
             },
@@ -487,12 +487,12 @@
             "version": "v0.10",
             "source": {
                 "type": "git",
-                "url": "https://github.com/google/google-auth-library-php.git",
+                "url": "https://github.com/googleapis/google-auth-library-php.git",
                 "reference": "760e3fbe4064c0525c22e27e5374eada3c103da8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/google/google-auth-library-php/zipball/760e3fbe4064c0525c22e27e5374eada3c103da8",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/760e3fbe4064c0525c22e27e5374eada3c103da8",
                 "reference": "760e3fbe4064c0525c22e27e5374eada3c103da8",
                 "shasum": ""
             },
@@ -1116,6 +1116,48 @@
             ],
             "description": "An adapter decorator to enable meta-data caching.",
             "time": "2018-07-09T20:51:04+00:00"
+        },
+        {
+            "name": "mervick/emojionearea",
+            "version": "v3.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mervick/emojionearea.git",
+                "reference": "dc73dc556fdc6e82c5d26847533b893ece255ce1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mervick/emojionearea/zipball/dc73dc556fdc6e82c5d26847533b893ece255ce1",
+                "reference": "dc73dc556fdc6e82c5d26847533b893ece255ce1",
+                "shasum": ""
+            },
+            "type": "plugin",
+            "extra": {
+                "asset-installer-paths": {
+                    "npm-asset-library": "vendor/npm",
+                    "bower-asset-library": "vendor/bower"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andrey Izman",
+                    "email": "izmanw@gmail.com"
+                },
+                {
+                    "name": "Klas Lundberg",
+                    "email": "klas.lundberg@instinct.se"
+                },
+                {
+                    "name": "Merlin Mason",
+                    "email": "info@merlinmason.co.uk"
+                }
+            ],
+            "description": "WYSIWYG-like EmojiOne Converter / Picker Plugin for jQuery",
+            "time": "2018-02-09T22:44:43+00:00"
         },
         {
             "name": "monolog/monolog",

@@ -211,6 +211,11 @@ if (isset($_GET['sort']))
                     <label for="post_question_text">Ask a question:</label>
                     <textarea required class="form-control" id="post_question_text" name="question"
                               placeholder="Type your question here"></textarea>
+                    <script type="text/javascript">
+                    $(document).ready(function() {
+                        $("#post_question_text").emojioneArea();
+                    });
+                    </script>
                     <br>
                       <div class="form-group">
                         <div class="col-sm-6 pull-right">
@@ -224,6 +229,7 @@ if (isset($_GET['sort']))
                             <button type="submit" class="btn btn-default pull-right" id="post_question_submit">Post Question</button>
                         </div>
                     </div>
+                    <br>
                     @if(isset($all))
                         <div class="form-group" style="width:50%;">
                             <label for="course" style="">Post question to: </label>

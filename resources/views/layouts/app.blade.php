@@ -8,6 +8,8 @@
     <script type="text/javascript" src="{{asset('js/jquery-1.11.2.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/bootstrap.min.js')}}"></script>
     <link rel="shortcut icon" href="{{asset('art/logo.png')}}">
+    <link rel="stylesheet" href="{{asset('css/emojionearea.min.css')}}">
+    <script type="text/javascript" src="{{asset('js/emojionearea.min.js')}}"></script>
 </head>
 <body>
 <nav class="navbar navbar-default">
