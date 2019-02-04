@@ -22,12 +22,14 @@
 
                 <br>
                 @if(Auth::user())
-                    @if(Auth::user()->role >= 1)
+                    @if(Auth::user()->role >= 1 )
                       <form onclick="return confirm('Are you sure want to delete this note?');" action='/admin/delete_note/{{$note->id}}' Method="GET">
                         <button class ="icon-button"><span class="glyphicon glyphicon-trash" style="font-size:30px"></span></button>
                       </form>
-                    @elseif(Auth::user()->id == $note->user_id)
-                        <a value="{{$note->id}}" data-toggle="modal" data-target="#delete_modal" class="deletion_comment" title="Note Delete Request"><span class="glyphicon glyphicon-trash" style="font-size:30px;cursor:pointer;"></span></a>
+                    @elseif(Auth::user()->id == $note->user_id || $verified_users_courses !== null)
+                        <form onclick="return confirm('Are you sure want to delete this note?');" action='/delete_note/{{$note->id}}' Method="GET">
+                            <button class ="icon-button"><span class="glyphicon glyphicon-trash" style="font-size:30px"></span></button>
+                        </form>
                     @endif
                 @endif
             </div>
@@ -90,7 +92,7 @@
             <i class="far fa-thumbs-down downvote_note" value="{{$note->id}}" title="downvote" style="color:red; font-size: 28px"></i>
         @endif
 
-          <h4><a href="{{url('browse/notes/view_note/'.$note->id)}}">Click to download</a></h4>
+          <h4><a href="{{url('browse/notes/view_note/'.$note->id)}}"><span class="glyphicon glyphicon-paperclip"></span> {{$filename}}</a></h4>
 
         </div>
 
@@ -107,7 +109,7 @@
                             @if(Auth::user()->id == $comment->user_id)
                                 <a value="{{$comment}}" data-toggle="modal" data-target="#edit_modal" class="edit_comment" title="Edit Note Comment"><span class="glyphicon glyphicon-edit" style="color:#D24848;cursor:pointer;"></span></a>
                             @endif
-                            @if(Auth::user()->id == $comment->user_id || Auth::user()->role >= 1)
+                            @if(Auth::user()->id == $comment->user_id || Auth::user()->role >= 1 || $verified_users_courses !== null)
                                 <a onclick="return confirm('Are you sure want to delete this comment?');" title="Delete Note Comment" href="{{url('delete_note_comment/'.$note->id.'/'.$comment->id)}}"><span style="color:#FFAF6C" class="glyphicon glyphicon-remove"></span></a>
                                 <br>
                             @endif
@@ -181,6 +183,7 @@
         @endif
 
     </div>
+    <br>
 
 
 

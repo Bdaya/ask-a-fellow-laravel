@@ -59,9 +59,9 @@
                 @endif
             </div>
             <div class="media-body">
-                @if(Auth::user() && (Auth::user()->id == $question->asker_id || Auth::user()->role >= 1))
+                @if(Auth::user() && (Auth::user()->id == $question->asker_id || Auth::user()->role >= 1 || $verified_users_courses !== null))
                 <div class="delete_question pull-right">
-                    <a onclick="return confirm('Are you sure?');" title="Delete question" class="" href="{{url('delete_question/'.$question->id)}}"><span style="color:#FFAF6C" class="glyphicon glyphicon-remove"></span></a>
+                    <a onclick="return confirm('Are you sure?');" title="Delete question" class="" href="{{url('delete_question/'.$question->id.'/'.$verified_users_courses)}}"><span style="color:#FFAF6C" class="glyphicon glyphicon-remove"></span></a>
                 </div>
                 @endif
                     @if($question->asker->verified_badge >=1)
@@ -126,7 +126,7 @@
                             @if(Auth::user()->id == $answer->responder_id)
                                 <a value="{{$answer}}" data-toggle="modal" data-target="#edit_modal" class="edit_answer" title="Edit Answer"><span class="glyphicon glyphicon-edit" style="color:#D24848;cursor:pointer;"></span></a>
                             @endif
-                            @if(Auth::user()->id == $answer->responder_id || Auth::user()->role >= 1)
+                            @if(Auth::user()->id == $answer->responder_id || Auth::user()->role >= 1 || $verified_users_courses !== null)
 
                                     <a onclick="return confirm('Are you sure?');" title="Delete answer" href="{{url('delete_answer/'.$answer->id)}}"><span style="color:#FFAF6C" class="glyphicon glyphicon-remove"></span></a>
 
