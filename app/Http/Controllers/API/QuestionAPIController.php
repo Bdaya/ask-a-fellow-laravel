@@ -11,6 +11,7 @@ use App\Answer;
 use App\BookmarkQuestion;
 use App\QuestionVote;
 use App\AnswerVote;
+use App\Notification;
 use Auth;
 use Illuminate\Support\Facades\Storage;
 
