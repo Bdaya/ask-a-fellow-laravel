@@ -89,4 +89,11 @@ class EventsAPIController extends Controller
         return response()->json($event, 200);
     }
 
+    public function deleteEvent($id)
+    {
+        $event = Event::find($id);
+        $event->delete();
+        return response()->json(['status' => '200 ok', 'message' => 'Your request to delete this event is successful'], 200);
+    }
+
 }
