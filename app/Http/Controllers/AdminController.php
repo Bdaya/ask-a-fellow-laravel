@@ -112,7 +112,7 @@ class AdminController extends Controller
     public function add_major_page()
     {
         $majors = Major::all();
-        return view('admin.add_major', compact(['courses', 'majors']));
+        return view('admin.add_major', compact(['majors']));
     }
 
     public function add_major(Request $request)
